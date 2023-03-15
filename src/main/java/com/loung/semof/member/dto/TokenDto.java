@@ -1,8 +1,6 @@
 package com.loung.semof.member.dto;
 
 
-
-
 public class TokenDto {
     private String grantType;
     private String memberName;

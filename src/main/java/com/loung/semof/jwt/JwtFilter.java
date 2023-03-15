@@ -3,7 +3,7 @@ package com.loung.semof.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.uni.reactpro.exception.dto.ApiExceptionDto;
+import com.loung.semof.exception.dto.ApiExceptionDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

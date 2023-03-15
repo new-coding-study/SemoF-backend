@@ -1,6 +1,7 @@
 package com.loung.semof.member.dao;
 
-import com.uni.reactpro.member.dto.MemberDto;
+
+import com.loung.semof.member.dto.MemberDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Optional;
