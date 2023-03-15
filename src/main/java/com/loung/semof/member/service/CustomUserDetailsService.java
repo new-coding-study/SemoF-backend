@@ -1,9 +1,9 @@
 package com.loung.semof.member.service;
 
 
-import com.uni.reactpro.exception.UserNotFoundException;
-import com.uni.reactpro.member.dao.MemberMapper;
-import com.uni.reactpro.member.dto.MemberDto;
+import com.loung.semof.exception.UserNotFoundException;
+import com.loung.semof.member.dao.MemberMapper;
+import com.loung.semof.member.dto.MemberDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

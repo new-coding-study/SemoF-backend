@@ -1,7 +1,8 @@
 package com.loung.semof.member.service;
 
-import com.uni.reactpro.member.dao.MemberMapper;
-import com.uni.reactpro.member.dto.MemberDto;
+
+import com.loung.semof.member.dao.MemberMapper;
+import com.loung.semof.member.dto.MemberDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;

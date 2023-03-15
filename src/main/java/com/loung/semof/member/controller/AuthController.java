@@ -1,9 +1,9 @@
 package com.loung.semof.member.controller;
 
 
-import com.uni.reactpro.common.ResponseDto;
-import com.uni.reactpro.member.dto.MemberDto;
-import com.uni.reactpro.member.service.AuthService;
+import com.loung.semof.common.ResponseDto;
+import com.loung.semof.member.dto.MemberDto;
+import com.loung.semof.member.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,8 +1,8 @@
 package com.loung.semof.configuration;
 
 
-import com.uni.reactpro.jwt.JwtFilter;
-import com.uni.reactpro.jwt.TokenProvider;
+import com.loung.semof.jwt.JwtFilter;
+import com.loung.semof.jwt.TokenProvider;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.DefaultSecurityFilterChain;

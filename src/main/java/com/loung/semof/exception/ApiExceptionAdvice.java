@@ -1,6 +1,7 @@
 package com.loung.semof.exception;
 
-import com.uni.reactpro.exception.dto.ApiExceptionDto;
+
+import com.loung.semof.exception.dto.ApiExceptionDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

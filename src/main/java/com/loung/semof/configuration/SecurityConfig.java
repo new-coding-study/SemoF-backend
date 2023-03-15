@@ -1,9 +1,9 @@
 package com.loung.semof.configuration;
 
 
-import com.uni.reactpro.jwt.JwtAccessDeniedHandler;
-import com.uni.reactpro.jwt.JwtAuthenticationEntryPoint;
-import com.uni.reactpro.jwt.TokenProvider;
+import com.loung.semof.jwt.JwtAccessDeniedHandler;
+import com.loung.semof.jwt.JwtAuthenticationEntryPoint;
+import com.loung.semof.jwt.TokenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
