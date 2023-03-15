@@ -1,9 +1,9 @@
 package com.loung.semof.jwt;
 
 
-import com.uni.reactpro.exception.TokenException;
-import com.uni.reactpro.member.dto.MemberDto;
-import com.uni.reactpro.member.dto.TokenDto;
+import com.loung.semof.exception.TokenException;
+import com.loung.semof.member.dto.MemberDto;
+import com.loung.semof.member.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
