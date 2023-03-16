@@ -4,14 +4,9 @@ server:
 
 spring:
   datasource:
-    driver-class-name: oracle.jdbc.OracleDriver
-    #    url: jdbc:oracle:thin:@43.200.33.166:1522/xe
-    #    url: jdbc:oracle:thin:@43.200.45.85:1522/xe
-    #    url: jdbc:oracle:thin:@192.168.0.24:1522/xe  192.168.0.165\uB85C\uCEEC\uC5D0 \uC62C\uB9B4\uB54C\uB294 \uD3EC\uD2B8 \uBC88\uD638 \uBC14\uAFD4\uC57C \uD568.. doker\uC5D0 \uC62C\uB9AC\uC168\uB358???
-    #    url: jdbc:oracle:thin:@localhost:1521/xe
-    url: jdbc:oracle:thin:@192.168.0.165:1522/xe
-    username: uni
-    password: uni
+    url: jdbc:mysql://localhost:3306/semof?serverTimezone=Asia/Seoul
+    username: semof
+    password: semof1234
   servlet:
     multipart:
       enabled: true
