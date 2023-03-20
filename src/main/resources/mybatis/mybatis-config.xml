@@ -12,8 +12,10 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias alias="ProductDto" type="com.uni.reactpro.product.dto.ProductDto"/>
-		<typeAlias alias="MemberDto" type="com.uni.reactpro.member.dto.MemberDto"/>
+		<typeAlias alias="empDto" type="com.loung.semof.common.dto.EmployeeDto"/>
+		<typeAlias alias="boardDto" type="com.loung.semof.board.dto.BoardDto"/>
+
+		<!--		<typeAlias alias="MemberDto" type="com.uni.reactpro.member.dto.MemberDto"/>-->
 <!--		<typeAlias alias="PurchaseDto" type="com.uni.reactpro.purchase.dto.PurchaseDto"/>-->
 <!--		<typeAlias alias="ReviewDto" type="com.uni.reactpro.review.dto.ReviewDto"/>-->
 	</typeAliases>

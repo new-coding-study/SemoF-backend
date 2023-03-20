@@ -5,9 +5,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@ToString
-@Getter
-@Setter
 @Builder
 @Data
 @AllArgsConstructor
@@ -30,4 +27,6 @@ public class EmployeeDto {
     private long jobCode;   //직급
     private String deptCode;    //부서
     private long bCode; //지점
+
+
 }
