@@ -2,9 +2,6 @@ package com.loung.semof.common.dto;
 
 import lombok.*;
 
-@ToString
-@Getter
-@Setter
 @Builder
 @Data
 @AllArgsConstructor
