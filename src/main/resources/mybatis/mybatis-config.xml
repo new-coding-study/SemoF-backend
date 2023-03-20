@@ -12,18 +12,15 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias alias="empDto" type="com.loung.semof.common.dto.EmployeeDto"/>
-		<typeAlias alias="boardDto" type="com.loung.semof.board.dto.BoardDto"/>
-
-		<!--		<typeAlias alias="MemberDto" type="com.uni.reactpro.member.dto.MemberDto"/>-->
-<!--		<typeAlias alias="PurchaseDto" type="com.uni.reactpro.purchase.dto.PurchaseDto"/>-->
-<!--		<typeAlias alias="ReviewDto" type="com.uni.reactpro.review.dto.ReviewDto"/>-->
+		<typeAlias alias="MemberDto" type="com.loung.semof.member.dto.MemberDto"/>
+		<typeAlias alias="EmployeeDto" type="com.loung.semof.common.dto.EmployeeDto"/>
+		<typeAlias alias="DepartmentDto" type="com.loung.semof.common.dto.DepartmentDto"/>
+		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
 	</typeAliases>
 
 	<mappers>
 		<mapper resource="MemberMapper.xml" />
-<!--		<mapper resource="ReviewMapper.xml" />-->
-		<mapper resource="ProductMapper.xml" />
-<!--		<mapper resource="PurchaseMapper.xml" />-->
+		<mapper resource="EmployeeMapper.xml" />
+		<mapper resource="DepartmentMapper.xml" />
 	</mappers>
 </configuration>
