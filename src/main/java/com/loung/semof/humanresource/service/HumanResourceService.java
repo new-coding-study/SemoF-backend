@@ -6,8 +6,13 @@ import com.loung.semof.common.dao.EmployeeMapper;
 import com.loung.semof.common.dto.BranchDto;
 import com.loung.semof.common.dto.DepartmentDto;
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.humanresource.Exception.NotFoundException;
 import com.loung.semof.humanresource.dao.HumanResourceMapper;
 import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @파일이름 : HumanResourceService.java
@@ -82,11 +87,17 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 등록 비즈니스 로직을 수행하는 메소드.
      */
-    public EmployeeDto insertEmployee(EmployeeDto employeeDto) {
+    public EmployeeDto insertEmployee(EmployeeDto employeeDto) throws SQLException {
 
-        employeeMapper.insertEmployee(employeeDto);
+        try {
+            employeeMapper.insertEmployee(employeeDto);
 
-        return employeeDto;
+            return employeeDto;
+
+        } catch (Exception e) {
+
+            throw new SQLException("사원 정보를 추가하는 도중 에러가 발생하였습니다.", e);   // 예외 처리 로직
+        }
     }
 
     /**
@@ -138,5 +149,56 @@ public class HumanResourceService {
             return true; // 수정 성공인 경우 true를 반환
         }
         return false; // 수정 실패인 경우 false를 반환
+    }
+
+    /**
+     * @작성일 : 2023-03-21
+     * @작성자 : 이현도
+     * @메소드설명 :  사원의 전체 수를 조회하는 비즈니스 로직을 수행하는 메소드
+     */
+    public int selectEmployeeTotal() throws SQLException {
+
+        int totalCount = 0;
+
+        try {
+            totalCount = humanResourceMapper.selectEmployeeTotal();
+
+        } catch (Exception e) {
+            throw new SQLException("전체 직원 수를 조회하지 못했습니다.", e);
+        }
+        return totalCount;
+    }
+
+    /**
+     * @작성일 : 2023-03-21
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 전체를 조회해오고 페이지 처리를 하는 비즈니스 로직을 수행하는 메소드
+     */
+    public List<EmployeeDto> selectEmployeeListWithPaging(int startRow, int endRow) {
+
+        List<EmployeeDto> employeeList = Collections.emptyList();
+
+        try {
+            employeeList = humanResourceMapper.selectEmployeeListWithPaging(startRow, endRow);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return employeeList;
+    }
+
+    /**
+     * @작성일 : 2023-03-21
+     * @작성자 : 이현도
+     * @메소드설명 : 설명을 여기에 작성한다.
+     */
+    public EmployeeDto selectEmployeeByEmpName(String empName) throws Exception {
+
+        EmployeeDto employee = humanResourceMapper.selectEmployeeByEmpName(empName);
+
+        if (employee == null) {
+            throw new NotFoundException("사원을 찾을 수 없습니다.");
+        }
+        return employee;
     }
 }
