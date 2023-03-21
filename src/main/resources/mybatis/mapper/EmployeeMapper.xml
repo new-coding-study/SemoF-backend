@@ -43,12 +43,20 @@
     <update id="updateEmployee" parameterType="EmployeeDto">
         UPDATE tbl_employee
         SET
-             email = #{email},
-             phone = #{phone},
-             address = #{address},
-             salary = #{salary},
-             job_code = #{jobCode}
-        WHERE emp_no = #{empNo}
+             EMAIL = #{email},
+             PHONE = #{phone},
+             ADDRESS = #{address},
+             SALARY = #{salary},
+             JOB_CODE = #{jobCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
+    <update id="updateEmployeeStatus" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET
+            WORK_STATUS = 'N'
+        WHERE EMP_NO = #{empNo}
     </update>
 
 </mapper>

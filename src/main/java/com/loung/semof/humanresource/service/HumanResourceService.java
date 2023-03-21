@@ -92,7 +92,7 @@ public class HumanResourceService {
     /**
      * @작성일 : 2023-03-21
      * @작성자 : 이현도
-     * @메소드설명 : 사원 정보 수정 비즈니스 로직을 수행하는 메소드.
+     * @메소드설명 : 사원 정보 수정 비즈니스 로직을 수행하는 메소드
      */
     public boolean updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode) {
 
@@ -116,6 +116,24 @@ public class HumanResourceService {
             }
 
             employeeMapper.updateEmployee(employee);
+
+            return true; // 수정 성공인 경우 true를 반환
+        }
+        return false; // 수정 실패인 경우 false를 반환
+    }
+
+    /**
+     * @작성일 : 2023-03-21
+     * @작성자 : 이현도
+     * @메소드설명 : 퇴직으로 상태값 변경하는 비즈니스 로직을 수행하는 메소드
+     */
+    public boolean updateEmployeeStatus(Long empNo) {
+
+        EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
+
+        if(employee != null) {
+
+            employeeMapper.updateEmployeeStatus(employee);
 
             return true; // 수정 성공인 경우 true를 반환
         }
