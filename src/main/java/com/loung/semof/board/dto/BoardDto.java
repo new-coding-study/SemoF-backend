@@ -13,9 +13,11 @@ import java.time.LocalDate;
 public class BoardDto {
     private int boardNo;
     private int empNo;
+    private String empName;
     private String boardTitle;
     private String boardContent;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
     private LocalDate writeDate;
     private int boardCateCode;
+    private String boardCategoryName;
 }
