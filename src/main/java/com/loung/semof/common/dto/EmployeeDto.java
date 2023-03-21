@@ -25,7 +25,7 @@ public class EmployeeDto {
     private String email;   //사원이메일
     private String phone;   //사원휴대번호
     private String address; //사원주소
-    private int salary; //사원급여
+    private Integer salary; //사원급여
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     private LocalDateTime enrollDate;   //입사일
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
