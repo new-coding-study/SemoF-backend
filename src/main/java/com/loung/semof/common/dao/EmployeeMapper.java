@@ -18,7 +18,7 @@ public interface EmployeeMapper {
 
     void insertEmployee(EmployeeDto employeeDto);
 
-    void updateEmployee(EmployeeDto employee);
+    int updateEmployee(EmployeeDto employee);
 
-    void updateEmployeeStatus(EmployeeDto employee);
+    int updateEmployeeStatus(EmployeeDto employee);
 }
