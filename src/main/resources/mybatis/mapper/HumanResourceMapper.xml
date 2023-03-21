@@ -22,14 +22,14 @@
     </sql>
 
     <update id="updateEmployee" parameterType="EmployeeDto">
-        update tbl_employee
-        set DEPT_CODE = #{deptCode}
-        where EMP_NO = #{empNo}
+        UPDATE tbl_employee
+        SET DEPT_CODE = #{deptCode}
+        WHERE EMP_NO = #{empNo}
     </update>
 
     <update id="updateEmployeeBranch" parameterType="EmployeeDto">
-        update tbl_employee
-        set BRANCH_CODE = #{branchCode}
-        where EMP_NO = #{empNo}
+        UPDATE tbl_employee
+        SET BRANCH_CODE = #{branchCode}
+        WHERE EMP_NO = #{empNo}
     </update>
 </mapper>

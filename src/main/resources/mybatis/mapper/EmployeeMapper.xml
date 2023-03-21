@@ -21,20 +21,34 @@
         , BRANCH_CODE
     </sql>
 
+    <!-- SELECT 쿼리: 사원번호(empNo)로 EmployeeDto 조회 -->
     <select id="selectEmployeeByEmpNo" parameterType="java.lang.Long" resultType="EmployeeDto">
-        select
+        SELECT
         <include refid="employeeColumns"/>
-        from tbl_employee
-        where EMP_NO = #{empNo}
+        FROM tbl_employee
+        WHERE EMP_NO = #{empNo}
     </select>
 
+    <!-- INSERT 쿼리: EmployeeDto 데이터 등록 -->
     <insert id="insertEmployee" parameterType="EmployeeDto">
-        insert into tbl_employee
-        values
+        INSERT INTO tbl_employee
+        VALUES
             (#{empNo}, #{empName}, #{empReg},
              #{email}, #{phone}, #{address}, #{salary},
              DEFAULT, DEFAULT, DEFAULT, #{gender},
              #{jobCode}, #{deptCode}, #{branchCode})
     </insert>
+
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
+    <update id="updateEmployee" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET
+             email = #{email},
+             phone = #{phone},
+             address = #{address},
+             salary = #{salary},
+             job_code = #{jobCode}
+        WHERE emp_no = #{empNo}
+    </update>
 
 </mapper>
