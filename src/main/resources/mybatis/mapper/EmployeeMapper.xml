@@ -18,7 +18,7 @@
         , GENDER
         , JOB_CODE
         , DEPT_CODE
-        , B_CODE
+        , BRANCH_CODE
     </sql>
 
     <select id="selectEmployeeByEmpNo" parameterType="java.lang.Long" resultType="EmployeeDto">
@@ -34,5 +34,9 @@
         WHERE EMP_NO = #{empNo}
     </update>
 
-
+    <update id="updateEmployeeBranch" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET BRANCH_CODE = #{branchCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
 </mapper>

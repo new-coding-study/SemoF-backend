@@ -15,6 +15,7 @@
 		<typeAlias alias="MemberDto" type="com.loung.semof.member.dto.MemberDto"/>
 		<typeAlias alias="EmployeeDto" type="com.loung.semof.common.dto.EmployeeDto"/>
 		<typeAlias alias="DepartmentDto" type="com.loung.semof.common.dto.DepartmentDto"/>
+		<typeAlias alias="BranchDto" type="com.loung.semof.common.dto.BranchDto"/>
 		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
 	</typeAliases>
 
@@ -22,5 +23,6 @@
 		<mapper resource="MemberMapper.xml" />
 		<mapper resource="EmployeeMapper.xml" />
 		<mapper resource="DepartmentMapper.xml" />
+		<mapper resource="Branch.xml" />
 	</mappers>
 </configuration>
