@@ -22,21 +22,19 @@
     </sql>
 
     <select id="selectEmployeeByEmpNo" parameterType="java.lang.Long" resultType="EmployeeDto">
-        SELECT
+        select
         <include refid="employeeColumns"/>
-            FROM tbl_employee
-            WHERE EMP_NO = #{empNo}
+        from tbl_employee
+        where EMP_NO = #{empNo}
     </select>
 
-    <update id="updateEmployee" parameterType="EmployeeDto">
-        UPDATE tbl_employee
-        SET DEPT_CODE = #{deptCode}
-        WHERE EMP_NO = #{empNo}
-    </update>
+    <insert id="insertEmployee" parameterType="EmployeeDto">
+        insert into tbl_employee
+        values
+            (#{empNo}, #{empName}, #{empReg},
+             #{email}, #{phone}, #{address}, #{salary},
+             DEFAULT, DEFAULT, DEFAULT, #{gender},
+             #{jobCode}, #{deptCode}, #{branchCode})
+    </insert>
 
-    <update id="updateEmployeeBranch" parameterType="EmployeeDto">
-        UPDATE tbl_employee
-        SET BRANCH_CODE = #{branchCode}
-        WHERE EMP_NO = #{empNo}
-    </update>
 </mapper>
