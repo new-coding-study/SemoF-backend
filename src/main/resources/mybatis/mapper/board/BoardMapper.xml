@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.board.dao.BoardDao">
 
-    <resultMap id="empDto" type="com.loung.semof.common.dto.EmployeeDto">
+    <resultMap id="empNo" type="com.loung.semof.common.dto.EmployeeDto">
         <id property="empNo" column="EMP_NO"/>
         <result property="empName" column="EMP_NAME"/>
         <result property="empReg" column="EMP_REG"/>
@@ -27,7 +27,11 @@
         <result property="boardContent" column="BOARD_CONTENT"/>
         <result property="writeDate" column="WRITE_DATE"/>
         <result property="boardCateCode" column="BOARD_CATE_CODE"/>
-        <association property="emp" resultMap="empDto"/>
+        <association property="empNo" resultMap="empDto"/>
+        <association property="boardCateCode" javaType="CategoryDto">
+            <id property="boardCategoryCode" column="BOARD_CATEGORY_CODE"/>
+            <result property="boardCategoryName" column="BOARD_CATEGORY_NAME"/>
+        </association>
     </resultMap>
 
     <select id="selectBoardForNotice" resultType="BoardDto">
@@ -45,6 +49,41 @@
                 ON (B.EMP_NO = E.EMP_NO)
         WHERE C.CATEGORY_CODE = '1'
     </select>
+
+    <select id="selectBoardForPosting" resultType="BoardDto">
+        SELECT
+            B.BOARD_NO,
+            B.BOARD_TITLE,
+            B.BOARD_CONTENT,
+            B.WRITE_DATE,
+            E.EMP_NO,
+            C.BOARD_CATEGORY_NAME
+        FROM tbl_board B
+                 JOIN tbl_board_category C
+                      ON (B.BOARD_CATE_CODE = C.BOARD_CATEGORY_CODE)
+                 JOIN tbl_employee E
+                      ON (B.EMP_NO = E.EMP_NO)
+        WHERE C.CATEGORY_CODE = '2'
+    </select>
+
+    <select id="selectNoticeForAuthor" resultType="BoardDto">
+        SELECT
+            B.BOARD_NO,
+            B.BOARD_TITLE,
+            B.BOARD_CONTENT,
+            B.WRITE_DATE,
+            E.EMP_NO,
+            C.BOARD_CATEGORY_NAME
+        FROM tbl_board B
+                 JOIN tbl_board_category C
+                      ON (B.BOARD_CATE_CODE = C.BOARD_CATEGORY_CODE)
+                 JOIN tbl_employee E
+                      ON (B.EMP_NO = E.EMP_NO)
+        WHERE C.CATEGORY_CODE = '1'
+        AND WHERE E.EMP_NO = #{empNo}
+        ORDER BY B.WRITE_DATE DESC
+    </select>
+
 
 
 </mapper>
