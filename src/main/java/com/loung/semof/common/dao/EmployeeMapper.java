@@ -13,9 +13,8 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface EmployeeMapper {
-    void updateEmployee(EmployeeDto employee);
+
 
     EmployeeDto selectEmployeeByEmpNo(Long empNo);
-
-    void updateEmployeeBranch(EmployeeDto employee);
+    void insertEmployee(EmployeeDto employeeDto);
 }

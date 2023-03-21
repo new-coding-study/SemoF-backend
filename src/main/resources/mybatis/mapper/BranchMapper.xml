@@ -10,10 +10,10 @@
     </sql>
 
     <select id="selectBranchByBCode" resultType="BranchDto">
-        SELECT
+        select
         <include refid="branchColumns"/>
-        FROM tbl_branch
-        WHERE BRANCH_CODE = #{branchCode}
+        from tbl_branch
+        where BRANCH_CODE = #{branchCode}
     </select>
 
 

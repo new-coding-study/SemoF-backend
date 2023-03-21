@@ -10,10 +10,10 @@
     </sql>
 
     <select id="selectDepartmentByDeptCode" resultType="DepartmentDto">
-        SELECT
+        select
         <include refid="departmentColumns"/>
-        FROM tbl_department
-        WHERE DEPT_CODE = #{deptCode}
+        from tbl_department
+        where DEPT_CODE = #{deptCode}
     </select>
 
 

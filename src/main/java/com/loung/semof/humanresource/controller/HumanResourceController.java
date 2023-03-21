@@ -6,10 +6,7 @@ import com.loung.semof.humanresource.service.HumanResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @파일이름 : HumanResourceController.java
@@ -25,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HumanResourceController {
 
     private final HumanResourceService humanResourceService;
+
     public HumanResourceController(HumanResourceService humanResourceService) {
         this.humanResourceService = humanResourceService;
     }
@@ -62,4 +60,17 @@ public class HumanResourceController {
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "발령 실패", isSuccess));
         }
     }
+
+    /**
+     * @작성일 : 2023-03-21
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 등록을 수행하는 메소드
+     */
+    @PostMapping("/register")
+    public ResponseEntity<ResponseDto> registerEmployee(@RequestBody EmployeeDto employeeDto) {
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", humanResourceService.registerEmployee(employeeDto)));
+    }
+
+
 }
