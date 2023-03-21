@@ -1,5 +1,6 @@
 package com.loung.semof.humanresource.dao;
 
+import com.loung.semof.common.dto.EmployeeDto;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -12,4 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface HumanResourceMapper {
+    void updateEmployee(EmployeeDto employee);
+    void updateEmployeeBranch(EmployeeDto employee);
 }

@@ -21,22 +21,42 @@
         , BRANCH_CODE
     </sql>
 
+    <!-- SELECT 쿼리: 사원번호(empNo)로 EmployeeDto 조회 -->
     <select id="selectEmployeeByEmpNo" parameterType="java.lang.Long" resultType="EmployeeDto">
         SELECT
         <include refid="employeeColumns"/>
-            FROM tbl_employee
-            WHERE EMP_NO = #{empNo}
+        FROM tbl_employee
+        WHERE EMP_NO = #{empNo}
     </select>
 
+    <!-- INSERT 쿼리: EmployeeDto 데이터 등록 -->
+    <insert id="insertEmployee" parameterType="EmployeeDto">
+        INSERT INTO tbl_employee
+        VALUES
+            (#{empNo}, #{empName}, #{empReg},
+             #{email}, #{phone}, #{address}, #{salary},
+             DEFAULT, DEFAULT, DEFAULT, #{gender},
+             #{jobCode}, #{deptCode}, #{branchCode})
+    </insert>
+
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
     <update id="updateEmployee" parameterType="EmployeeDto">
         UPDATE tbl_employee
-        SET DEPT_CODE = #{deptCode}
+        SET
+             EMAIL = #{email},
+             PHONE = #{phone},
+             ADDRESS = #{address},
+             SALARY = #{salary},
+             JOB_CODE = #{jobCode}
         WHERE EMP_NO = #{empNo}
     </update>
 
-    <update id="updateEmployeeBranch" parameterType="EmployeeDto">
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
+    <update id="updateEmployeeStatus" parameterType="EmployeeDto">
         UPDATE tbl_employee
-        SET BRANCH_CODE = #{branchCode}
+        SET
+            WORK_STATUS = 'N'
         WHERE EMP_NO = #{empNo}
     </update>
+
 </mapper>

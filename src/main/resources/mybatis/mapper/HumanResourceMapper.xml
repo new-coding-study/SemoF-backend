@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.humanresource.dao.HumanResourceMapper">
+
+    <sql id="employeeColumns">
+        EMP_NO
+		, EMP_NAME
+		, EMP_REG
+		, EMAIL
+		, PHONE
+		, ADDRESS
+		, SALARY
+        , ENROLL_DATE
+        , RETIRE_DATE
+        , WORK_STATUS
+        , GENDER
+        , JOB_CODE
+        , DEPT_CODE
+        , BRANCH_CODE
+    </sql>
+
+    <update id="updateEmployee" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET DEPT_CODE = #{deptCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+    <update id="updateEmployeeBranch" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET BRANCH_CODE = #{branchCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
+</mapper>
