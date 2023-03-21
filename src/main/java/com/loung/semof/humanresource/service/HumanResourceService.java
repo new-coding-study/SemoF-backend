@@ -45,20 +45,29 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원의 부서 발령 비즈니스 로직을 수행하는 메소드
      */
-    public boolean updateEmployeeDepartment(Long empNo, String deptCode) {
+    public EmployeeDto updateEmployeeDepartment(Long empNo, String deptCode) throws SQLException, NotFoundException {
 
         EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
 
         DepartmentDto department = departmentMapper.selectDepartmentByDeptCode(deptCode);
 
-        if(employee != null && department != null) {
-            employee.setDeptCode(department.getDeptCode());
+        if(employee == null) {
+            throw new NotFoundException("해당 사원이 존재하지 않습니다.");
+        }
 
+        if(department == null) {
+            throw new NotFoundException("해당 부서가 존재하지 않습니다.");
+        }
+
+        employee.setDeptCode(department.getDeptCode());
+
+        try {
             humanResourceMapper.updateEmployee(employee);
 
-            return true; // 발령 성공인 경우 true를 반환
+        } catch(Exception e) {
+            throw new SQLException("발령 처리 중 오류가 발생했습니다.", e);
         }
-        return false; // 발령 실패인 경우 false를 반환
+        return employee; // 발령 성공인 경우 true를 반환
     }
 
     /**
@@ -66,20 +75,33 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원의 지점 발령 비즈니스 로직을 수행하는 메소드.
      */
-    public boolean updateEmployeeBranch(Long empNo, Long branchCode) {
+    public EmployeeDto updateEmployeeBranch(Long empNo, Long branchCode) throws SQLException {
 
-        EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
+        try {
+            EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
 
-        BranchDto branch = branchMapper.selectBranchByBCode(branchCode);
+            BranchDto branch = branchMapper.selectBranchByBCode(branchCode);
 
-        if(employee != null && branch != null) {
+            if (employee == null || branch == null) {
+                throw new SQLException("직원의 지점 코드를 수정하지 못하였습니다. 잘못된 사원 번호 혹은  지점 코드 인지 확인해주세요.");
+            }
+
             employee.setBranchCode(branch.getBranchCode());
 
             humanResourceMapper.updateEmployeeBranch(employee);
 
-            return true; // 발령 성공인 경우 true를 반환
+            return employee;
+
+        } catch (SQLException e) {
+            e.printStackTrace();    // SQLException 처리
+
+            throw e;
+
+        } catch (Exception e) {
+            e.printStackTrace();    // 업무 로직에서 발생하는 예외 처리
+
+            throw new RuntimeException("직원의 지점 코드를 수정하지 못했습니다.: " + e.getMessage());
         }
-        return false; // 발령 실패인 경우 false를 반환
     }
 
     /**
@@ -95,6 +117,7 @@ public class HumanResourceService {
             return employeeDto;
 
         } catch (Exception e) {
+            e.printStackTrace();
 
             throw new SQLException("사원 정보를 추가하는 도중 에러가 발생하였습니다.", e);   // 예외 처리 로직
         }
@@ -105,32 +128,37 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 정보 수정 비즈니스 로직을 수행하는 메소드
      */
-    public boolean updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode) {
+    public EmployeeDto updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode) throws Exception {
 
         EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
 
-        if(employee != null) {
-            if (phone != null) {
-                employee.setPhone(phone);
-            }
-            if (email != null) {
-                employee.setEmail(email);
-            }
-            if (address != null) {
-                employee.setAddress(address);
-            }
-            if (salary != null) {
-                employee.setSalary(salary);
-            }
-            if (jobCode != null) {
-                employee.setJobCode(jobCode);
-            }
-
-            employeeMapper.updateEmployee(employee);
-
-            return true; // 수정 성공인 경우 true를 반환
+        if(employee == null) {
+            throw new NotFoundException("해당 사원을 찾을 수 없습니다.");
         }
-        return false; // 수정 실패인 경우 false를 반환
+
+        if (phone != null) {
+            employee.setPhone(phone);
+        }
+        if (email != null) {
+            employee.setEmail(email);
+        }
+        if (address != null) {
+            employee.setAddress(address);
+        }
+        if (salary != null) {
+            employee.setSalary(salary);
+        }
+        if (jobCode != null) {
+            employee.setJobCode(jobCode);
+        }
+
+        int affectedRows = employeeMapper.updateEmployee(employee); //update 쿼리가 실행된 결과로, 몇 개의 row가 업데이트 되었는지를 나타내는 변수
+
+        if (affectedRows != 1) {
+            throw new SQLException("사원 정보 업데이트에 실패하였습니다.");
+        }
+
+        return employee;
     }
 
     /**
@@ -138,17 +166,25 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 퇴직으로 상태값 변경하는 비즈니스 로직을 수행하는 메소드
      */
-    public boolean updateEmployeeStatus(Long empNo) {
+    public EmployeeDto updateEmployeeStatus(Long empNo) throws Exception {
 
         EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
 
         if(employee != null) {
+            employee.setWorkStatus("N");
 
-            employeeMapper.updateEmployeeStatus(employee);
+            int affectedRows = employeeMapper.updateEmployeeStatus(employee);
 
-            return true; // 수정 성공인 경우 true를 반환
+            if (affectedRows > 0) {
+                return employee;
+
+            } else {
+                throw new Exception("사원 상태 변경에 실패했습니다.");
+            }
+
+        } else {
+            throw new NotFoundException("사원을 찾을 수 없습니다.");
         }
-        return false; // 수정 실패인 경우 false를 반환
     }
 
     /**
