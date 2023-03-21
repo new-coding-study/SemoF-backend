@@ -226,6 +226,7 @@
         WHERE TC.CATEGORY_CODE = '2'
         AND TB.BOARD_NO = #{boardNo}
         AND TE.EMP_NO = #{empNo}
+
     </select>
 
 <!--게시글을 위한 페이징 처리-->
