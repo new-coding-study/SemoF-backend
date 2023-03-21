@@ -98,4 +98,24 @@ public class HumanResourceController {
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "수정 실패", isSuccess));
         }
     }
+
+    /**
+     * @작성일 : 2023-03-21
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 상태값을 변경하여 퇴사 처리를 수행하는 메소드
+     */
+    @DeleteMapping("/present")
+    public ResponseEntity<ResponseDto> updateEmployeeStatus(@RequestBody EmployeeDto employeeDto) {
+
+        boolean isSuccess = humanResourceService.updateEmployeeStatus(employeeDto.getEmpNo());
+
+        if (isSuccess) {
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "수정 성공", isSuccess));
+
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "수정 실패", isSuccess));
+        }
+    }
 }
