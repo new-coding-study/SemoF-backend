@@ -1,27 +1,17 @@
 package com.loung.semof.attendance.service;
 
-import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.attendance.dao.AttendanceMapper;
-import com.loung.semof.attendance.dto.ReadAttendanceDto;
 import com.loung.semof.attendance.dto.AttendanceDto;
-import com.loung.semof.util.FileUploadUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 @Slf4j
 @Service
 public class AttendanceService {
 
-    @Value("${image.image-dir}")
-    private String IMAGE_DIR;
-    @Value("${image.image-url}")
-    private String IMAGE_URL;
+    // @Value("${image.image-dir}")
+    // private String IMAGE_DIR;
+    // @Value("${image.image-url}")
+    // private String IMAGE_URL;
 
     private final AttendanceMapper attendanceMapper;
 
@@ -29,17 +19,26 @@ public class AttendanceService {
         this.attendanceMapper = attendanceMapper;
     }
 
+    /* 스티커 상세 조회 */
+    public AttendanceDto selectAttendance(int empNo) {
+        log.info("[AttendanceService] selectAttendance Start ===================================");
+        AttendanceDto attendanceDto = attendanceMapper.selectAttendance(empNo);
+        // attendanceDto.setAttendanceImageUrl(IMAGE_URL + attendanceDto.getAttendanceImageUrl());
+        log.info("[AttendanceService] selectAttendance End ===================================");
+        return attendanceDto;
+    }
+
     /* 총 갯수 구하기 */
-    public int selectAttendanceTotal() {
+    /* public int selectAttendanceTotal() {
         log.info("[AttendanceService] selectAttendanceTotal Start ===================================");
         int result = attendanceMapper.selectAttendanceTotal();
 
         log.info("[AttendanceService] selectAttendanceTotal End ===================================");
         return result;
-    }
+    } */
 
     /* 페이징 처리 된 전체 조회 */
-    public Object selectAttendanceListWithPaging(SelectCriteria selectCriteria) {
+    /* public Object selectAttendanceListWithPaging(SelectCriteria selectCriteria) {
         log.info("[AttendanceService] selectAttendanceListWithPaging Start ===================================");
         List<ReadAttendanceDto> attendanceList = attendanceMapper.selectAttendanceListWithPaging(selectCriteria);
 
@@ -48,19 +47,19 @@ public class AttendanceService {
         }
         log.info("[AttendanceService] selectAttendanceListWithPaging End ===================================");
         return attendanceList;
-    }
+    } */
 
     /* 스티커 상세 조회 */
-    public ReadAttendanceDto selectAttendance(String attendanceCode) {
+    /* public ReadAttendanceDto selectAttendance(String attendanceCode) {
         log.info("[AttendanceService] selectAttendance Start ===================================");
         ReadAttendanceDto attendanceDto = attendanceMapper.selectAttendance(attendanceCode);
         attendanceDto.setAttendanceImageUrl(IMAGE_URL + attendanceDto.getAttendanceImageUrl());
         log.info("[AttendanceService] selectAttendance End ===================================");
         return attendanceDto;
-    }
+    } */
 
     /* 카테고리별 전체 조회 */
-    public List<ReadAttendanceDto> selectAttendanceListAboutCategory(String categoryCode) {
+    /* public List<ReadAttendanceDto> selectAttendanceListAboutCategory(String categoryCode) {
         log.info("[AttendanceService] selectAttendanceListAboutCategory Start ===================================");
 
         List<ReadAttendanceDto> selectAttendanceListAboutCategory = attendanceMapper.selectAttendanceListAboutCategory(categoryCode);
@@ -72,10 +71,10 @@ public class AttendanceService {
         log.info("[AttendanceService] selectAttendanceListAboutCategory End ==============================");
 
         return selectAttendanceListAboutCategory;
-    }
+    } */
 
     /* 타입별 전체 조회 */
-    public List<ReadAttendanceDto> selectAttendanceListAboutType(String typeCode) {
+    /* public List<ReadAttendanceDto> selectAttendanceListAboutType(String typeCode) {
         log.info("[AttendanceService] selectAttendanceListAboutType Start ===================================");
 
         List<ReadAttendanceDto> selectAttendanceListAboutType = attendanceMapper.selectAttendanceListAboutType(typeCode);
@@ -87,10 +86,10 @@ public class AttendanceService {
         log.info("[AttendanceService] selectAttendanceListAboutType End ==============================");
 
         return selectAttendanceListAboutType;
-    }
+    } */
 
     /* 스티커 추가 */
-    @Transactional
+    /* @Transactional
     public String insertAttendance(AttendanceDto attendanceDto) {
         log.info("[AttendanceService] insertAttendance Start ===================================");
         log.info("[AttendanceService] attendanceDto : " + attendanceDto);
@@ -118,10 +117,10 @@ public class AttendanceService {
         }
         log.info("[AttendanceService] result > 0 성공: "+ result);
         return (result > 0) ? "스티커 등록 성공" : "스티커 등록 실패";
-    }
+    } */
 
     /* 스티커 수정 */
-    @Transactional
+    /* @Transactional
     public Object updateAttendance(AttendanceDto attendanceDto) {
         log.info("[AttendanceService] updateAttendance Start ===================================");
         log.info("[AttendanceService] attendanceDto : " + attendanceDto);
@@ -159,10 +158,10 @@ public class AttendanceService {
         log.info("[AttendanceService] result > 0 성공: "+ result);
 
         return (result > 0) ? "스티커 업데이트 성공" : "스티커 업데이트 실패";
-    }
+    } */
 
     /* 스티커 삭제 */
-    @Transactional
+    /* @Transactional
     public String deleteAttendance(String attendanceNo) {
         log.info("[AttendanceService] deleteAttendance Start ===================================");
         log.info("[AttendanceService] attendanceNo : " + attendanceNo);
@@ -172,10 +171,10 @@ public class AttendanceService {
 
         log.info("[AttendanceService] result > 0 성공: "+ result);
         return (result > 0) ? "스티커 삭제 성공" : "스티커 삭제 실패";
-    }
+    } */
 
     /* 스티커 검색 조회 */
-    public List<ReadAttendanceDto> selectSearchAttendanceList(HashMap<String, String> search) {
+    /* public List<ReadAttendanceDto> selectSearchAttendanceList(HashMap<String, String> search) {
         log.info("[AttendanceService] selectSearchAttendanceList Start ===================================");
         log.info("[AttendanceService] searchValue : " + search);
 
@@ -188,6 +187,6 @@ public class AttendanceService {
         log.info("[AttendanceService] selectSearchAttendanceList End ===================================");
 
         return attendanceListWithSearchValue;
-    }
+    } */
 
 }

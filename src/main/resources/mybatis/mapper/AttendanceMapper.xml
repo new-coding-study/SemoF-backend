@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.attendance.dao.AttendanceMapper">
+
+    <!-- 사원 근태정보 상세 조회  -->
+    <select id="selectAttendanceDetail" resultType="com.loung.semof.attendance.dto.AttendanceDto">
+        SELECT
+            att.ATD_NO,
+            emp.EMP_NO,
+            emp.EMP_NAME,
+            sts.STATUS_NAME,
+            att.ATD_DATE,
+            att.START_TIME,
+            att.END_TIME,
+            vac.ALL_DAYS,
+            vac.USED_DAYS,
+            vac.LEFT_DAYS
+        FROM tbl_employee emp
+                 JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
+                 JOIN tbl_attendance_status_info ats ON (att.ATD_NO = ats.ATD_NO)
+                 JOIN tbl_attendance_status sts ON (ats.STATUS_CODE = sts.STATUS_CODE)
+                 JOIN tbl_emp_vacation_info vac ON (emp.EMP_NO = vac.EMP_NO)
+        WHERE emp.EMP_NO = 1
+          AND att.ATD_DATE = '2023-03-05'
+        ORDER BY att.ATD_DATE;
+    </select>
+
+
+</mapper>

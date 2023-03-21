@@ -1,21 +1,18 @@
 package com.loung.semof.attendance.controller;
 
-import com.loung.semof.common.ResponseDto;
-import com.loung.semof.common.paging.Pagenation;
-import com.loung.semof.common.paging.ResponseDtoWithPaging;
-import com.loung.semof.common.paging.SelectCriteria;
-import com.loung.semof.attendance.dto.AttendanceDto;
 import com.loung.semof.attendance.service.AttendanceService;
+import com.loung.semof.common.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/attendance")
 public class AttendanceController {
 
 
@@ -25,8 +22,15 @@ public class AttendanceController {
         this.attendanceService = attendanceService;
     }
 
+    /* 사원 근태정보 상세 조회 */
+    @GetMapping("/status/{empNo}")
+    public ResponseEntity<ResponseDto> selectAttendanceDetail(@PathVariable int empNo) {
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendance(empNo)));
+    }
+
     /* 총 갯수 구해서 페이징 처리한 스티커 전체 조회 */
-    @GetMapping("/attendances")
+    /* @GetMapping("/attendances")
     public ResponseEntity<ResponseDto> selectAttendanceListWithPaging(@RequestParam(name="offset", defaultValue="1") String offset) {
 
         log.info("[AttendanceController] selectAttendanceListWithPaging : " + offset);
@@ -44,31 +48,31 @@ public class AttendanceController {
         responseDtoWithPaging.setData(attendanceService.selectAttendanceListWithPaging(selectCriteria));
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "전체 조회 성공", responseDtoWithPaging));
-    }
+    } */
 
     /* 스티커 상세 조회 */
-    @GetMapping("/attendances/{attendanceCode}")
+    /* @GetMapping("/attendances/{attendanceCode}")
     public ResponseEntity<ResponseDto> selectAttendanceDetail(@PathVariable String attendanceCode) {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "스티커 상세정보 조회 성공",  attendanceService.selectAttendance(attendanceCode)));
-    }
+    } */
 
     /* 카테고리별 리스트 조회 */
-    @GetMapping("/attendances/categories/{categoryCode}")
+    /* @GetMapping("/attendances/categories/{categoryCode}")
     public ResponseEntity<ResponseDto> selectAttendanceListAboutCategory(@PathVariable String categoryCode) {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리별 스티커 조회 성공",  attendanceService.selectAttendanceListAboutCategory(categoryCode)));
-    }
+    } */
 
     /* 타입별 리스트 조회 */
-    @GetMapping("/attendances/types/{typeCode}")
+    /* @GetMapping("/attendances/types/{typeCode}")
     public ResponseEntity<ResponseDto> selectAttendanceListAboutType(@PathVariable String typeCode) {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "타입별 스티커 조회 성공",  attendanceService.selectAttendanceListAboutType(typeCode)));
-    }
+    } */
 
     /* 스티커 전체조회 (관리자) */
-    @GetMapping("/attendances-management")
+    /* @GetMapping("/attendances-management")
     public ResponseEntity<ResponseDto> selectAttendanceListWithPagingForAdmin(@RequestParam(name="offset", defaultValue="1") String offset) {
 
         log.info("[AttendanceController] selectAttendanceListWithPagingForAdmin : " + offset);
@@ -85,24 +89,24 @@ public class AttendanceController {
         responseDtoWithPaging.setData(attendanceService.selectAttendanceListWithPaging(selectCriteria));
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
-    }
+    } */
 
     /* 스티커 상세조회 (관리자) */
-    @GetMapping("/attendances-management/{attendanceCode}")
+    /* @GetMapping("/attendances-management/{attendanceCode}")
     public ResponseEntity<ResponseDto> selectAttendanceDetailForAdmin(@PathVariable String attendanceCode) {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "상품 상세정보 조회 성공", attendanceService.selectAttendance(attendanceCode)));
-    }
+    } */
 
     /* 스티커 등록 (관리자) */
-    @PostMapping(value = "/attendances-management")
+    /* @PostMapping(value = "/attendances-management")
     public ResponseEntity<ResponseDto> insertAttendance(@ModelAttribute AttendanceDto attendanceDto) {
         log.info("[AttendanceController] PostMapping attendanceDto : " + attendanceDto);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "스티커 등록 성공",  attendanceService.insertAttendance(attendanceDto)));
-    }
+    } */
 
     /* 스티커 수정 (관리자) */
-    @PutMapping(value = "/attendances-management/{attendanceNo}")
+    /* @PutMapping(value = "/attendances-management/{attendanceNo}")
     public ResponseEntity<ResponseDto> updateAttendance(@ModelAttribute AttendanceDto attendanceDto, @PathVariable String attendanceNo) {
         log.info("[AttendanceController]PutMapping attendanceNo : " + attendanceNo);
         log.info("[AttendanceController]PutMapping attendanceDto : " + attendanceDto);
@@ -110,17 +114,17 @@ public class AttendanceController {
         attendanceDto.setAttendanceCode(Integer.parseInt(attendanceNo));
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "스티커 수정 성공",  attendanceService.updateAttendance(attendanceDto)));
-    }
+    } */
 
     /* 스티커 삭제 */
-    @DeleteMapping("/attendances-management/{attendanceNo}")
+    /* @DeleteMapping("/attendances-management/{attendanceNo}")
     public ResponseEntity<ResponseDto> deleteAttendance(@PathVariable String attendanceNo) {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "스티커 삭제 성공",  attendanceService.deleteAttendance(attendanceNo)));
-    }
+    } */
 
     /* 스티커 검색 */
-    @GetMapping("/attendances/search")
+    /* @GetMapping("/attendances/search")
     public ResponseEntity<ResponseDto> selectSearchList(@RequestParam(name="condition", defaultValue = "attendanceName") String condition, @RequestParam(name="searchValue", required = false) String searchValue ) {
 
         HashMap<String, String> search = new HashMap<>();
@@ -131,6 +135,6 @@ public class AttendanceController {
         System.out.println(searchValue);
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공",  attendanceService.selectSearchAttendanceList(search)));
-    }
+    } */
 
 }
