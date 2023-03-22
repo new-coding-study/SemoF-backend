@@ -94,8 +94,8 @@ public class HumanResourceController {
     public ResponseEntity<ResponseDto> insertEmployee(@RequestBody EmployeeDto employeeDto) throws SQLException {
 
         try {
-            EmployeeDto result = humanResourceService.insertEmployee(employeeDto);
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", result));
+            EmployeeDto employee = humanResourceService.insertEmployee(employeeDto);
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", employee));
 
         } catch (SQLException e) {
             e.printStackTrace();
