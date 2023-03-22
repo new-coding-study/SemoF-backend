@@ -77,7 +77,7 @@
 <!--    <select id="selectNoticeDetailForEmp" resultType="BoardDto" parameterType="int">-->
 <!--        SELECT-->
 <!--            TB.BOARD_NO,-->
-<!--            TB.BOARD_TITLE,-->
+<!--                TB.BOARD_TITLE,-->
 <!--            TB.BOARD_CONTENT,-->
 <!--            TB.WRITE_DATE,-->
 <!--            TE.EMP_NAME,-->
