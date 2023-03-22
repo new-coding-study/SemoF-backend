@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.humanresource.dao.HumanResourceMapper">
+
+    <sql id="employeeSelectColumns">
+        EMP_NO
+		, EMP_NAME
+		, EMAIL
+		, PHONE
+		, ADDRESS
+		, SALARY
+        , ENROLL_DATE
+        , RETIRE_DATE
+        , WORK_STATUS
+        , GENDER
+        , JOB_CODE
+        , DEPT_CODE
+        , BRANCH_CODE
+    </sql>
+
+    <!-- ResultMap EmployeeDto -->
+    <resultMap id="employeeResult" type="EmployeeDto">
+        <id property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
+        <result property="empReg" column="EMP_REG"/>
+        <result property="email" column="EMAIL"/>
+        <result property="phone" column="PHONE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="salary" column="SALARY"/>
+        <result property="enrollDate" column="ENROLL_DATE"/>
+        <result property="retireDate" column="RETIRE_DATE"/>
+        <result property="workStatus" column="WORK_STATUS"/>
+        <result property="gender" column="GENDER"/>
+        <result property="jobCode" column="JOB_CODE"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="branchCode" column="BRANCH_CODE"/>
+    </resultMap>
+
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
+    <update id="updateEmployee" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET DEPT_CODE = #{deptCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
+    <update id="updateEmployeeBranch" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET BRANCH_CODE = #{branchCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+    <!-- SELECT 쿼리 페이지네이션 포함 : 사원 전체 조회 -->
+    <select id="selectEmployeeListWithPaging" parameterType="map" resultMap="employeeResult">
+        SELECT
+        <include refid="employeeSelectColumns"/>
+        FROM tbl_employee
+        ORDER BY EMP_NO DESC
+        LIMIT #{startRow}, #{endRow}
+    </select>
+
+    <!-- SELECT 쿼리 : 사원 전체 숫자 조회 -->
+    <select id="selectEmployeeTotal" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_employee
+    </select>
+
+    <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
+    <select id="selectEmployeeByEmpName"  resultMap="employeeResult">
+        SELECT
+        <include refid="employeeSelectColumns"/>
+        FROM tbl_employee
+        WHERE EMP_NAME = #{empName}
+    </select>
+
+</mapper>

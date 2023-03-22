@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.board.dao.BoardDao">
 
-    <resultMap id="empDto" type="com.loung.semof.common.dto.EmployeeDto">
+    <resultMap id="empNo" type="com.loung.semof.common.dto.EmployeeDto">
         <id property="empNo" column="EMP_NO"/>
         <result property="empName" column="EMP_NAME"/>
         <result property="empReg" column="EMP_REG"/>
@@ -27,24 +27,292 @@
         <result property="boardContent" column="BOARD_CONTENT"/>
         <result property="writeDate" column="WRITE_DATE"/>
         <result property="boardCateCode" column="BOARD_CATE_CODE"/>
-        <association property="emp" resultMap="empDto"/>
+        <result property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
+        <result property="boardCategoryCode" column="BOARD_CATEGORY_CODE"/>
+        <result property="boardCategoryName" column="BOARD_CATEGORY_NAME"/>
     </resultMap>
 
-    <select id="selectBoardForNotice" resultType="BoardDto">
+<!--  공지사항 전체조회를 위한 select문  -->
+    <select id="selectBoardForAllNotice" resultType="BoardDto">
         SELECT
-            B.BOARD_NO,
-            B.BOARD_TITLE,
-            B.BOARD_CONTENT,
-            B.WRITE_DATE,
-            E.EMP_NO,
-            C.BOARD_CATEGORY_NAME
-        FROM tbl_board B
-            JOIN tbl_board_category C
-                ON (B.BOARD_CATE_CODE = C.BOARD_CATEGORY_CODE)
-            JOIN tbl_employee E
-                ON (B.EMP_NO = E.EMP_NO)
-        WHERE C.CATEGORY_CODE = '1'
+            ROW_NUMBER() OVER(ORDER BY TB.WRITE_DATE DESC) AS RN,
+            TB.BOARD_TITLE,
+            TB.BOARD_CONTENT,
+            TB.WRITE_DATE,
+            TE.EMP_NAME,
+            TC.BOARD_CATEGORY_NAME
+        FROM tbl_board TB
+        JOIN tbl_board_category TC
+        ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+        JOIN tbl_employee TE
+        ON (TB.EMP_NO = TE.EMP_NO)
+        WHERE TC.CATEGORY_CODE = '1'
+        ORDER BY TB.WRITE_DATE DESC
     </select>
+<!--공지사항 세부조회를 위한 select문-->
+    <select id="selectNoticeDetail" resultType="BoardDto" parameterType="int">
+        SELECT
+            TB.BOARD_NO,
+            TB.BOARD_TITLE,
+            TB.BOARD_CONTENT,
+            TB.WRITE_DATE,
+            TE.EMP_NAME,
+            TC.BOARD_CATEGORY_NAME
+        FROM tbl_board TB
+                 JOIN tbl_board_category TC
+                      ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+                 JOIN tbl_employee TE
+                      ON (TB.EMP_NO = TE.EMP_NO)
+        WHERE TC.CATEGORY_CODE = '1'
+          AND TB.BOARD_NO = #{boardNo}
+    </select>
+
+<!--    <select id="selectNoticeDetailForEmp" resultType="BoardDto" parameterType="int">-->
+<!--        SELECT-->
+<!--            TB.BOARD_NO,-->
+<!--            TB.BOARD_TITLE,-->
+<!--            TB.BOARD_CONTENT,-->
+<!--            TB.WRITE_DATE,-->
+<!--            TE.EMP_NAME,-->
+<!--            TC.BOARD_CATEGORY_NAME-->
+<!--        FROM tbl_board TB-->
+<!--                 JOIN tbl_board_category TC-->
+<!--                      ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)-->
+<!--                 JOIN tbl_employee TE-->
+<!--                      ON (TB.EMP_NO = TE.EMP_NO)-->
+<!--        WHERE TC.CATEGORY_CODE = '1'-->
+<!--          AND TB.BOARD_NO = #{boardNo}-->
+<!--    </select>-->
+
+<!--공지사항 페이징처리를 위한 select문-->
+    <select id="selectNoticeListWithPaging" resultType="BoardDTO">
+        SELECT
+                ROW_NUMBER()OVER(ORDER BY P.WRITE_DATE DESC) AS RN,
+                P.BOARD_TITLE,
+                P.BOARD_CONTENT,
+                P.WRITE_DATE,
+                P.EMP_NAME,
+                P.BOARD_CATEGORY_NAME
+        FROM
+        (SELECT
+                TB.BOARD_NO,
+                TB.BOARD_TITLE,
+                TB.BOARD_CONTENT,
+                TB.WRITE_DATE,
+                TE.EMP_NAME,
+                TC.BOARD_CATEGORY_NAME
+         FROM tbl_board TB
+                  JOIN tbl_board_category TC
+                       ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+                  JOIN tbl_employee TE
+                       ON (TB.EMP_NO = TE.EMP_NO)
+                WHERE TC.CATEGORY_CODE = '1') P
+        LIMIT ${ startRow -1 }, #{ limit }
+    </select>
+
+<!--    <select id="selectNoticeListWithPagingForAdmin" resultType="BoardDTO" parameterType="int">-->
+<!--        SELECT-->
+<!--            P.RN,-->
+<!--            P.BOARD_TITLE,-->
+<!--            P.BOARD_CONTENT,-->
+<!--            P.WRITE_DATE,-->
+<!--            P.EMP_NAME,-->
+<!--            P.BOARD_CATEGORY_NAME-->
+<!--        FROM-->
+<!--            (SELECT-->
+<!--                 TB.BOARD_NO,-->
+<!--                 TB.BOARD_TITLE,-->
+<!--                 TB.BOARD_CONTENT,-->
+<!--                 TB.WRITE_DATE,-->
+<!--                 TE.EMP_NAME,-->
+<!--                 TC.BOARD_CATEGORY_NAME,-->
+<!--                 ROW_NUMBER() OVER(ORDER BY TB.WRITE_DATE DESC) AS RN-->
+<!--             FROM tbl_board TB-->
+<!--                      JOIN tbl_board_category TC-->
+<!--                           ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)-->
+<!--                      JOIN tbl_employee TE-->
+<!--                           ON (TB.EMP_NO = TE.EMP_NO)-->
+<!--             WHERE TC.CATEGORY_CODE = '1'-->
+<!--             AND TE.EMP_NO = #{empNo}) P-->
+<!--            LIMIT ${ startRow -1 }, #{ limit }-->
+<!--    </select>-->
+
+<!--게시글을 조회하기 위한 select문-->
+    <select id="selectBoardForAllPosting" resultType="BoardDto">
+        SELECT
+            ROW_NUMBER()OVER(ORDER BY TB.WRITE_DATE DESC) AS RN,
+            TB.BOARD_TITLE,
+            TB.BOARD_CONTENT,
+            TB.WRITE_DATE,
+            TE.EMP_NAME,
+            TC.BOARD_CATEGORY_NAME
+        FROM tbl_board TB
+        JOIN tbl_board_category TC
+        ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+        JOIN tbl_employee TE
+        ON (TB.EMP_NO = TE.EMP_NO)
+        WHERE TC.CATEGORY_CODE = '2'
+        ORDER BY TB.WRITE_DATE DESC
+    </select>
+
+<!--게시글 세부조회를 위한 select문-->
+    <select id="selectPostingDetailForEmp" resultType="BoardDto" parameterType="int">
+        SELECT
+            TB.BOARD_TITLE,
+            TB.BOARD_CONTENT,
+            TB.WRITE_DATE,
+            TE.EMP_NAME,
+            TC.BOARD_CATEGORY_NAME
+        FROM tbl_board TB
+        JOIN tbl_board_category TC
+        ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+        JOIN tbl_employee TE
+        ON (TB.EMP_NO = TE.EMP_NO)
+        WHERE TC.CATEGORY_CODE = '2' AND
+        AND TB.BOARD_NO = #{boardNo}
+    </select>
+
+<!--관리자를 위한 게시글 세부조회 select문-->
+    <select id="selectPostingDetailForAdmin" resultType="BoardDto" parameterType="int">
+        SELECT
+            TB.BOARD_TITLE,
+            TB.BOARD_CONTENT,
+            TB.WRITE_DATE,
+            TE.EMP_NAME,
+            TC.BOARD_CATEGORY_NAME
+        FROM tbl_board TB
+                 JOIN tbl_board_category TC
+                      ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+                 JOIN tbl_employee TE
+                      ON (TB.EMP_NO = TE.EMP_NO)
+        WHERE TC.CATEGORY_CODE = '2' AND
+          AND TB.BOARD_NO = #{boardNo}
+    </select>
+
+<!--자신이 쓴 게시물에 대한 전체조회-->
+    <select id="selectAllPostingForAuthor" resultType="BoardDto" parameterType="int">
+        SELECT
+            ROW_NUMBER()OVER(ORDER BY TB.WRITE_DATE DESC) AS RN,
+            TB.BOARD_TITLE,
+            TB.BOARD_CONTENT,
+            TB.WRITE_DATE,
+            TE.EMP_NAME,
+            TC.BOARD_CATEGORY_NAME
+        FROM tbl_board TB
+                 JOIN tbl_board_category TC
+                      ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+                 JOIN tbl_employee TE
+                      ON (TB.EMP_NO = TE.EMP_NO)
+        WHERE TC.CATEGORY_CODE = '2'
+        AND TE.EMP_NO = #{ empNo }
+        ORDER BY TB.WRITE_DATE DESC
+    </select>
+
+
+<!--자신이 쓴 게시글에 대한 상세조회-->
+    <select id="selectDetailPostingForAuthor" resultType="BoardDto" parameterType="int">
+        SELECT
+            TB.BOARD_TITLE,
+            TB.BOARD_CONTENT,
+            TB.WRITE_DATE,
+            TE.EMP_NAME,
+            TC.BOARD_CATEGORY_NAME
+        FROM tbl_board TB
+                 JOIN tbl_board_category TC
+                      ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+                 JOIN tbl_employee TE
+                      ON (TB.EMP_NO = TE.EMP_NO)
+        WHERE TC.CATEGORY_CODE = '2'
+        AND TB.BOARD_NO = #{boardNo}
+        AND TE.EMP_NO = #{empNo}
+
+    </select>
+
+<!--게시글을 위한 페이징 처리-->
+    <select id="selectPostingListWithPaging" resultType="BoardDTO">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TB.WRITE_DATE DESC) AS RN,
+            P.BOARD_TITLE,
+            P.BOARD_CONTENT,
+            P.WRITE_DATE,
+            P.EMP_NAME,
+            P.BOARD_CATEGORY_NAME
+        FROM
+            (SELECT
+                 TB.BOARD_NO,
+                 TB.BOARD_TITLE,
+                 TB.BOARD_CONTENT,
+                 TB.WRITE_DATE,
+                 TE.EMP_NAME,
+                 TC.BOARD_CATEGORY_NAME
+             FROM tbl_board TB
+                      JOIN tbl_board_category TC
+                           ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+                      JOIN tbl_employee TE
+                           ON (TB.EMP_NO = TE.EMP_NO)
+             WHERE TC.CATEGORY_CODE = '2') P
+            LIMIT ${ startRow -1 }, #{ limit }
+    </select>
+
+    <select id="selectPostingListWithPagingForAuthor" resultType="BoardDTO" parameterType="int">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TB.WRITE_DATE DESC) AS RN,
+            P.BOARD_TITLE,
+            P.BOARD_CONTENT,
+            P.WRITE_DATE,
+            P.EMP_NAME,
+            P.BOARD_CATEGORY_NAME
+        FROM
+            (SELECT
+                 TB.BOARD_NO,
+                 TB.BOARD_TITLE,
+                 TB.BOARD_CONTENT,
+                 TB.WRITE_DATE,
+                 TE.EMP_NAME,
+                 TC.BOARD_CATEGORY_NAME
+             FROM tbl_board TB
+                      JOIN tbl_board_category TC
+                           ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+                      JOIN tbl_employee TE
+                           ON (TB.EMP_NO = TE.EMP_NO)
+             WHERE TC.CATEGORY_CODE = '2'
+             AND TE.EMP_NO = #{empNo}) P
+            LIMIT ${ startRow -1 }, #{ limit }
+    </select>
+    
+    <insert id="insertBoard" parameterType="boardDto">
+        INSERT INTO tbl_board
+        (
+            BOARD_TITLE,
+            BOARD_CONTENT,
+            BOARD_CATE_CODE
+        )
+        VALUES
+        (
+            #{boardTitle},
+            #{boardContent},
+            #{boardCateCode}
+        )
+    </insert>
+
+    <update id="updateNotice" parameterType="boardDto">
+        UPDATE tbl_board
+        SET
+            BOARD_TITLE = #{boardTitle},
+            BOARD_CONTENT = #{boardContent}
+        WHERE BOARD_CATE_CODE = '1' AND EMP_NO = #{empNo}
+    </update>
+
+    <update id="updatePosting" parameterType="boardDto">
+        UPDATE tbl_board
+        SET
+            BOARD_TITLE = #{boardTitle},
+            BOARD_CONTENT = #{boardContent}
+        WHERE BOARD_CATE_CODE = '2'
+          AND EMP_NO = #{empNo}
+          AND BOARD_NO = #{boardNo}
+    </update>
 
 
 </mapper>
