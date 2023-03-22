@@ -69,11 +69,32 @@
     </select>
 
     <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
-    <select id="selectEmployeeByEmpName"  resultMap="employeeResult">
+    <select id="selectEmployee"  resultMap="employeeResult">
         SELECT
         <include refid="employeeSelectColumns"/>
         FROM tbl_employee
         WHERE EMP_NAME = #{empName}
+        <if test="deptCode != null and deptCode != ''">
+            AND DEPT_CODE = #{deptCode}
+        </if>
+        <if test="branchCode != null">
+            AND BRANCH_CODE = #{branchCode}
+        </if>
+    </select>
+
+    <!-- SELECT 쿼리 : 이번달에 생일이 있는 사원 조회 -->
+    <select id="selectEmployeeByBirthMonth" resultMap="employeeResult">
+        SELECT *
+        FROM tbl_employee
+        WHERE MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) = #{monthValue}
+    </select>
+
+    <!-- SELECT 쿼리 : 다음달에 생일이 있는 사원 조회 -->
+    <select id="selectEmployeeByBirthMonthAfter" resultMap="employeeResult">
+        SELECT *
+        FROM tbl_employee
+        WHERE MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) &gt;= #{monthValue}
+        ORDER BY MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) ASC
     </select>
 
 </mapper>
