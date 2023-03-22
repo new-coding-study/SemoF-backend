@@ -6,6 +6,7 @@ import com.loung.semof.common.paging.Pagenation;
 import com.loung.semof.common.paging.ResponseDtoWithPaging;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.humanresource.Exception.NotFoundException;
+import com.loung.semof.humanresource.dto.HumanResourceDto;
 import com.loung.semof.humanresource.service.HumanResourceService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -250,4 +251,24 @@ public class HumanResourceController {
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
         }
     }
+
+    /**
+     * @작성일 : 2023-03-22
+     * @작성자 : 이현도
+     * @메소드설명 : 조직도를 위한 사원 전체 조회 메소드
+     */
+    @GetMapping("/chart")
+    public ResponseEntity<ResponseDto> selectAllEmployees(){
+
+        try {
+            List<HumanResourceDto> employees = humanResourceService.selectAllEmployees();
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", employees));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
 }
