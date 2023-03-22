@@ -26,5 +26,6 @@
 		<mapper resource="DepartmentMapper.xml" />
 		<mapper resource="BranchMapper.xml" />
 		<mapper resource="HumanResourceMapper.xml" />
+		<mapper resource="BoardMapper.xml"/>
 	</mappers>
 </configuration>
