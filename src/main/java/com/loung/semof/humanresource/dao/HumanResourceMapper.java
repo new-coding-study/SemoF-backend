@@ -1,6 +1,9 @@
 package com.loung.semof.humanresource.dao;
 
+import com.loung.semof.common.dto.EmployeeDto;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * @파일이름 : HumanResourceMapper.java
@@ -12,4 +15,13 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface HumanResourceMapper {
+    void updateEmployee(EmployeeDto employee);
+
+    void updateEmployeeBranch(EmployeeDto employee);
+
+    int selectEmployeeTotal();
+
+    List<EmployeeDto> selectEmployeeListWithPaging(int startRow, int endRow);
+
+    EmployeeDto selectEmployeeByEmpName(String empName);
 }

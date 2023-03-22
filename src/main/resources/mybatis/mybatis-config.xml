@@ -17,13 +17,18 @@
 		<typeAlias alias="DepartmentDto" type="com.loung.semof.common.dto.DepartmentDto"/>
 		<typeAlias alias="BranchDto" type="com.loung.semof.common.dto.BranchDto"/>
 		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
+
 		<typeAlias alias="ApprovDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
+
+		<typeAlias alias="HumanResourceDto" type="com.loung.semof.humanresource.dto.HumanResourceDto"/>
+
 	</typeAliases>
 
 	<mappers>
 		<mapper resource="MemberMapper.xml" />
 		<mapper resource="EmployeeMapper.xml" />
 		<mapper resource="DepartmentMapper.xml" />
-		<mapper resource="Branch.xml" />
+		<mapper resource="BranchMapper.xml" />
+		<mapper resource="HumanResourceMapper.xml" />
 	</mappers>
 </configuration>
