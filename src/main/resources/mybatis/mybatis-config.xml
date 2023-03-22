@@ -18,8 +18,13 @@
 		<typeAlias alias="BranchDto" type="com.loung.semof.common.dto.BranchDto"/>
 		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
 
-		<typeAlias alias="ApprovDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
-
+		<typeAlias alias="ApprovalDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
+		<typeAlias alias="ApprovLineDTO" type="com.loung.semof.approval.dto.ApprovLineDTO"/>
+		<typeAlias alias="ApprovOrderDTO" type="com.loung.semof.approval.dto.ApprovOrderDTO"/>
+		<typeAlias alias="ApprovFileDTO" type="com.loung.semof.approval.dto.ApprovFileDTO"/>
+		<typeAlias alias="ApprovContentDTO" type="com.loung.semof.approval.dto.ApprovContentDTO"/>
+		<typeAlias alias="ApprovStatusDTO" type="com.loung.semof.approval.dto.ApprovStatusDTO"/>
+		<typeAlias alias="ApprovOpinDTO" type="com.loung.semof.approval.dto.ApprovOpinDTO"/>
 		<typeAlias alias="HumanResourceDto" type="com.loung.semof.humanresource.dto.HumanResourceDto"/>
 
 		<typeAlias alias="TodoDto" type="com.loung.semof.todo.dto.TodoDto"/>
@@ -31,6 +36,10 @@
 		<mapper resource="DepartmentMapper.xml" />
 		<mapper resource="BranchMapper.xml" />
 		<mapper resource="HumanResourceMapper.xml" />
+
+		<mapper resource="ApprovalMapper.xml"/>
+
 		<mapper resource="BoardMapper.xml"/>
+
 	</mappers>
 </configuration>
