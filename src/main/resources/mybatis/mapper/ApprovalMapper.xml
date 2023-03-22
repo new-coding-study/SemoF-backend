@@ -3,44 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.approval.dao.ApprovalMapper">
-    <resultMap type="com.loung.semof.approval.dto.ApprovLineDTO" id="lineResultMap">
-        <id property="lineNo" column="LINE_NO"/>
-        <result property="lineName" column="LINE_NAME"/>
-        <result property="empName" column="EMP_NAME"/>
-        <result property="empNo" column="EMP_NO"/>
-        <result property="bName" column="B_NAME"/>
-        <result property="bCode" column="B_CODE"/>
-<!--        <result property="line" column="LINE"/>-->
-
-        <collection property="approvOrderDTOList" resultMap="orderResultMap"/>
-    </resultMap>
-
-    <resultMap id="orderResultMap" type="com.loung.semof.approval.dto.ApprovOrderDTO">
-        <id property="orderNo" column="ORDER_NO"/>
-        <result property="lineNo" column="LINE_NO"/>
-        <result property="jobName" column="JOB_NAME"/>
-        <association property="approvStatusDTO" javaType="com.loung.semof.approval.dto.ApprovStatusDTO">
-            <id property="statusCode" column="STATUS_CODE"/>
-            <result property="statusName" column="STATUS_NAME"/>
-            <result property="orderNo" column="ORDER_NO"/>
-            <result property="approvNo" column="APPROV_NO"/>
-        </association>
-
-    </resultMap>
-    <resultMap type="com.loung.semof.approval.dto.ApprovStatusDTO" id="statusResultMap">
-        <id property="statusCode" column="STATUS_CODE"/>
-        <result property="statusName" column="STATUS_NAME"/>
-        <result property="orderNo" column="ORDER_NO"/>
-        <result property="approvNo" column="APPROV_NO"/>
-    </resultMap>
 <!--    <resultMap type="com.loung.semof.approval.dto.ApprovLineDTO" id="lineResultMap">-->
 <!--        <id property="lineNo" column="LINE_NO"/>-->
 <!--        <result property="lineName" column="LINE_NAME"/>-->
 <!--        <result property="empName" column="EMP_NAME"/>-->
 <!--        <result property="empNo" column="EMP_NO"/>-->
-<!--        <result property="bName" column="B_NAME"/>-->
-<!--        <result property="bCode" column="B_CODE"/>-->
-<!--        &lt;!&ndash;        <result property="line" column="LINE"/>&ndash;&gt;-->
+<!--        <result property="branchName" column="BRANCH_NAME"/>-->
+<!--        <result property="branchCode" column="BRANCH_CODE"/>-->
+<!--&lt;!&ndash;        <result property="line" column="LINE"/>&ndash;&gt;-->
 
 <!--        <collection property="approvOrderDTOList" resultMap="orderResultMap"/>-->
 <!--    </resultMap>-->
@@ -57,34 +27,40 @@
 <!--        </association>-->
 
 <!--    </resultMap>-->
+<!--    <resultMap type="com.loung.semof.approval.dto.ApprovStatusDTO" id="statusResultMap">-->
+<!--        <id property="statusCode" column="STATUS_CODE"/>-->
+<!--        <result property="statusName" column="STATUS_NAME"/>-->
+<!--        <result property="orderNo" column="ORDER_NO"/>-->
+<!--        <result property="approvNo" column="APPROV_NO"/>-->
+<!--    </resultMap>-->
+
+
 <!--    결재라인-->
 <!--    결재라인 추가-->
-    <insert id = "addApprovLine" parameterType="ApprovLineDTO">
+    <insert id = "insertApprovLine" parameterType="ApprovLineDTO">
         INSERT INTO TBL_APPROV_LINE
         VALUES
             (
             #{ lineNo }
-            ,#{ lineName }
-            ,#{ empNo }
-            ,#{ bCode }
---         ,#{line}
+            , #{ lineName }
+            , #{ empNo }
+            , #{ branchCode }
+            , #{line}
             )
     </insert>
 <!--    결재라인 순서 등록-->
-    <insert id = "addApprovOrder" parameterType="ApprovOrderDTO">
+    <insert id = "insertApprovOrder" parameterType="ApprovOrderDTO">
         INSERT INTO TBL_APPROV_ORDER
         VALUES
             (
             #{ orderNo }
-            ,#{ lineNo }
-            ,#{ jobCode }
---             ,#{ bCode }
---         ,#{line}
+            , #{ lineNo }
+            , #{ jobCode }
             )
     </insert>
 
 <!--결재라인 조회-->
-    <select id="approvLineList" resultType="ApprovStatusDTO">
+    <select id="selectApprovLineListWithPaging" resultType="ApprovOrderDTO">
         SELECT
             A.*, B.*
         FROM TBL_APPROV_LINE A
@@ -94,63 +70,173 @@
     </select>
 
 <!--    결재라인수정-->
-    <update id="modifyApprovLine" parameterType="ApprovLineDTO">
+    <update id="updateApprovLine" parameterType="ApprovLineDTO">
         UPDATE TBL_APPROV_LINE
         SET
-            LINE_NANE=#{lineName}
-            , B_CODE = #{bCode}
+            LINE_NANE = #{lineName}
+            , BRANCH_CODE = #{branchCode}
             , EMP_NO = #{empNo}
         WHERE LINE_NO=#{lineNo}
     </update>
 <!--    결재순서수정-->
-    <update id="modifyApprovOrder" parameterType="ApprovOrderDTO">
+    <update id="updateApprovOrder" parameterType="ApprovOrderDTO">
         UPDATE TBL_APPROV_ORDER
         SET
-            JOB_CODE=#{jobCode}
-        WHERE LINE_NO=#{lineNo}
-        AND ORDER_NO=#{orderNo}
+            JOB_CODE = #{jobCode}
+        WHERE LINE_NO = #{lineNo}
+        AND ORDER_NO = #{orderNo}
     </update>
 
 <!--    결재라인 삭제-->
-    <delete id="removeApprovLine" parameterType="ApprovLineDTO">
+    <delete id="deleteApprovLine" parameterType="ApprovLineDTO">
         DELETE
         FROM TBL_APPROV_LINE
         WHERE LINE_NO=#{lineNo}
     </delete>
+<!--    결재순서 삭제-->
+    <delete id="deleteApprovOrder" parameterType="ApprovOrderDTO">
+        DELETE
+        FROM TBL_APPROV_order
+        WHERE LINE_NO=#{lineNo}
+    </delete>
 
-
+<!--    결재문서-->
 <!--    결재상신-->
-    <insert id="insertRequestApprov" parameterType="ApprovalDTO">
+    <insert id="insertApproval" parameterType="ApprovalDTO">
         INSERT INTO TBL_APPROVAL
         VALUES
             (
-                #{approvNo}
-            ,#{approvTitle}
-            ,#{approvDate}
---             ,#{ bCode }
---         ,#{line}
+            #{ approvNo }
+            ,#{ approvTitle }
+            ,#{ approvDate }
+            ,#{ lineNo }
+            ,#{ empNo }
             )
     </insert>
-
-<!--    결재처리-->
-    <update id="" parameterType="">
-
-    </update>
-    <!--    결재의견작성-->
-<!--    댓글처럼-->
-
+    <insert id="insertApprovFile" parameterType="ApprovFileDTO">
+        INSERT INTO TBL_APPROVAL
+        VALUES
+            (
+                #{ approvNo }
+            ,#{ approvTitle }
+            ,#{ approvDate }
+            ,#{ lineNo }
+            ,#{ empNo }
+            )
+    </insert>
+    <insert id="insertApprovContent" parameterType="ApprovContentDTO">
+        INSERT INTO TBL_APPROVAL
+        VALUES
+            (
+                #{ approvNo }
+            ,#{ approvTitle }
+            ,#{ approvDate }
+            ,#{ lineNo }
+            ,#{ empNo }
+            )
+    </insert>
 <!--    결재상신함-->
+    <select id="selectApprovalListWithPaging" resultType="ApprovalDTO">
+        SELECT
+            A.*, B.*, C.*, D.*
+        FROM TBL_APPROVal A
+                 JOIN TBL_APPROV_CONTENT B
+                      ON A.APPROV_NO = B.APPROV_NO
+                 JOIN TBL_APPROV_STATUS C
+                      ON A.APPROV_NO = C.APPROV_NO
+                 JOIN TBL_APPROV_CATEGORY D
+                      ON B.FORM_CODE = D.FORM_CODE
+        ORDER BY A.APPROV_NO
+    </select>
 <!--    상신은 empNo로 수신은 수신도? 보여지는게 다르니까 나누자-->
 <!--    결재상세조회 -->
+    <select id="selectApproval" resultType="ApprovalDTO">
+        SELECT
+            A.*, B.*, C.*, D.*
+        FROM TBL_APPROVal A
+                 JOIN TBL_APPROV_CONTENT B
+                      ON A.APPROV_NO = B.APPROV_NO
+                 JOIN TBL_APPROV_FILE C
+                      ON A.APPROV_NO = C.APPROV_NO
+                 JOIN TBL_APPROV_CATEGORY D
+                      ON B.FORM_CODE = D.FORM_CODE
+        WHERE A.APPROV_NO = #{approvNo}
+    </select>
 
 <!--결재 통계조회-->
 <!--    미지수-->
 
 <!--  결재수정  -->
+    <update id="updateApproval" parameterType="ApprovalDTO">
+        UPDATE TBL_APPROVal
+        SET
+            APPROV_TITLE = #{approvTitle}
+            , APPROV_DATE = #{approvDate}
+        WHERE LINE_NO = #{lineNo}
+          AND EMP_NO = #{empNo}
+    </update>
+    <update id="updateApprovFile" parameterType="ApprovFileDTO">
+        UPDATE TBL_APPROV_file
+        SET
+            ORIGIN_NAME = #{originName}
+          , NEW_NAME = #{newName}
+          , FILE_PATH = #{filePath}
+        WHERE APPROV_NO = #{approvNo}
+          AND FILE_NO = #{fileNo}
+    </update>
+    <update id="updateContent" parameterType="ApprovContentDTO">
+        UPDATE TBL_APPROV_content
+        SET
+            CONTENT = #{content}
+        WHERE CONTENT_NO = #{contentNo}
+          AND APPROV_NO = #{approvNo}
+          AND FORM_CODE = #{formCode}
+    </update>
 <!--    where절에 걸것 반려, 혹은 미확인상태-->
+
 <!--    결재삭제-->
+    <delete id="deleteApproval" parameterType="_int">
+        DELETE
+        FROM TBL_APPROVal A
+        JOIN tbl_approv_status B
+        ON A.APPROV_NO = B.APPROV_NO
+        WHERE APPROV_NO=#{approvNo}
+        AND ALL B.STATUS_CODE = 'C'
+    </delete>
 <!--    where절에 미확인-->
+    <delete id="deleteFile" parameterType="_int">
+        DELETE
+        FROM TBL_APPROV_file
+        WHERE APPROV_NO=#{approvNo}
+    </delete>
+    <delete id="deleteContent" parameterType="_int">
+        DELETE
+        FROM TBL_APPROV_content
+        WHERE APPROV_NO=#{approvNo}
+    </delete>
+
 <!--    완료된 결재-->
 <!--    상태 올 승인-->
 
+    <!--    결재처리-->
+    <update id="updateStatus" parameterType="ApprovStatusDTO">
+        UPDATE TBL_APPROV_STATUS
+        SET
+            STATUS_CODE = #{statusCode}
+            , STATUS_NAME = #{statusName}
+        WHERE ORDER_NO = #{orderNo}
+          AND APPROV_NO = #{approvNo}
+    </update>
+    <!--    결재의견작성-->
+    <insert id="insertOpinion" parameterType="ApprovOpinDTO">
+        INSERT INTO TBL_APPROV_opinion
+        VALUES
+            (
+            #{opinNo}
+            ,#{opinContent}
+            ,#{empNo}
+            ,#{approvNo}
+            )
+    </insert>
+    <!--    댓글처럼-->
 </mapper>
