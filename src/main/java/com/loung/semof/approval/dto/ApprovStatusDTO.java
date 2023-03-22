@@ -1,4 +1,4 @@
-package com.loung.semof.approval.model.dto;
+package com.loung.semof.approval.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

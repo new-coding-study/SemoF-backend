@@ -17,6 +17,7 @@
 		<typeAlias alias="DepartmentDto" type="com.loung.semof.common.dto.DepartmentDto"/>
 		<typeAlias alias="BranchDto" type="com.loung.semof.common.dto.BranchDto"/>
 		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
+		<typeAlias alias="ApprovDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
 	</typeAliases>
 
 	<mappers>
