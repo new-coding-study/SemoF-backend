@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.loung.semof.common.dao.TodoMapper">
+<mapper namespace="com.loung.semof.todo.dao.TodoMapper">
 
-    <resultMap id="todoResultMap" type="com.loung.semof.board.dto.TodoDto">
+    <resultMap id="todoResultMap" type="com.loung.semof.todo.dto.TodoDto">
         <id property="todoNo" column="TODO_NO"/>
         <result property="todoName" column="TODO_NAME"/>
         <result property="todoDate" column="TODO_DATE"/>
@@ -26,7 +26,7 @@
 <!--        <result property="empNo" column="EMP_NO"/>-->
 <!--    </resultMap>-->
 
-    <select id="selectTodoList" parameterType="java.lang.Long" resultType="TodoDto">
+    <select id="selectTodoList" resultType="TodoDto">
         <![CDATA[
             SELECT
                 A.*,
@@ -34,23 +34,20 @@
             FROM tbl_todo A
                 JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
                 JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
-            WHERE EMP_NO = #{empNo}
+            WHERE B.EMP_NO = #{empNo}
             AND TODO_DATE >= DATE(NOW())
+            ORDER BY TODO_DATE, TODO_TIME
         ]]>
     </select>
 
     <select id="selectTodoDetail" parameterType="java.lang.Long" resultType="TodoDto">
-        <![CDATA[
-            SELECT
-                A.*,
-                B.*
-            FROM tbl_todo A
-                JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
-                JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
-            WHERE EMP_NO = #{empNo}
-            AND TODO_NO = #{todoNo}
-            AND TODO_DATE >= DATE(NOW())
-        ]]>
+        SELECT
+            A.*,
+            B.*
+        FROM tbl_todo A
+                 JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
+                 JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
+        WHERE TODO_NO =  #{todoNo}
     </select>
 
     <insert id="insertCategory" parameterType="TodoDto">
@@ -75,15 +72,14 @@
         WHERE CATE_NO = #{cateNo}
     </update>
 
-    <delete id="deleteCategory" parameterType="Long">
+    <delete id="deleteCategory" parameterType="java.lang.Long">
         DELETE FROM tbl_todo_category
         WHERE CATE_NO = #{cateNo}
     </delete>
 
     <insert id="insertTodo" parameterType="TodoDto">
-        INSERT INTO tbl_todo_category
+        INSERT INTO tbl_todo
         (
---             TODO_NO,
             TODO_NAME,
             TODO_DATE,
             TODO_TIME,
@@ -94,7 +90,6 @@
         )
         VALUES
         (
---                 #{todoNo},
             #{todoName},
             #{todoDate},
             #{todoTime},
@@ -117,7 +112,7 @@
         WHERE TODO_NO = #{todoNo}
     </update>
 
-    <delete id="deleteTodo" parameterType="TodoDto">
+    <delete id="deleteTodo" parameterType="java.lang.Long">
         DELETE FROM tbl_todo
         WHERE TODO_NO = #{todoNo}
     </delete>

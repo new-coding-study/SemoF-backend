@@ -1,8 +1,10 @@
 package com.loung.semof.todo.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-
+import org.springframework.format.annotation.DateTimeFormat;
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Builder
 @Data
@@ -11,8 +13,10 @@ import java.sql.Date;
 public class TodoDto {
     private Long todoNo;
     private String todoName;
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date todoDate;
-    private Date todoTime;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="HH:mm:ss", timezone="Asia/Seoul")
+    private LocalDateTime todoTime;
     private String todoContent;
     private int todoFinish;
     private int todoStar;

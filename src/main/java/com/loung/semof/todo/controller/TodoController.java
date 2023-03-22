@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
+
 
 /**
  * @파일이름 : TodoController.java
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/todo")
+@RequestMapping("/todos")
 public class TodoController {
 
     private final TodoService todoService;
@@ -32,38 +34,128 @@ public class TodoController {
     /**
      * @작성일 : 2023/03/21
      * @작성자 : 박지희
-     * @메소드설명 : 로그인한 사원의 할일리스트를 모두 가져오는 메소드
+     * @메소드설명 : 로그인한 사원의 할 일을 전체 조회하는 메소드
      */
-    @GetMapping
-    public ResponseEntity<ResponseDto> selectTodoList(@RequestParam Long empNo){
+    @GetMapping("/todolist/{empNo}")
+    public ResponseEntity<ResponseDto> selectTodoList(@PathVariable Long empNo){
 
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "전체 할 일 조회 성공", todoService.selectTodoList(empNo)));
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 전체 조회 성공", todoService.selectTodoList(empNo)));
 
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 전체 조회 성공", todoService.selectTodoList(empNo)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
     }
 
-    @GetMapping("/{todoNo}")
-    public ResponseEntity<ResponseDto> selectTodo(@PathVariable int todoNo){
+    @GetMapping("/todo/{todoNo}")
+    public ResponseEntity<ResponseDto> selectTodo(@PathVariable Long todoNo){
 
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 상세 조회 성공", todoService.selectTodoDetail(todoNo)));
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 상세 조회 성공", todoService.selectTodoDetail(todoNo)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
     }
 
     @PostMapping("/category")
     public ResponseEntity<ResponseDto> insertCategory(@ModelAttribute TodoDto categoryDto){
 
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 상세 조회 성공", todoService.insertCategory(categoryDto)));
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 추가 성공", todoService.insertCategory(categoryDto)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
     }
 
     @PutMapping(value="/category")
     public ResponseEntity<ResponseDto> updateCategory(@ModelAttribute TodoDto categoryDto){
 
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 상세 조회 성공", todoService.updateCategory(categoryDto)));
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 수정 성공", todoService.updateCategory(categoryDto)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
     }
 
-    @DeleteMapping(value="/category")
+    @DeleteMapping(value="/category/{cateNo}")
     public ResponseEntity<ResponseDto> deleteCategory(@ModelAttribute TodoDto categoryDto){
 
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 상세 조회 성공", todoService.deleteCategory(categoryDto)));
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 삭제 성공", todoService.deleteCategory(categoryDto)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
     }
+
+    @PostMapping("/todo")
+    public ResponseEntity<ResponseDto> insertTodo(@ModelAttribute TodoDto todoDto){
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 추가 성공", todoService.insertTodo(todoDto)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
+
+    @PutMapping(value="/todo")
+    public ResponseEntity<ResponseDto> updateTodo(@ModelAttribute TodoDto todoDto){
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 수정 성공", todoService.updateTodo(todoDto)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
+
+    @DeleteMapping(value="/todo/{todoNo}")
+    public ResponseEntity<ResponseDto> deleteTodo(@ModelAttribute TodoDto todoDto){
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 삭제 성공", todoService.deleteTodo(todoDto)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
+
+    @PutMapping(value="/star/{todoNo}")
+    public ResponseEntity<ResponseDto> updateStar(@PathVariable Long todoNo){
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "중요 표시 변경 성공", todoService.updateStar(todoNo)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
+
+//    검색 메소드 만들어야 함
 
 
 }

@@ -18,9 +18,12 @@ import java.util.List;
 public interface TodoMapper {
 
     List<TodoDto> selectTodoList(Long empNo);
-    TodoDto selectTodoDetail(int todoNo);
+    TodoDto selectTodoDetail(Long todoNo);
     int insertCategory(TodoDto categoryDto);
     int updateCategory(TodoDto categoryDto);
-
     int deleteCategory(Long cateNo);
+    int insertTodo(TodoDto todoDto);
+    int updateTodo(TodoDto todoDto);
+    int deleteTodo(Long todoNo);
+    int updateStar(Long todoNo);
 }

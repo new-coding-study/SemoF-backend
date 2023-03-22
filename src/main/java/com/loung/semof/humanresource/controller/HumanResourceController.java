@@ -7,6 +7,7 @@ import com.loung.semof.common.paging.ResponseDtoWithPaging;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.humanresource.Exception.NotFoundException;
 import com.loung.semof.humanresource.service.HumanResourceService;
+import com.loung.semof.todo.service.TodoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,9 +30,11 @@ import java.util.List;
 public class HumanResourceController {
 
     private final HumanResourceService humanResourceService;
+    private final TodoService todoService;
 
-    public HumanResourceController(HumanResourceService humanResourceService) {
+    public HumanResourceController(HumanResourceService humanResourceService, TodoService todoService) {
         this.humanResourceService = humanResourceService;
+        this.todoService = todoService;
     }
 
     /**
