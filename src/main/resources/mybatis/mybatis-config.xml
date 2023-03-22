@@ -27,6 +27,7 @@
 		<typeAlias alias="ApprovOpinDTO" type="com.loung.semof.approval.dto.ApprovOpinDTO"/>
 		<typeAlias alias="HumanResourceDto" type="com.loung.semof.humanresource.dto.HumanResourceDto"/>
 
+		<typeAlias alias="TodoDto" type="com.loung.semof.todo.dto.TodoDto"/>
 	</typeAliases>
 
 	<mappers>
@@ -35,6 +36,10 @@
 		<mapper resource="DepartmentMapper.xml" />
 		<mapper resource="BranchMapper.xml" />
 		<mapper resource="HumanResourceMapper.xml" />
+
 		<mapper resource="ApprovalMapper.xml"/>
+
+		<mapper resource="BoardMapper.xml"/>
+
 	</mappers>
 </configuration>
