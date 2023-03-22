@@ -24,9 +24,8 @@ public class AttendanceController {
 
     /* 사원 근태정보 상세 조회 */
     @GetMapping("/status/{empNo}")
-    public ResponseEntity<ResponseDto> selectAttendanceDetail(@PathVariable int empNo) {
-
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendance(empNo)));
+    public ResponseEntity<ResponseDto> selectAttendanceDetail(@PathVariable (name = "empNo") int empNo) {
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendanceDetail(empNo)));
     }
 
     /* 총 갯수 구해서 페이징 처리한 스티커 전체 조회 */

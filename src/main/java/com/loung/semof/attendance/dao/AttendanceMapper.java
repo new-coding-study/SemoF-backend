@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 public interface AttendanceMapper {
 
     /* 사원 근태정보 상세 조회 */
-    AttendanceDto selectAttendance(int empNo);
+    AttendanceDto selectAttendanceDetail(int empNo);
 
 
     /* 총 갯수 구하기 */

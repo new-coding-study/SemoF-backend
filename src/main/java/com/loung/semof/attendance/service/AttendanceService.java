@@ -20,9 +20,9 @@ public class AttendanceService {
     }
 
     /* 스티커 상세 조회 */
-    public AttendanceDto selectAttendance(int empNo) {
+    public AttendanceDto selectAttendanceDetail(int empNo) {
         log.info("[AttendanceService] selectAttendance Start ===================================");
-        AttendanceDto attendanceDto = attendanceMapper.selectAttendance(empNo);
+        AttendanceDto attendanceDto = attendanceMapper.selectAttendanceDetail(empNo);
         // attendanceDto.setAttendanceImageUrl(IMAGE_URL + attendanceDto.getAttendanceImageUrl());
         log.info("[AttendanceService] selectAttendance End ===================================");
         return attendanceDto;

@@ -24,7 +24,7 @@
                  JOIN tbl_emp_vacation_info vac ON (emp.EMP_NO = vac.EMP_NO)
         WHERE emp.EMP_NO = 1
           AND att.ATD_DATE = '2023-03-05'
-        ORDER BY att.ATD_DATE;
+        ORDER BY sts.STATUS_NAME DESC LIMIT 1;
     </select>
 
 
