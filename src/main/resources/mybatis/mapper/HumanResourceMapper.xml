@@ -42,7 +42,6 @@
     <resultMap id="employeesResultExtend" type="HumanResourceDto">
         <id property="empNo" column="EMP_NO"/>
         <result property="empName" column="EMP_NAME"/>
-        <result property="empReg" column="EMP_REG"/>
         <result property="email" column="EMAIL"/>
         <result property="phone" column="PHONE"/>
         <result property="address" column="ADDRESS"/>
@@ -54,6 +53,8 @@
         <result property="jobCode" column="JOB_CODE"/>
         <result property="deptCode" column="DEPT_CODE"/>
         <result property="branchCode" column="BRANCH_CODE"/>
+        <result property="branchName" column="BRANCH_NAME"/>
+        <result property="deptName" column="DEPT_NAME"/>
     </resultMap>
 
     <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
@@ -70,7 +71,7 @@
         WHERE EMP_NO = #{empNo}
     </update>
 
-    <!-- SELECT 쿼리 페이지네이션 포함 : 사원 전체 조회 -->
+    <!-- SELECT 쿼리 - 페이지네이션 포함 : 사원 전체 조회 -->
     <select id="selectEmployeeListWithPaging" parameterType="map" resultMap="employeeResult">
         SELECT
         <include refid="employeeSelectColumns"/>
@@ -115,16 +116,47 @@
         ORDER BY MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) ASC
     </select>
 
-    <select id="selectAllEmployees" resultMap="employeesResultExtend">
+
+    <!-- SELECT 쿼리 : 조직도 검색 - 사원 이름과 일치하는 사원 조회  -->
+    <select id="selectByEmpName" resultMap="employeesResultExtend" parameterType="String">
         SELECT
             E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
             E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
             E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
             E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM tbl_employee E
-                 JOIN tbl_job J ON e.job_code = j.job_code
-                 JOIN tbl_department D ON e.dept_code = d.dept_code
-                 JOIN tbl_branch B ON e.branch_code = b.branch_code
+                 JOIN tbl_job J ON E.job_code = J.job_code
+                 JOIN tbl_department D ON E.dept_code = D.dept_code
+                 JOIN tbl_branch B ON E.branch_code = B.branch_code
+        WHERE E.EMP_NAME = #{empName}
+    </select>
+
+    <!-- SELECT 쿼리 : 조직도 검색 - 부서명과 일치하는 부서의 전체 사원 조회  -->
+    <select id="selectByDeptName" resultMap="employeesResultExtend" parameterType="String">
+        SELECT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                 JOIN tbl_job J ON E.JOB_CODE = J.JOB_CODE
+                 JOIN tbl_department D ON E.DEPT_CODE = D.DEPT_CODE
+                 JOIN tbl_branch B ON E.BRANCH_CODE = B.BRANCH_CODE
+        WHERE D.DEPT_NAME = #{deptName}
+    </select>
+
+    <!-- SELECT 쿼리 : 조직도 검색 - 지점명과 일치하는 지점의 전체 사원 조회  -->
+    <select id="selectByBranchName" resultMap="employeesResultExtend" parameterType="String">
+        SELECT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                JOIN tbl_job J ON E.JOB_CODE = J.JOB_CODE
+                JOIN tbl_department D ON E.DEPT_CODE = D.DEPT_CODE
+                JOIN tbl_branch B ON E.BRANCH_CODE = B.BRANCH_CODE
+        WHERE B.BRANCH_NAME = #{branchName}
     </select>
 
 </mapper>
