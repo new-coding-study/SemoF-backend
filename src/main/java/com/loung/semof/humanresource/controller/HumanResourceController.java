@@ -205,11 +205,12 @@ public class HumanResourceController {
      * @메소드설명 : 사원의 이름으로 사원을 조회하는 메소드
      */
     @GetMapping("/present")
-    public ResponseEntity<ResponseDto> selectEmployee(@RequestBody EmployeeDto employeeDto) throws Exception {
+    public ResponseEntity<ResponseDto> selectEmployee(@RequestParam(required = false) String empName,
+                                                      @RequestParam(required = false) String deptCode,
+                                                      @RequestParam(required = false) Long branchCode) throws Exception {
 
         try {
-            EmployeeDto employee = humanResourceService.selectEmployee(employeeDto.getEmpName(),
-                    employeeDto.getDeptCode(), employeeDto.getBranchCode());
+            EmployeeDto employee = humanResourceService.selectEmployee(empName, deptCode, branchCode);
 
             if (employee != null) {
                 return ResponseEntity.ok()
@@ -256,22 +257,23 @@ public class HumanResourceController {
     }
 
     /**
-     * @작성일 : 2023-03-22
+     * @작성일 : 2023-03-23
      * @작성자 : 이현도
-     * @메소드설명 : 조직도를 위한 사원 전체 조회 메소드
+     * @메소드설명 : 조직도를 위한 조건 검색 메소드
      */
     @GetMapping("/chart")
-    public ResponseEntity<ResponseDto> selectAllEmployees(){
-
-        try {
-            List<HumanResourceDto> employees = humanResourceService.selectAllEmployees();
-
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", employees));
-
-        } catch (Exception e) {
-
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+    public List<HumanResourceDto> search(@RequestParam(required = false) String empName,
+                                         @RequestParam(required = false) String deptName,
+                                         @RequestParam(required = false) String branchName) {
+        if (empName != null && !empName.isEmpty()) {
+            return humanResourceService.searchByEmpName(empName);
         }
+        if (deptName != null && !deptName.isEmpty()) {
+            return humanResourceService.searchByDeptName(deptName);
+        }
+        if (branchName != null && !branchName.isEmpty()) {
+            return humanResourceService.searchByBranchName(branchName);
+        }
+        throw new IllegalArgumentException("사원 이름(empName), 부서명(deptName), 또는 지점명(branchName) 중 하나가 제공되어야합니다.");
     }
-
 }

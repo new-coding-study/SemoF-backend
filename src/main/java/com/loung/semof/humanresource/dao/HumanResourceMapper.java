@@ -3,6 +3,7 @@ package com.loung.semof.humanresource.dao;
 import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.humanresource.dto.HumanResourceDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -30,5 +31,10 @@ public interface HumanResourceMapper {
 
     List<EmployeeDto> selectEmployeeByBirthMonthAfter(int monthValue);
 
-    List<HumanResourceDto> selectAllEmployees();
+    List<HumanResourceDto> selectByEmpName(@Param("empName") String empName);
+
+    List<HumanResourceDto> selectByDeptName(@Param("deptName") String deptName);
+
+    List<HumanResourceDto> selectByBranchName(@Param("branchName") String branchName);
+
 }

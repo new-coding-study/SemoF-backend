@@ -9,6 +9,7 @@
 		, BRANCH_NAME
     </sql>
 
+    <!-- SELECT 쿼리 : BranchDto 의 branchCode 조회 -->
     <select id="selectBranchByBCode" resultType="BranchDto">
         SELECT
         <include refid="branchColumns"/>

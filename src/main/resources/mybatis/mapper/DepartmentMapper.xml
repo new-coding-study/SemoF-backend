@@ -9,6 +9,7 @@
 		, DEPT_NAME
     </sql>
 
+    <!-- SELECT 쿼리 : DepartmentDto 의 deptCode 조회 -->
     <select id="selectDepartmentByDeptCode" resultType="DepartmentDto">
         SELECT
         <include refid="departmentColumns"/>

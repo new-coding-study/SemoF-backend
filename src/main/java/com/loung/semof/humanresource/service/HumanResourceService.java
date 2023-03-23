@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @파일이름 : HumanResourceService.java
@@ -267,38 +266,61 @@ public class HumanResourceService {
     }
 
     /**
-     * @작성일 : 2023-03-22
+     * @작성일 : 2023-03-23
      * @작성자 : 이현도
-     * @메소드설명 : 전체 사원을 조회해서 리스트를 작성하는 비즈니스 로직을 담당하는 메소드
+     * @메소드설명 : 조직도 출력에 사용 할 사원의 이름을 조회해서 해당 사원의 정보를 출력하는 비즈니스 로직
      */
-    public List<HumanResourceDto> selectAllEmployees() {
+    public List<HumanResourceDto> searchByEmpName(String empName) {
 
-        try {
-            List<HumanResourceDto> employees = humanResourceMapper.selectAllEmployees();
-
-            return employees.stream()
-                    .map(employee -> HumanResourceDto.builder()
-                            .empNo(employee.getEmpNo())
-                            .empName(employee.getEmpName())
-                            .email(employee.getEmail())
-                            .phone(employee.getPhone())
-                            .address(employee.getAddress())
-                            .salary(employee.getSalary())
-                            .enrollDate(employee.getEnrollDate())
-                            .retireDate(employee.getRetireDate())
-                            .workStatus(employee.getWorkStatus())
-                            .gender(employee.getGender())
-                            .jobCode(employee.getJobCode())
-                            .jobName(employee.getJobName())
-                            .deptCode(employee.getDeptCode())
-                            .deptName(employee.getDeptName())
-                            .branchCode(employee.getBranchCode())
-                            .branchName(employee.getBranchName())
-                            .build())
-                    .collect(Collectors.toList());
-
-        } catch (Exception e) {
-            throw new RuntimeException("사원 정보 조회 중 오류가 발생했습니다.", e); // 예외 처리 로직
+        if (empName == null || empName.isEmpty()) {
+            throw new IllegalArgumentException("사원의 이름을 입력하셔야 합니다.");
         }
+
+        List<HumanResourceDto> result = humanResourceMapper.selectByEmpName(empName);
+
+        if (result.isEmpty()) {
+            throw new NotFoundException("해당하는 사원을 찾을 수 없습니다 : " + empName);
+        }
+
+        return result;
+    }
+
+    /**
+     * @작성일 : 2023-03-23
+     * @작성자 : 이현도
+     * @메소드설명 : 조직도 출력에 사용 할 부서의 이름을 조회해서 해당 부서의 사원 목록을 출력하는 비즈니스 로직
+     */
+    public List<HumanResourceDto> searchByDeptName(String deptName) {
+
+        if (deptName == null || deptName.isEmpty()) {
+            throw new IllegalArgumentException("부서명을 입력하셔야 합니다.");
+        }
+
+        List<HumanResourceDto> result = humanResourceMapper.selectByDeptName(deptName);
+
+        if (result.isEmpty()) {
+            throw new NotFoundException("해당하는 부서를 찾을 수 없습니다 : " + deptName);
+        }
+
+        return result;
+    }
+
+    /**
+     * @작성일 : 2023-03-23
+     * @작성자 : 이현도
+     * @메소드설명 : 조직도 출력에 사용 할 지점의 이름을 조회해서 해당 지점의 사원 목록을 출력하는 비즈니스 로직
+     */
+    public List<HumanResourceDto> searchByBranchName(String branchName) {
+        if (branchName == null || branchName.isEmpty()) {
+            throw new IllegalArgumentException("지점 이름을 입력해주세요.");
+        }
+
+        List<HumanResourceDto> result = humanResourceMapper.selectByBranchName(branchName);
+
+        if (result == null || result.isEmpty()) {
+            throw new NotFoundException("일치하는 지점이 없습니다 : " + branchName);
+        }
+
+        return result;
     }
 }
