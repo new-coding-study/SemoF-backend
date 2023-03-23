@@ -8,11 +8,15 @@ import com.loung.semof.common.dto.DepartmentDto;
 import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.humanresource.Exception.NotFoundException;
 import com.loung.semof.humanresource.dao.HumanResourceMapper;
+import com.loung.semof.humanresource.dto.HumanResourceDto;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @파일이름 : HumanResourceService.java
@@ -67,7 +71,7 @@ public class HumanResourceService {
         } catch(Exception e) {
             throw new SQLException("발령 처리 중 오류가 발생했습니다.", e);
         }
-        return employee; // 발령 성공인 경우 true를 반환
+        return employee;
     }
 
     /**
@@ -226,15 +230,75 @@ public class HumanResourceService {
     /**
      * @작성일 : 2023-03-21
      * @작성자 : 이현도
-     * @메소드설명 : 설명을 여기에 작성한다.
+     * @메소드설명 : 사원 조회 비즈니스 로직을 수행하는 메소드
      */
-    public EmployeeDto selectEmployeeByEmpName(String empName) throws Exception {
+    public EmployeeDto selectEmployee(String empName, String deptCode, Long branchCode) throws Exception {
 
-        EmployeeDto employee = humanResourceMapper.selectEmployeeByEmpName(empName);
+        EmployeeDto employee = humanResourceMapper.selectEmployee(empName, deptCode, branchCode);
 
         if (employee == null) {
             throw new NotFoundException("사원을 찾을 수 없습니다.");
         }
         return employee;
+    }
+
+    /**
+     * @작성일 : 2023-03-22
+     * @작성자 : 이현도
+     * @메소드설명 : 생일에 해당하는 사원 조회 비즈니스 로직을 수행하는 메소드
+     */
+    public List<EmployeeDto> selectEmployeeByBirthMonth() throws Exception {
+
+        LocalDate now = LocalDate.now();    // 이번 달 날짜 정보 추출
+
+        int monthValue = now.getMonthValue();
+
+        List<EmployeeDto> employees = humanResourceMapper.selectEmployeeByBirthMonth(monthValue);   // 생일인 사원 조회
+
+        List<EmployeeDto> employeesAfter = humanResourceMapper.selectEmployeeByBirthMonthAfter(monthValue);  // 이번 달 이후 생일인 사원 조회
+
+        employees.sort(Comparator.comparing(e -> e.getEmpReg().substring(2, 6)));   // 생일순으로 정렬
+
+        employeesAfter.sort(Comparator.comparing(e -> e.getEmpReg().substring(2, 6)));
+
+        employees.addAll(employeesAfter);   // 이번 달 생일인 사원과 이번 달 이후 생일인 사원을 합침
+
+        return employees;
+    }
+
+    /**
+     * @작성일 : 2023-03-22
+     * @작성자 : 이현도
+     * @메소드설명 : 전체 사원을 조회해서 리스트를 작성하는 비즈니스 로직을 담당하는 메소드
+     */
+    public List<HumanResourceDto> selectAllEmployees() {
+
+        try {
+            List<HumanResourceDto> employees = humanResourceMapper.selectAllEmployees();
+
+            return employees.stream()
+                    .map(employee -> HumanResourceDto.builder()
+                            .empNo(employee.getEmpNo())
+                            .empName(employee.getEmpName())
+                            .email(employee.getEmail())
+                            .phone(employee.getPhone())
+                            .address(employee.getAddress())
+                            .salary(employee.getSalary())
+                            .enrollDate(employee.getEnrollDate())
+                            .retireDate(employee.getRetireDate())
+                            .workStatus(employee.getWorkStatus())
+                            .gender(employee.getGender())
+                            .jobCode(employee.getJobCode())
+                            .jobName(employee.getJobName())
+                            .deptCode(employee.getDeptCode())
+                            .deptName(employee.getDeptName())
+                            .branchCode(employee.getBranchCode())
+                            .branchName(employee.getBranchName())
+                            .build())
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            throw new RuntimeException("사원 정보 조회 중 오류가 발생했습니다.", e); // 예외 처리 로직
+        }
     }
 }

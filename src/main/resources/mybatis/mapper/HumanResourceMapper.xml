@@ -38,6 +38,24 @@
         <result property="branchCode" column="BRANCH_CODE"/>
     </resultMap>
 
+    <!-- ResultMap HumanResourceDto -->
+    <resultMap id="employeesResultExtend" type="HumanResourceDto">
+        <id property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
+        <result property="empReg" column="EMP_REG"/>
+        <result property="email" column="EMAIL"/>
+        <result property="phone" column="PHONE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="salary" column="SALARY"/>
+        <result property="enrollDate" column="ENROLL_DATE"/>
+        <result property="retireDate" column="RETIRE_DATE"/>
+        <result property="workStatus" column="WORK_STATUS"/>
+        <result property="gender" column="GENDER"/>
+        <result property="jobCode" column="JOB_CODE"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="branchCode" column="BRANCH_CODE"/>
+    </resultMap>
+
     <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
     <update id="updateEmployee" parameterType="EmployeeDto">
         UPDATE tbl_employee
@@ -69,11 +87,44 @@
     </select>
 
     <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
-    <select id="selectEmployeeByEmpName"  resultMap="employeeResult">
+    <select id="selectEmployee"  resultMap="employeeResult">
         SELECT
         <include refid="employeeSelectColumns"/>
         FROM tbl_employee
         WHERE EMP_NAME = #{empName}
+        <if test="deptCode != null and deptCode != ''">
+            AND DEPT_CODE = #{deptCode}
+        </if>
+        <if test="branchCode != null">
+            AND BRANCH_CODE = #{branchCode}
+        </if>
+    </select>
+
+    <!-- SELECT 쿼리 : 이번달에 생일이 있는 사원 조회 -->
+    <select id="selectEmployeeByBirthMonth" resultMap="employeeResult">
+        SELECT *
+        FROM tbl_employee
+        WHERE MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) = #{monthValue}
+    </select>
+
+    <!-- SELECT 쿼리 : 다음달에 생일이 있는 사원 조회 -->
+    <select id="selectEmployeeByBirthMonthAfter" resultMap="employeeResult">
+        SELECT *
+        FROM tbl_employee
+        WHERE MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) &gt;= #{monthValue}
+        ORDER BY MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) ASC
+    </select>
+
+    <select id="selectAllEmployees" resultMap="employeesResultExtend">
+        SELECT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                 JOIN tbl_job J ON e.job_code = j.job_code
+                 JOIN tbl_department D ON e.dept_code = d.dept_code
+                 JOIN tbl_branch B ON e.branch_code = b.branch_code
     </select>
 
 </mapper>

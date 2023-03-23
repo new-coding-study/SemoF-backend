@@ -6,6 +6,7 @@ import com.loung.semof.common.paging.Pagenation;
 import com.loung.semof.common.paging.ResponseDtoWithPaging;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.humanresource.Exception.NotFoundException;
+import com.loung.semof.humanresource.dto.HumanResourceDto;
 import com.loung.semof.humanresource.service.HumanResourceService;
 import com.loung.semof.todo.service.TodoService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -96,8 +98,8 @@ public class HumanResourceController {
     public ResponseEntity<ResponseDto> insertEmployee(@RequestBody EmployeeDto employeeDto) throws SQLException {
 
         try {
-            EmployeeDto result = humanResourceService.insertEmployee(employeeDto);
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", result));
+            EmployeeDto employee = humanResourceService.insertEmployee(employeeDto);
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", employee));
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -203,10 +205,11 @@ public class HumanResourceController {
      * @메소드설명 : 사원의 이름으로 사원을 조회하는 메소드
      */
     @GetMapping("/present")
-    public ResponseEntity<ResponseDto> selectEmployeeByEmpName(@RequestBody EmployeeDto employeeDto) throws Exception {
+    public ResponseEntity<ResponseDto> selectEmployee(@RequestBody EmployeeDto employeeDto) throws Exception {
 
         try {
-            EmployeeDto employee = humanResourceService.selectEmployeeByEmpName(employeeDto.getEmpName());
+            EmployeeDto employee = humanResourceService.selectEmployee(employeeDto.getEmpName(),
+                    employeeDto.getDeptCode(), employeeDto.getBranchCode());
 
             if (employee != null) {
                 return ResponseEntity.ok()
@@ -224,4 +227,51 @@ public class HumanResourceController {
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
         }
     }
+
+    /**
+     * @작성일 : 2023-03-22
+     * @작성자 : 이현도
+     * @메소드설명 : 생일인 사원을 조회하는 메소드
+     */
+    @GetMapping("/birthday")
+    public ResponseEntity<ResponseDto> selectEmployeeByBirthMonth() {
+
+        try {
+            List<EmployeeDto> employees = humanResourceService.selectEmployeeByBirthMonth();
+
+            if (employees.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseDto(HttpStatus.NOT_FOUND, "조회 실패 - 생일인 사원이 존재하지 않습니다.", new ArrayList<EmployeeDto>()));
+            } else {
+                return ResponseEntity.ok()
+                        .body(new ResponseDto(HttpStatus.OK, "조회 성공", employees));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
+    /**
+     * @작성일 : 2023-03-22
+     * @작성자 : 이현도
+     * @메소드설명 : 조직도를 위한 사원 전체 조회 메소드
+     */
+    @GetMapping("/chart")
+    public ResponseEntity<ResponseDto> selectAllEmployees(){
+
+        try {
+            List<HumanResourceDto> employees = humanResourceService.selectAllEmployees();
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", employees));
+
+        } catch (Exception e) {
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
 }

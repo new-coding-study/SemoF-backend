@@ -2,8 +2,9 @@ package com.loung.semof.approval.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 /**
- * @파일이름 : ApprovStatusDTO.java
+ * @파일이름 : ApprovOpinDTO.java
  * @프로젝트 : semoF
  * @버전관리 : 1.0.0
  * @작성일 : 2023-03-22
@@ -12,9 +13,10 @@ import lombok.NoArgsConstructor;
  */
 @NoArgsConstructor
 @Data
-public class ApprovStatusDTO {
-    private char statusCode;
-    private String statusName;
-    private Integer orderNo;
+public class ApprovOpinDTO {
+    private Integer opinNo;
+    private String opinContent;
+    private Integer empNo;
+    private String empName;
     private Integer approvNo;
 }
