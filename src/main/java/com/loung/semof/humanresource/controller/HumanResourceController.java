@@ -262,17 +262,17 @@ public class HumanResourceController {
      * @메소드설명 : 조직도를 위한 조건 검색 메소드
      */
     @GetMapping("/chart")
-    public List<HumanResourceDto> search(@RequestParam(required = false) String empName,
+    public List<HumanResourceDto> SelectEmployees(@RequestParam(required = false) String empName,
                                          @RequestParam(required = false) String deptName,
                                          @RequestParam(required = false) String branchName) {
         if (empName != null && !empName.isEmpty()) {
-            return humanResourceService.searchByEmpName(empName);
+            return humanResourceService.selectByEmpName(empName);
         }
         if (deptName != null && !deptName.isEmpty()) {
-            return humanResourceService.searchByDeptName(deptName);
+            return humanResourceService.selectByDeptName(deptName);
         }
         if (branchName != null && !branchName.isEmpty()) {
-            return humanResourceService.searchByBranchName(branchName);
+            return humanResourceService.selectByBranchName(branchName);
         }
         throw new IllegalArgumentException("사원 이름(empName), 부서명(deptName), 또는 지점명(branchName) 중 하나가 제공되어야합니다.");
     }
