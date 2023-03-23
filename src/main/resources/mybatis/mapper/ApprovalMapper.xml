@@ -110,21 +110,29 @@
 
     <insert id = "insertApprovLine" parameterType="ApprovLineDTO">
         INSERT INTO TBL_APPROV_LINE
+        (
+         LINE_NAME
+         , BRANCH_CODE
+         , LINE
+        , EMP_NO
+        )
         VALUES
             (
-                #{ lineNo }
-            , #{ lineName }
-            , #{ empNo }
+             #{ lineName }
             , #{ branchCode }
             , #{line}
+            , #{empNo}
             )
     </insert>
     <!--    결재라인 순서 등록-->
     <insert id = "insertApprovOrder" parameterType="ApprovOrderDTO">
         INSERT INTO TBL_APPROV_ORDER
-        VALUES ( #{ orderNo }
-               , #{ lineNo }
-               , #{ jobCode })
+        (
+         JOB_CODE
+        )
+        VALUES (
+                #{ jobCode }
+                )
     </insert>
 
 
@@ -176,21 +184,27 @@
     <!--    결재상신-->
     <insert id="insertApproval" parameterType="ApprovalDTO">
         INSERT INTO TBL_APPROVAL
+        (
+         APPROV_TITLE
+         , LINE_NO
+        )
         VALUES
             (
-                #{ approvNo }
-            ,#{ approvTitle }
-            ,#{ approvDate }
+           #{ approvTitle }
             ,#{ lineNo }
-            ,#{ empNo }
             )
     </insert>
     <insert id="insertApprovFile" parameterType="ApprovFileDTO">
         INSERT INTO TBL_APPROVAL_file
+        (
+         ORIGIN_NAME
+         , NEW_NAME
+         , FILE_PATH
+         , APPROV_NO
+        )
         VALUES
             (
-                #{ fileNo }
-            ,#{ originName }
+            #{ originName }
             ,#{ newName }
             ,#{ filePath }
             ,#{ approvNo }
@@ -199,29 +213,50 @@
     <!--    결재상신-->
 
     <insert id="insertApprovContent" parameterType="ApprovContentDTO">
-        INSERT INTO TBL_APPROVAL
+        INSERT INTO TBL_APPROV_CONTENT
+        (
+            APPROV_CONTENT
+        )
         VALUES
             (
-                #{ approvNo }
-            ,#{ approvTitle }
-            ,#{ approvDate }
-            ,#{ lineNo }
-            ,#{ empNo }
+            #{approvContent}
             )
     </insert>
 
     <!--    결재상신함-->
     <select id="selectApprovalListWithPaging" resultType="ApprovalDTO">
         SELECT
-            A.*, B.*, C.*, D.*
-        FROM TBL_APPROVal A
-                 JOIN TBL_APPROV_CONTENT B
-                      ON A.APPROV_NO = B.APPROV_NO
-                 JOIN TBL_APPROV_STATUS C
-                      ON A.APPROV_NO = C.APPROV_NO
-                 JOIN TBL_APPROV_CATEGORY D
-                      ON B.FORM_CODE = D.FORM_CODE
-        ORDER BY A.APPROV_NO
+            P.APP_CATEGORY
+             , P.APPROV_TITLE
+             , LAST_VALUE(P.STATUS_NAME) OVER (
+	ORDER BY ORDER_NO
+	RANGE BETWEEN
+            	UNBOUNDED PRECEDING AND
+            	UNBOUNDED FOLLOWING
+	) STATUS
+             , P.APPROV_DATE
+        FROM(
+            SELECT
+                B.APP_CATEGORY
+                 , A.APPROV_TITLE
+                 , C.STATUS_NAME
+                 ,  A.APPROV_DATE
+
+            FROM tbl_APPROVAL A
+                     JOIN tbl_APPROV_CATEGORY B
+                          ON (A.APPROV_NO = B.APPROV_NO)
+                     JOIN tbl_APPROV_STATUS
+                          ON (A.APPROV_NO= C.APPROV_NO)
+                     JOIN TBL_EMPLOYEE D
+                          ON( A.EMP_NO = D.EMP_NO)
+            WHERE A.EMP_NO = #{empNo}
+        ) P
+            )  LIMIT ${ startRow -1 }, #{ endRow }
+    </select>
+    <select id="selectApprovalTotal" resultType="int">
+        SELECT
+            count(*)
+        FROM tbl_approval
     </select>
     <!--    상신은 empNo로 수신은 수신도? 보여지는게 다르니까 나누자-->
     <!--    결재상세조회 -->
@@ -240,12 +275,21 @@
 
     <!--  결재수정  -->
     <update id="updateApproval" parameterType="ApprovalDTO">
-        UPDATE TBL_APPROVal
-        SET
-            APPROV_TITLE = #{approvTitle}
-          , APPROV_DATE = #{approvDate}
-        WHERE LINE_NO = #{lineNo}
-          AND EMP_NO = #{empNo}
+<![CDATA[
+        UPDATE TBL_APPROVal A
+            JOIN tbl_approv_status B
+        ON A.APPROV_NO = B.APPROV_NO
+            SET
+                APPROV_TITLE = #{approvTitle}
+                    , APPROV_DATE = #{approvDate}
+        WHERE APPROV_NO=#{approvNo}
+        AND NOT EXISTS (
+        SELECT 1
+        FROM tbl_approv_status C
+        WHERE A.APPROV_NO = C.APPROV_NO
+        AND C.STATUS_CODE <> 'C'
+        );
+]]>
     </update>
     <update id="updateApprovFile" parameterType="ApprovFileDTO">
         UPDATE TBL_APPROV_file
@@ -268,12 +312,19 @@
 
     <!--    결재삭제-->
     <delete id="deleteApproval" parameterType="_int">
-        DELETE
+        <![CDATA[
+        DELETE A
         FROM TBL_APPROVal A
-            JOIN tbl_approv_status B
+        JOIN tbl_approv_status B
         ON A.APPROV_NO = B.APPROV_NO
-        WHERE APPROV_NO=#{approvNo}
-          AND ALL B.STATUS_CODE = 'C'
+        WHERE A.APPROV_NO = #{approvNo}
+        AND NOT EXISTS (
+        SELECT 1
+        FROM tbl_approv_status C
+        WHERE A.APPROV_NO = C.APPROV_NO
+        AND C.STATUS_CODE <> 'C'
+        );
+        ]]>
     </delete>
     <!--    where절에 미확인-->
     <delete id="deleteFile" parameterType="_int">
@@ -302,12 +353,16 @@
     <!--    결재의견작성-->
     <insert id="insertOpinion" parameterType="ApprovOpinDTO">
         INSERT INTO TBL_APPROV_opinion
+        (
+          OPIN_CONTENT
+          , EMP_NO
+          , APPROV_NO
+        )
         VALUES
             (
-                #{opinNo}
-            ,#{opinContent}
-            ,#{empNo}
-            ,#{approvNo}
+           #{opinContent}
+           ,#{empNo}
+           ,#{approvNo}
             )
     </insert>
     <!--    댓글처럼-->
