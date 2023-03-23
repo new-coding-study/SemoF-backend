@@ -270,7 +270,7 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 조직도 출력에 사용 할 사원의 이름을 조회해서 해당 사원의 정보를 출력하는 비즈니스 로직
      */
-    public List<HumanResourceDto> searchByEmpName(String empName) {
+    public List<HumanResourceDto> selectByEmpName(String empName) {
 
         if (empName == null || empName.isEmpty()) {
             throw new IllegalArgumentException("사원의 이름을 입력하셔야 합니다.");
@@ -290,7 +290,7 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 조직도 출력에 사용 할 부서의 이름을 조회해서 해당 부서의 사원 목록을 출력하는 비즈니스 로직
      */
-    public List<HumanResourceDto> searchByDeptName(String deptName) {
+    public List<HumanResourceDto> selectByDeptName(String deptName) {
 
         if (deptName == null || deptName.isEmpty()) {
             throw new IllegalArgumentException("부서명을 입력하셔야 합니다.");
@@ -310,7 +310,7 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 조직도 출력에 사용 할 지점의 이름을 조회해서 해당 지점의 사원 목록을 출력하는 비즈니스 로직
      */
-    public List<HumanResourceDto> searchByBranchName(String branchName) {
+    public List<HumanResourceDto> selectByBranchName(String branchName) {
         if (branchName == null || branchName.isEmpty()) {
             throw new IllegalArgumentException("지점 이름을 입력해주세요.");
         }

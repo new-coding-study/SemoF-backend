@@ -4,19 +4,19 @@ server:
 
 spring:
   mail:
-    host:
-    port:
-    username:
-    password:
+    host: smtp.gmail.com
+    port: 587
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_PASSWORD}
 
   datasource:
-    url: jdbc:mysql://localhost:3306/semof?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3310/semof?serverTimezone=Asia/Seoul
     username: semof
     password: semof1234
   servlet:
