@@ -27,4 +27,16 @@ public class BoardService {
         for(int i = 0; i < boardList.size(); i++);
         return boardList;
     }
+
+    public int selectPostingTotal() {
+        int result = boardMapper.selectPostingTotal();
+
+        return result;
+    }
+
+    public Object selectPostingListWithPaging(SelectCriteria selectCriteria) {
+        List<BoardDto> boardList = boardMapper.selectPostingListWithPaging(selectCriteria);
+        for(int i = 0; i < boardList.size(); i++);
+        return boardList;
+    }
 }
