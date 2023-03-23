@@ -68,7 +68,7 @@ public class TodoController {
     public ResponseEntity<ResponseDto> insertCategory(@ModelAttribute TodoDto categoryDto){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 추가 성공", todoService.insertCategory(categoryDto)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "트", todoService.insertCategory(categoryDto)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -91,10 +91,10 @@ public class TodoController {
     }
 
     @DeleteMapping(value="/category/{cateNo}")
-    public ResponseEntity<ResponseDto> deleteCategory(@ModelAttribute TodoDto categoryDto){
+    public ResponseEntity<ResponseDto> deleteCategory(@PathVariable Long cateNo){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 삭제 성공", todoService.deleteCategory(categoryDto)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 삭제 성공", todoService.deleteCategory(cateNo)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -120,7 +120,7 @@ public class TodoController {
     public ResponseEntity<ResponseDto> updateTodo(@ModelAttribute TodoDto todoDto){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 수정 성공", todoService.updateTodo(todoDto)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 수정 성공", todoService.updateTodo(todoDto)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -130,10 +130,10 @@ public class TodoController {
     }
 
     @DeleteMapping(value="/todo/{todoNo}")
-    public ResponseEntity<ResponseDto> deleteTodo(@ModelAttribute TodoDto todoDto){
+    public ResponseEntity<ResponseDto> deleteTodo(@PathVariable Long todoNo) throws SQLException {
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 삭제 성공", todoService.deleteTodo(todoDto)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 삭제 성공", todoService.deleteTodo(todoNo)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

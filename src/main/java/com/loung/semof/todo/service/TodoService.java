@@ -58,9 +58,7 @@ public class TodoService {
         return "카테고리 수정 성공";
     }
 
-    public String deleteCategory(TodoDto categoryDto) throws SQLException {
-
-        Long cateNo = categoryDto.getCateNo();
+    public String deleteCategory(Long cateNo) throws SQLException {
 
         int result = todoMapper.deleteCategory(cateNo);
 
@@ -93,9 +91,7 @@ public class TodoService {
         return "할 일 수정 성공";
     }
 
-    public String deleteTodo(TodoDto todoDto) throws SQLException {
-
-        Long todoNo = todoDto.getCateNo();
+    public String deleteTodo(Long todoNo) throws SQLException {
 
         int result = todoMapper.deleteTodo(todoNo);
 
@@ -108,10 +104,17 @@ public class TodoService {
 
     public String updateStar(Long todoNo) throws SQLException {
 
-        int result = todoMapper.updateStar(todoNo);
+        int todoStar = todoMapper.checkStar(todoNo);
+        System.out.println("todoStar" + todoStar);
+
+        Long changeStar = (long) (todoStar == 0 ? 1: 0);
+        System.out.println("changeStar" + changeStar);
+
+        int result = todoMapper.updateStar(todoNo, changeStar);
 
         if (result != 1) {
             throw new SQLException("중요 표시 변경 실패");
+
         }
 
         return "중요 표시 변경 성공";

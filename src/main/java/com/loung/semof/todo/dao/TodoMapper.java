@@ -25,5 +25,6 @@ public interface TodoMapper {
     int insertTodo(TodoDto todoDto);
     int updateTodo(TodoDto todoDto);
     int deleteTodo(Long todoNo);
-    int updateStar(Long todoNo);
+    int checkStar(Long todoNo);
+    int updateStar(Long todoNo, Long changeStar);
 }
