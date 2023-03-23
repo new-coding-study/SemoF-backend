@@ -11,4 +11,8 @@ public interface BoardMapper {
     int selectNoticeTotal();
 
     List<BoardDto> selectNoticeListWithPaging(SelectCriteria selectCriteria);
+
+    int selectPostingTotal();
+
+    List<BoardDto> selectPostingListWithPaging(SelectCriteria selectCriteria);
 }

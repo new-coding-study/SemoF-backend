@@ -31,9 +31,14 @@ public class BoardController {
         this.boardService = boardService;
     }
 
-    @GetMapping("/board-lists")
-    public ResponseEntity<ResponseDto> selectBoardListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
-        System.out.println("selectBoardListWithPaging execute" + offset);
+    /**
+     * @작성일 : 2023.03.23
+     * @작성자 : 이지형
+     * @메소드설명 : 공지사항에 대한 페이링 처리 및 리스트를 불러오기 위한 메소드
+     */
+    @GetMapping("/boardNotice-lists")
+    public ResponseEntity<ResponseDto> selectNoticeListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
+        System.out.println("selectNoticeListWithPaging execute" + offset);
 
         int totalCount = boardService.selectNoticeTotal();
         int limit = 10;
@@ -48,9 +53,27 @@ public class BoardController {
         responseDtoWithPaging.setData(boardService.selectNoticeListWithPaging(selectCriteria));
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공!!!", responseDtoWithPaging));
-
-
     }
+    @GetMapping("/boardPosting-lists")
+    public ResponseEntity<ResponseDto> selectPostingListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
+        System.out.println("selectPostingListWithPaging execute" + offset);
+
+        int totalCount = boardService.selectPostingTotal();
+        int limit = 10;
+        int buttonAmount = 13;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        System.out.println("selectCriteria=========execute" + selectCriteria);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(boardService.selectPostingListWithPaging(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공!!!", responseDtoWithPaging));
+    }
+
+
 
 
 }
