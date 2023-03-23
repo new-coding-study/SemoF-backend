@@ -20,7 +20,8 @@ public class ApprovalDTO {
     private Integer approvNo;
     private String approvTitle;
     private Date approvDate;
-//    private Integer lineNo;
-//    private Integer empNo;
+    private Integer lineNo;
+    private Integer empNo;
     private List<ApprovFileDTO> approvFileDTOList;
+    private List <ApprovContentDTO> approvContentDTOList;
 }

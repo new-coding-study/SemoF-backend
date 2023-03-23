@@ -34,7 +34,7 @@ public interface ApprovalMapper {
 
     List<ApprovalDTO> selectApprovalListWithPaging(SelectCriteria selectCriteria);
 
-    ApprovalDTO selectApproval(ApprovalDTO approval);
+    ApprovalDTO selectApproval(Integer approvNo);
 
     int insertApproval(ApprovalDTO approval);
 
@@ -63,5 +63,7 @@ public interface ApprovalMapper {
     int updateStatus(ApprovStatusDTO status);
 
 
+    int selectApprovalTotal();
 
+    int selectApprovLineTotal();
 }
