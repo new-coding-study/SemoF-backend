@@ -75,13 +75,20 @@
         FROM tbl_board
         WHERE BOARD_CATE_CODE = 1
     </select>
-    <!-- 페이징 처리를 위해 게시판 글 갯수를 조회-->
-    <select id="selectPostingTotal" resultType="int">
-        SELECT
-            count(*)
-        FROM tbl_board
-        WHERE BOARD_CATE_CODE = 2
+
+
+    <!-- 페이징 처리를 위해 공지사항 글 갯수를 조회-->
+    <select id="selectNoticeTopTotal" resultType="int">
+        SELECT COUNT(*)
+        FROM (
+                 SELECT *
+                 FROM tbl_board
+                 WHERE BOARD_CATE_CODE = 1
+                 ORDER BY WRITE_DATE DESC
+                     LIMIT 3
+             ) SUB
     </select>
+
 
 <!--    <select id="selectNoticeDetailForEmp" resultType="BoardDto" parameterType="int">-->
 <!--        SELECT-->
@@ -187,7 +194,8 @@
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
         JOIN tbl_employee TE
         ON (TB.EMP_NO = TE.EMP_NO)
-        WHERE TC.CATEGORY_CODE = '2'
+        WHERE TC.BOARD_CATEGORY_CODE = '2'
+        AND TB.BOARD_NO = #{boardNo}
     </select>
 
 <!--관리자를 위한 게시글 세부조회 select문-->
@@ -203,7 +211,7 @@
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
         JOIN tbl_employee TE
         ON (TB.EMP_NO = TE.EMP_NO)
-        WHERE TC.CATEGORY_CODE = '2'
+        WHERE TC.BOARD_CATEGORY_CODE = '2'
         AND TB.BOARD_NO = #{boardNo}
     </select>
 
@@ -230,10 +238,18 @@
              JOIN tbl_employee TE
              ON (TB.EMP_NO = TE.EMP_NO)
              WHERE TC.BOARD_CATEGORY_CODE = '2') P
-             LIMIT ${ startRow }, #{ endRow }
+             LIMIT ${ startRow-1 }, #{ endRow }
     </select>
 
-<!--자신이 쓴 게시물에 대한 전체조회-->
+    <!-- 페이징 처리를 위해 게시판 글 갯수를 조회-->
+    <select id="selectPostingTotal" resultType="int">
+        SELECT
+            count(*)
+        FROM tbl_board
+        WHERE BOARD_CATE_CODE = 2
+    </select>
+
+    <!--자신이 쓴 게시물에 대한 전체조회-->
     <select id="selectAllPostingForAuthor" resultType="BoardDto" parameterType="int">
         SELECT
             ROW_NUMBER()OVER(ORDER BY TB.WRITE_DATE DESC) AS RN
@@ -247,33 +263,12 @@
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
         JOIN tbl_employee TE
         ON (TB.EMP_NO = TE.EMP_NO)
-        WHERE TC.CATEGORY_CODE = '2'
+        WHERE TC.BOARD_CATEGORY_CODE = '2'
         AND TE.EMP_NO = #{ empNo }
         ORDER BY TB.WRITE_DATE DESC
     </select>
 
-
-<!--자신이 쓴 게시글에 대한 상세조회-->
-    <select id="selectDetailPostingForAuthor" resultType="BoardDto" parameterType="int">
-        SELECT
-            TB.BOARD_TITLE
-            ,TB.BOARD_CONTENT
-            ,TB.WRITE_DATE
-            ,TE.EMP_NAME
-            ,TC.BOARD_CATEGORY_NAME
-        FROM tbl_board TB
-        JOIN tbl_board_category TC
-        ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
-        JOIN tbl_employee TE
-        ON (TB.EMP_NO = TE.EMP_NO)
-        WHERE TC.CATEGORY_CODE = '2'
-        AND TB.BOARD_NO = #{boardNo}
-        AND TE.EMP_NO = #{empNo}
-
-    </select>
-
-
-
+<!--자신이 쓴 글 조회를 위한 페이징 처리-->
     <select id="selectPostingListWithPagingForAuthor" resultType="BoardDTO" parameterType="int">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TB.WRITE_DATE DESC) AS RN
@@ -295,48 +290,91 @@
              ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
              JOIN tbl_employee TE
              ON (TB.EMP_NO = TE.EMP_NO)
-             WHERE TC.CATEGORY_CODE = '2'
+             WHERE TC.BOARD_CATEGORY_CODE = '2'
              AND TE.EMP_NO = #{empNo}) P
              LIMIT ${ startRow -1 }, #{ limit }
     </select>
 
+    <!--자신이 쓴 게시글에 대한 상세조회-->
+    <select id="selectDetailPostingForAuthor" resultType="BoardDto" parameterType="int">
+        SELECT
+            TB.BOARD_TITLE
+             ,TB.BOARD_CONTENT
+             ,TB.WRITE_DATE
+             ,TE.EMP_NAME
+             ,TC.BOARD_CATEGORY_NAME
+        FROM tbl_board TB
+                 JOIN tbl_board_category TC
+                      ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+                 JOIN tbl_employee TE
+                      ON (TB.EMP_NO = TE.EMP_NO)
+        WHERE TC.BOARD_CATEGORY_CODE = '2'
+          AND TB.BOARD_NO = #{boardNo}
+          AND TE.EMP_NO = #{empNo}
+    </select>
 
 
 
-
-
-
-    <insert id="insertBoard" parameterType="boardDto">
+    <insert id="insertNotice" parameterType="boardDto">
         INSERT INTO tbl_board
-        (
-            BOARD_TITLE,
-            BOARD_CONTENT,
-            BOARD_CATE_CODE
-        )
+                (
+                  BOARD_TITLE
+                , BOARD_CONTENT
+                , BOARD_CATE_CODE
+                , EMP_NO
+                )
         VALUES
-        (
-            #{boardTitle},
-            #{boardContent},
-            #{boardCateCode}
-        )
+                (
+                 #{boardTitle}
+               , #{boardContent}
+               , 1
+               , #{empNo}
+                )
     </insert>
 
-    <update id="updateNotice" parameterType="boardDto">
-        UPDATE tbl_board
+    <insert id="insertPosting" parameterType="boardDto">
+        INSERT INTO tbl_board
+        (
+            BOARD_TITLE
+        , BOARD_CONTENT
+        , BOARD_CATE_CODE
+        , EMP_NO
+        )
+        VALUES
+            (
+                #{boardTitle}
+            , #{boardContent}
+            , 2
+            , #{empNo}
+            )
+    </insert>
+
+    <update id="updateBoardAll" parameterType="boardDto">
+        UPDATE tbl_board TB
+        JOIN tbl_employee TE
+        ON (TB.EMP_NO = TE.EMP_NO)
+        JOIN tbl_job TJ
+        ON (TE.JOB_CODE = TJ.JOB_CODE)
         SET
-            BOARD_TITLE = #{boardTitle},
-            BOARD_CONTENT = #{boardContent}
-        WHERE BOARD_CATE_CODE = '1' AND EMP_NO = #{empNo}
+            TB.BOARD_TITLE = #{boardTitle}
+           ,TB.BOARD_CONTENT = #{boardContent}
+        WHERE TB.BOARD_CATE_CODE IN (1,2)
+          AND TB.BOARD_NO = #{boardNo}
+          AND TE.JOB_CODE IN (1,2,3)
     </update>
 
     <update id="updatePosting" parameterType="boardDto">
-        UPDATE tbl_board
+        UPDATE tbl_board TB
+        JOIN tbl_employee TE
+        ON (TB.EMP_NO = TE.EMP_NO)
+        JOIN tbl_job TJ
+        ON (TE.JOB_CODE = TJ.JOB_CODE)
         SET
-            BOARD_TITLE = #{boardTitle},
-            BOARD_CONTENT = #{boardContent}
-        WHERE BOARD_CATE_CODE = '2'
-          AND EMP_NO = #{empNo}
-          AND BOARD_NO = #{boardNo}
+            TB.BOARD_TITLE = #{boardTitle}
+           ,TB.BOARD_CONTENT = #{boardContent}
+        WHERE TB.BOARD_CATE_CODE = 2
+          AND TB.BOARD_NO = #{boardNo}
+          AND TB.EMP_NO = #{empNo}
     </update>
 
 

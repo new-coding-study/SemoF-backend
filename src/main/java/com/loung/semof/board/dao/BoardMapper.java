@@ -15,4 +15,19 @@ public interface BoardMapper {
     int selectPostingTotal();
 
     List<BoardDto> selectPostingListWithPaging(SelectCriteria selectCriteria);
+
+    BoardDto selectNoticeDetail(Integer boardNo);
+
+    int selectNoticeTopTotal();
+
+    BoardDto selectPostingDetailForEmp(Integer boardNo);
+
+
+    int insertNotice(BoardDto boardDto);
+
+    int insertPosting(BoardDto boardDto);
+
+    int updateBoardAll(BoardDto boardDto);
+
+    int updatePosting(BoardDto boardDto);
 }
