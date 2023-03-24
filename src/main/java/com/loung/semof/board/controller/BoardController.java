@@ -115,11 +115,12 @@ public class BoardController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "게시글 등록 성공!!!", boardService.insertPosting(boardDto)));
     }
 
-    @PutMapping("/boardAllLists/{boardNo}")
-    public ResponseEntity<ResponseDto> updateBoardAll(@ModelAttribute BoardDto boardDto, @PathVariable Integer boardNo) {
-        System.out.println("============공지사항 업데이트======="+ boardDto);
+    @PutMapping("/boardAllLists/{empNo}/{boardNo}")
+    public ResponseEntity<ResponseDto> updateBoardForAdmin(@ModelAttribute BoardDto boardDto, @PathVariable Integer boardNo, @PathVariable int empNo) {
+        System.out.println("============공지사항&게시물 업데이트======="+ boardDto);
         boardDto.setBoardNo(boardNo);
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"공지사항 업데이트 성공!!!", boardService.updateBoardAll(boardDto)));
+        boardDto.setEmpNo(empNo);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"공지사항&게시물 업데이트 성공!!!", boardService.updateBoardAll(boardDto)));
     }
 
     @PutMapping("/boardPosting-lists/{empNo}/{boardNo}")
@@ -130,4 +131,12 @@ public class BoardController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"게시글 업데이트 성공!!!", boardService.updatePosting(boardDto)));
     }
 
+    @DeleteMapping("/boardAllLists/{boardNo}")
+    public ResponseEntity<ResponseDto> deleteBoardForAdmin(@PathVariable Integer boardNo){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"공지사항 or 게시물삭제", boardService.deleteBoardForAdmin(boardNo)));
+    }
+    @DeleteMapping("/boardPosting-lists/{empNo}/{boardNo}")
+    public ResponseEntity<ResponseDto> deleteBoardForAdmin(@PathVariable int empNo, @PathVariable Integer boardNo){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"게시물삭제", boardService.deleteBoardForEmp(empNo,boardNo)));
+    }
 }
