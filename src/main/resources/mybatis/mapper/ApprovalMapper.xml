@@ -253,11 +253,14 @@
         ) P
             )  LIMIT ${ startRow -1 }, #{ endRow }
     </select>
+
+    <!--페이징 처리를 위한 결재문서 개수 조회-->
     <select id="selectApprovalTotal" resultType="int">
         SELECT
             count(*)
         FROM tbl_approval
     </select>
+
     <!--    상신은 empNo로 수신은 수신도? 보여지는게 다르니까 나누자-->
     <!--    결재상세조회 -->
     <select id="selectApproval" resultType="ApprovalDTO">
@@ -308,9 +311,8 @@
           AND APPROV_NO = #{approvNo}
           AND FORM_CODE = #{formCode}
     </update>
-    <!--    where절에 걸것 반려, 혹은 미확인상태-->
 
-    <!--    결재삭제-->
+    <!--결재삭제-->
     <delete id="deleteApproval" parameterType="_int">
         <![CDATA[
         DELETE A
