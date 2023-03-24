@@ -202,7 +202,7 @@ public class HumanResourceController {
     /**
      * @작성일 : 2023-03-21
      * @작성자 : 이현도
-     * @메소드설명 : 사원의 이름으로 사원을 조회하는 메소드
+     * @메소드설명 : 사원을 조건으로 조회하는 메소드
      */
     @GetMapping("/present")
     public ResponseEntity<ResponseDto> selectEmployee(@RequestParam(required = false) String empName,
@@ -305,5 +305,4 @@ public class HumanResourceController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto(HttpStatus.NOT_FOUND, "조회 실패", null));
         }
     }
-
 }

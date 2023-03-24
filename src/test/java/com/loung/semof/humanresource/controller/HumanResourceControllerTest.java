@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loung.semof.common.ResponseDto;
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.common.paging.ResponseDtoWithPaging;
+import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.humanresource.service.HumanResourceService;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
@@ -27,9 +29,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -280,6 +284,51 @@ class HumanResourceControllerTest {
         assertEquals(employeeDto.getJobCode(), data.get("jobCode").asLong());
     }
 
+    @Test
+    public void 사원_전체_조회_테스트() throws SQLException, UnsupportedEncodingException {
+        // Given
+        int pageNo = 1;
+        int totalCount = 30;
+        int limit = 10;
+        int buttonAmount = 5;
+        int maxPage = 3;
+        int startPage = 1;
+        int endPage = 3;
+        int startRow = 1;
+        int endRow = 10;
+
+        SelectCriteria selectCriteria = new SelectCriteria(pageNo, totalCount, limit, buttonAmount, maxPage, startPage, endPage, startRow, endRow);
+
+        List<EmployeeDto> employees = new ArrayList<>();
+
+        employees.add(new EmployeeDto(1L, "안유진", "030601-4234567", "yujinAn@gmail.com", "010-1234-5678", "서울특별시 강남구"
+                , 3000000, LocalDateTime.parse("2021-03-01 09:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), null, "Y", "F", 4L, "PL", 1L));
+        employees.add(new EmployeeDto(2L, "박지민", "000702-4345678", "parkjimin@gmail.com", "010-2345-6789", "서울특별시 강동구", 2800000
+                , LocalDateTime.parse("2021-03-01 09:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")), null, "Y", "M", 5L, "HR", 1L));
+
+        log.info("[HumanResourceControllerTest] employees : " + employees);
+
+        when(humanResourceService.selectEmployeeTotal()).thenReturn(totalCount);
+        when(humanResourceService.selectEmployeeListWithPaging(anyInt(), anyInt())).thenReturn(employees);
+
+        // When
+        ResponseEntity<ResponseDto> response = humanResourceController.selectEmployeeListWithPaging(pageNo);
+
+        log.info("[HumanResourceControllerTest] response: " + response);
+
+        // Then
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().getMessage()).isEqualTo("조회 성공");
+        assertThat(response.getBody().getData()).isInstanceOf(ResponseDtoWithPaging.class);
+
+        ResponseDtoWithPaging responseDtoWithPaging = (ResponseDtoWithPaging) response.getBody().getData();
+
+        log.info("[HumanResourceControllerTest] ResponseDtoWithPaging : " + responseDtoWithPaging);
+
+        assertThat(responseDtoWithPaging.getPageInfo()).isEqualTo(selectCriteria);
+        assertThat(responseDtoWithPaging.getData()).isEqualTo(employees);
+    }
+
     @Rollback
     @Test
     public void 사원_조건_선택_테스트() throws Exception {
@@ -295,6 +344,7 @@ class HumanResourceControllerTest {
         employeeDto.setDeptCode("PL");
 
         List<EmployeeDto> employeeDtoList = new ArrayList<>();
+
         employeeDtoList.add(employeeDto);
 
         log.info("EmployeeDtoList: " + employeeDtoList);
@@ -324,4 +374,6 @@ class HumanResourceControllerTest {
         assertEquals("조회 성공", responseDto.getMessage());
         assertEquals(16, ((List)responseDto.getData()).size());
     }
+
+
 }
