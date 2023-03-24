@@ -78,16 +78,16 @@
 
 
     <!-- 페이징 처리를 위해 공지사항 글 갯수를 조회-->
-    <select id="selectNoticeTopTotal" resultType="int">
-        SELECT COUNT(*)
-        FROM (
-                 SELECT *
-                 FROM tbl_board
-                 WHERE BOARD_CATE_CODE = 1
-                 ORDER BY WRITE_DATE DESC
-                     LIMIT 3
-             ) SUB
-    </select>
+<!--    <select id="selectNoticeTopTotal" resultType="int">-->
+<!--        SELECT COUNT(*)-->
+<!--        FROM (-->
+<!--                 SELECT *-->
+<!--                 FROM tbl_board-->
+<!--                 WHERE BOARD_CATE_CODE = 1-->
+<!--                 ORDER BY WRITE_DATE DESC-->
+<!--                     LIMIT 3-->
+<!--             ) SUB-->
+<!--    </select>-->
 
 
 <!--    <select id="selectNoticeDetailForEmp" resultType="BoardDto" parameterType="int">-->
@@ -132,6 +132,33 @@
          WHERE TC.BOARD_CATEGORY_CODE = '1'
          ORDER BY TB.WRITE_DATE DESC) P
          LIMIT ${ startRow -1 }, #{ endRow }
+    </select>
+
+<!--noticeTop3-->
+    <select id="selectNoticeTop3ListWithPaging" resultType="BoardDTO">
+        SELECT
+            P.RN
+             ,P.BOARD_TITLE
+             ,P.BOARD_CONTENT
+             ,P.WRITE_DATE
+             ,P.EMP_NAME
+             ,P.BOARD_CATEGORY_NAME
+        FROM
+            (SELECT
+                 ROW_NUMBER() OVER(ORDER BY TB.WRITE_DATE DESC) AS RN
+             ,TB.BOARD_TITLE
+                  ,TB.BOARD_CONTENT
+                  ,TB.WRITE_DATE
+                  ,TE.EMP_NAME
+                  ,TC.BOARD_CATEGORY_NAME
+             FROM tbl_board TB
+             JOIN tbl_board_category TC
+             ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
+             JOIN tbl_employee TE
+             ON (TB.EMP_NO = TE.EMP_NO)
+             WHERE TC.BOARD_CATEGORY_CODE = '1'
+             ORDER BY TB.WRITE_DATE DESC) P
+            LIMIT ${ startRow -1 }, 3
     </select>
 
 <!--    <select id="selectNoticeListWithPagingForAdmin" resultType="BoardDTO" parameterType="int">-->
@@ -313,8 +340,7 @@
           AND TE.EMP_NO = #{empNo}
     </select>
 
-
-
+    <!--공지사항 등록-->
     <insert id="insertNotice" parameterType="boardDto">
         INSERT INTO tbl_board
                 (
@@ -332,6 +358,7 @@
                 )
     </insert>
 
+    <!--게시글 등록-->
     <insert id="insertPosting" parameterType="boardDto">
         INSERT INTO tbl_board
         (
@@ -342,13 +369,14 @@
         )
         VALUES
             (
-                #{boardTitle}
+              #{boardTitle}
             , #{boardContent}
             , 2
             , #{empNo}
             )
     </insert>
 
+    <!--모든 게시글 수정(관리자)-->
     <update id="updateBoardAll" parameterType="boardDto">
         UPDATE tbl_board TB
         JOIN tbl_employee TE
@@ -358,12 +386,10 @@
         SET
             TB.BOARD_TITLE = #{boardTitle}
            ,TB.BOARD_CONTENT = #{boardContent}
-        WHERE TB.BOARD_CATE_CODE IN (1,2)
-          AND TB.EMP_NO = #{empNo}
-          AND TB.BOARD_NO = #{boardNo}
-          AND TE.JOB_CODE IN (1,2,3)
+        WHERE TB.BOARD_NO = #{boardNo}
     </update>
 
+    <!--자신이 작성한 게시글 수정-->
     <update id="updatePosting" parameterType="boardDto">
         UPDATE tbl_board TB
         JOIN tbl_employee TE
@@ -378,12 +404,13 @@
           AND TB.EMP_NO = #{empNo}
     </update>
 
+    <!--모든 게시글 삭제(관리자)-->
     <delete id="deleteBoardForAdmin" parameterType="boardDto">
         DELETE FROM tbl_board
-        WHERE BOARD_CATE_CODE IN (1, 2)
-          AND BOARD_NO = #{boardNo}
+        WHERE BOARD_NO = #{boardNo}
     </delete>
 
+    <!--자신이 작성한 게시글 삭제-->
     <delete id="deleteBoardForEmp" parameterType="boardDto">
         DELETE FROM tbl_board
         WHERE BOARD_CATE_CODE = 2

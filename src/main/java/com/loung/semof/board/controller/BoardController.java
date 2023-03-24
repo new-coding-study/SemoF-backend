@@ -34,13 +34,13 @@ public class BoardController {
      * @작성자 : 이지형
      * @메소드설명 : 공지사항에 대한 페이링 처리 및 리스트를 불러오기 위한 메소드
      */
-    @GetMapping("/boardNotice-lists")
+    @GetMapping("/board-notice-lists")
     public ResponseEntity<ResponseDto> selectNoticeListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         System.out.println("selectNoticeListWithPaging execute" + offset);
 
         int totalCount = boardService.selectNoticeTotal();
         int limit = 10;
-        int buttonAmount = 13;
+        int buttonAmount = 5;
 
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
 
@@ -53,13 +53,13 @@ public class BoardController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공!!!", responseDtoWithPaging));
     }
 
-    @GetMapping("/boardNotice-top3")
+    @GetMapping("/board-notice-top3")
     public ResponseEntity<ResponseDto> selectNoticeTop3WithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         System.out.println("selectNoticeListWithPaging execute" + offset);
 
         int totalCount = boardService.selectNoticeTopTotal();
         int limit = 3;
-        int buttonAmount = 6;
+        int buttonAmount = 0;
 
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
 
@@ -72,14 +72,14 @@ public class BoardController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공!!!", responseDtoWithPaging));
     }
 
-    @GetMapping("/boardNotice/{boardNo}")
+    @GetMapping("/board-notice/{boardNo}")
     public ResponseEntity<ResponseDto> selectNoticeDetail(@PathVariable Integer boardNo){
         System.out.println("boardNo : "+boardNo);
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "공지사항 상세조회 성공", boardService.selectNoticeDetail(boardNo)));
     }
 
-    @GetMapping("/boardPosting-lists")
+    @GetMapping("/board-posting-lists")
     public ResponseEntity<ResponseDto> selectPostingListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         System.out.println("selectPostingListWithPaging execute" + offset);
 
@@ -98,7 +98,7 @@ public class BoardController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공!!!", responseDtoWithPaging));
     }
 
-    @GetMapping("/boardPosting-lists/{boardNo}")
+    @GetMapping("/board-posting-lists/{boardNo}")
     public ResponseEntity<ResponseDto> selectPostingDetail(@PathVariable Integer boardNo){
         System.out.println("boardNo : "+boardNo);
 
@@ -106,36 +106,35 @@ public class BoardController {
     }
 
     @PostMapping("/boardNotice-lists")
-    public ResponseEntity<ResponseDto> insertNotice(@RequestBody BoardDto boardDto){
+    public ResponseEntity<ResponseDto> insertNotice(@ModelAttribute BoardDto boardDto){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "공지사항등록 성공!!!", boardService.insertNotice(boardDto)));
     }
 
-    @PostMapping("/boardPosting-lists")
-    public ResponseEntity<ResponseDto> insertPosting(@RequestBody BoardDto boardDto){
+    @PostMapping("/board-posting-lists")
+    public ResponseEntity<ResponseDto> insertPosting(@ModelAttribute BoardDto boardDto){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "게시글 등록 성공!!!", boardService.insertPosting(boardDto)));
     }
 
-    @PutMapping("/boardAllLists/{empNo}/{boardNo}")
-    public ResponseEntity<ResponseDto> updateBoardForAdmin(@ModelAttribute BoardDto boardDto, @PathVariable Integer boardNo, @PathVariable int empNo) {
+    @PutMapping("/board-all-lists/{boardNo}")
+    public ResponseEntity<ResponseDto> updateBoardForAdmin(@ModelAttribute BoardDto boardDto, @PathVariable Integer boardNo) {
         System.out.println("============공지사항&게시물 업데이트======="+ boardDto);
         boardDto.setBoardNo(boardNo);
-        boardDto.setEmpNo(empNo);
+
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"공지사항&게시물 업데이트 성공!!!", boardService.updateBoardAll(boardDto)));
     }
 
-    @PutMapping("/boardPosting-lists/{empNo}/{boardNo}")
-    public ResponseEntity<ResponseDto> updatePosting(@ModelAttribute BoardDto boardDto, @PathVariable Integer boardNo, @PathVariable int empNo) {
+    @PutMapping("/board-posting-lists/{boardNo}")
+    public ResponseEntity<ResponseDto> updatePosting(@ModelAttribute BoardDto boardDto, @PathVariable Integer boardNo) {
         System.out.println("============게시판 업데이트======="+ boardDto);
         boardDto.setBoardNo(boardNo);
-        boardDto.setEmpNo(empNo);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"게시글 업데이트 성공!!!", boardService.updatePosting(boardDto)));
     }
 
-    @DeleteMapping("/boardAllLists/{boardNo}")
+    @DeleteMapping("/board-all-lists/{boardNo}")
     public ResponseEntity<ResponseDto> deleteBoardForAdmin(@PathVariable Integer boardNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"공지사항 or 게시물삭제", boardService.deleteBoardForAdmin(boardNo)));
     }
-    @DeleteMapping("/boardPosting-lists/{empNo}/{boardNo}")
+    @DeleteMapping("/board-posting-lists/{empNo}/{boardNo}")
     public ResponseEntity<ResponseDto> deleteBoardForAdmin(@PathVariable int empNo, @PathVariable Integer boardNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"게시물삭제", boardService.deleteBoardForEmp(empNo,boardNo)));
     }

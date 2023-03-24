@@ -65,7 +65,7 @@ public class BoardService {
     @Transactional
     public Object insertPosting(BoardDto boardDto) {
         int result = boardMapper.insertPosting(boardDto);
-        System.out.println(boardDto);
+        System.out.println("================"+boardDto);
         return (result > 0) ? "게시글등록성공!!":"게시글등록실패ㅠㅠ";
     }
 
