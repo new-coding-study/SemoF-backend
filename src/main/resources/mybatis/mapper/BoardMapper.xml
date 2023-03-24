@@ -359,6 +359,7 @@
             TB.BOARD_TITLE = #{boardTitle}
            ,TB.BOARD_CONTENT = #{boardContent}
         WHERE TB.BOARD_CATE_CODE IN (1,2)
+          AND TB.EMP_NO = #{empNo}
           AND TB.BOARD_NO = #{boardNo}
           AND TE.JOB_CODE IN (1,2,3)
     </update>
@@ -377,5 +378,17 @@
           AND TB.EMP_NO = #{empNo}
     </update>
 
+    <delete id="deleteBoardForAdmin" parameterType="boardDto">
+        DELETE FROM tbl_board
+        WHERE BOARD_CATE_CODE IN (1, 2)
+          AND BOARD_NO = #{boardNo}
+    </delete>
+
+    <delete id="deleteBoardForEmp" parameterType="boardDto">
+        DELETE FROM tbl_board
+        WHERE BOARD_CATE_CODE = 2
+          AND EMP_NO = #{empNo}
+          AND BOARD_NO = #{boardNo}
+    </delete>
 
 </mapper>

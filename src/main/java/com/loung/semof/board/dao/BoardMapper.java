@@ -30,4 +30,8 @@ public interface BoardMapper {
     int updateBoardAll(BoardDto boardDto);
 
     int updatePosting(BoardDto boardDto);
+
+    int deleteBoardForAdmin(Integer boardNo);
+
+    int deleteBoardForEmp(int empNo, Integer boardNo);
 }
