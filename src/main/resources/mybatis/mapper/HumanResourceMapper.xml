@@ -108,7 +108,7 @@
     <select id="selectEmployeeByBirthMonth" resultMap="employeeResult">
         SELECT *
         FROM tbl_employee
-        WHERE MONTH(STR_TO_DATE(CONCAT(SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%y-%m-%d')) = #{monthValue}
+        WHERE MONTH(STR_TO_DATE(CONCAT('19', SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%Y-%m-%d')) = #{monthValue}
     </select>
 
     <!-- SELECT 쿼리 : 다음달에 생일이 있는 사원 조회 -->
