@@ -88,12 +88,15 @@
     </select>
 
     <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
-    <select id="selectEmployee"  resultMap="employeeResult">
+    <select id="selectEmployees"  resultMap="employeeResult">
         SELECT
         <include refid="employeeSelectColumns"/>
         FROM tbl_employee
-        WHERE EMP_NAME = #{empName}
-        <if test="deptCode != null and deptCode != ''">
+        WHERE 1=1
+        <if test="empName != null">
+            AND EMP_NAME = #{empName}
+        </if>
+        <if test="deptCode != null">
             AND DEPT_CODE = #{deptCode}
         </if>
         <if test="branchCode != null">
@@ -105,58 +108,54 @@
     <select id="selectEmployeeByBirthMonth" resultMap="employeeResult">
         SELECT *
         FROM tbl_employee
-        WHERE MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) = #{monthValue}
+        WHERE MONTH(STR_TO_DATE(CONCAT(SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%y-%m-%d')) = #{monthValue}
     </select>
 
     <!-- SELECT 쿼리 : 다음달에 생일이 있는 사원 조회 -->
     <select id="selectEmployeeByBirthMonthAfter" resultMap="employeeResult">
         SELECT *
         FROM tbl_employee
-        WHERE MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) &gt;= #{monthValue}
-        ORDER BY MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) ASC
+        WHERE MONTH(STR_TO_DATE(CONCAT(SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%y-%m-%d')) &gt;= #{monthValue}
+        ORDER BY MONTH(STR_TO_DATE(CONCAT(SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%y-%m-%d')) ASC
     </select>
 
-
-    <!-- SELECT 쿼리 : 조직도 검색 - 사원 이름과 일치하는 사원 조회  -->
-    <select id="selectByEmpName" resultMap="employeesResultExtend" parameterType="String">
+    <!-- SELECT 쿼리 : 해당 조건을 만족하는 사원 조회 -->
+    <select id="SelectEmployeesForChart"  resultMap="employeesResultExtend">
         SELECT
             E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
             E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
             E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
             E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM tbl_employee E
-                 JOIN tbl_job J ON E.job_code = J.job_code
-                 JOIN tbl_department D ON E.dept_code = D.dept_code
-                 JOIN tbl_branch B ON E.branch_code = B.branch_code
-        WHERE E.EMP_NAME = #{empName}
+            JOIN tbl_job J ON E.job_code = J.job_code
+            JOIN tbl_department D ON E.dept_code = D.dept_code
+            JOIN tbl_branch B ON E.branch_code = B.branch_code
+        WHERE 1=1
+        <if test="empName != null">
+            AND EMP_NAME = #{empName}
+        </if>
+        <if test="deptName != null">
+            AND DEPT_NAME = #{deptName}
+        </if>
+        <if test="branchName != null">
+            AND BRANCH_NAME = #{branchName}
+        </if>
     </select>
 
-    <!-- SELECT 쿼리 : 조직도 검색 - 부서명과 일치하는 부서의 전체 사원 조회  -->
-    <select id="selectByDeptName" resultMap="employeesResultExtend" parameterType="String">
+    <!-- SELECT 쿼리 : 사원 번호로 사원 조회  -->
+    <select id="selectEmployeeByEmpNo"  resultType="EmployeeDto">
         SELECT
-            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
-            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
-            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
-            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
-        FROM tbl_employee E
-                 JOIN tbl_job J ON E.JOB_CODE = J.JOB_CODE
-                 JOIN tbl_department D ON E.DEPT_CODE = D.DEPT_CODE
-                 JOIN tbl_branch B ON E.BRANCH_CODE = B.BRANCH_CODE
-        WHERE D.DEPT_NAME = #{deptName}
+        *
+        FROM tbl_employee
+        WHERE EMP_NO = #{empNo}
     </select>
 
-    <!-- SELECT 쿼리 : 조직도 검색 - 지점명과 일치하는 지점의 전체 사원 조회  -->
-    <select id="selectByBranchName" resultMap="employeesResultExtend" parameterType="String">
+    <!-- SELECT 쿼리 : 사원 번호로 사원 조회  -->
+    <select id="selectEmployeeByGender"  resultType="EmployeeDto">
         SELECT
-            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
-            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
-            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
-            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
-        FROM tbl_employee E
-                JOIN tbl_job J ON E.JOB_CODE = J.JOB_CODE
-                JOIN tbl_department D ON E.DEPT_CODE = D.DEPT_CODE
-                JOIN tbl_branch B ON E.BRANCH_CODE = B.BRANCH_CODE
-        WHERE B.BRANCH_NAME = #{branchName}
+            *
+        FROM tbl_employee
+        WHERE GENDER = #{gender}
     </select>
 
 </mapper>

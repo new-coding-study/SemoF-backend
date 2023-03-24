@@ -1,8 +1,9 @@
 package com.loung.semof.humanresource.dto;
 
 import com.loung.semof.common.dto.EmployeeDto;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -14,7 +15,8 @@ import java.time.LocalDateTime;
  * @작성자 : 이현도
  * @클래스설명 : 모델(Model)과 뷰(View) 사이에서 데이터 전송을 담당하는 클래스
  */
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 public class HumanResourceDto extends EmployeeDto {
 
