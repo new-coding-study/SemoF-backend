@@ -1,6 +1,7 @@
 package com.loung.semof.humanresource.dto;
 
 import com.loung.semof.common.dto.EmployeeDto;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -33,8 +34,8 @@ public class HumanResourceDto extends EmployeeDto {
         this.branchName = branchName;
     }
 
+    /*인사 관리 관련*/
     private String jobName; // 직급명
     private String deptName;    // 부서명
     private String branchName;  //지점명
-
 }
