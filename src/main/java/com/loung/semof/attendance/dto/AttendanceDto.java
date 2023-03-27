@@ -15,8 +15,10 @@ public class AttendanceDto {
     private int empNo;  //사원번호
     private String empName; //사원이름
     private String statusName;  //상태명
+    // @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date atdTime;   //근무날짜
+    // @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonSerialize(using = CustomDateSerializer.class)
     private Date startTime; //출근시간
     // @DateTimeFormat(pattern = "yyyy-MM-dd")

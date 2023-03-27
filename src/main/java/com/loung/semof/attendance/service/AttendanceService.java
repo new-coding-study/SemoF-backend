@@ -4,6 +4,9 @@ import com.loung.semof.attendance.dao.AttendanceMapper;
 import com.loung.semof.attendance.dto.AttendanceDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
 @Slf4j
 @Service
 public class AttendanceService {
@@ -19,13 +22,29 @@ public class AttendanceService {
         this.attendanceMapper = attendanceMapper;
     }
 
-    /* 스티커 상세 조회 */
-    public AttendanceDto selectAttendanceDetail(int empNo) {
-        log.info("[AttendanceService] selectAttendance Start ===================================");
+    /**
+     * @작성일 : 2023-03-27 027
+     * @작성자 : sik
+     * @메소드설명 : 사원 근태정보 상세 조회
+     */
+    public AttendanceDto selectAttendanceDetail(int empNo) throws Exception{
+        log.info("[AttendanceService] selectAttendanceDetail Start ===================================");
         AttendanceDto attendanceDto = attendanceMapper.selectAttendanceDetail(empNo);
-        // attendanceDto.setAttendanceImageUrl(IMAGE_URL + attendanceDto.getAttendanceImageUrl());
-        log.info("[AttendanceService] selectAttendance End ===================================");
+        log.info("[AttendanceService] selectAttendanceDetail End ===================================");
+        if (attendanceDto == null) {
+            throw new Exception("근태 정보 조회 실패");
+        }
         return attendanceDto;
+    }
+
+    public List<AttendanceDto> selectAttendanceList(int empNo) throws Exception {
+        log.info("[AttendanceService] selectAttendanceList Start ===================================");
+        List<AttendanceDto> attendanceDtoList = attendanceMapper.selectAttendanceList(empNo);
+        log.info("[AttendanceService] selectAttendanceList End ===================================");
+        if (attendanceDtoList == null) {
+            throw new Exception("근태 기록 조회 실패");
+        }
+        return attendanceDtoList;
     }
 
     /* 총 갯수 구하기 */

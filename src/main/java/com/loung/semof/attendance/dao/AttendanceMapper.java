@@ -3,11 +3,16 @@ package com.loung.semof.attendance.dao;
 import com.loung.semof.attendance.dto.AttendanceDto;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface AttendanceMapper {
 
     /* 사원 근태정보 상세 조회 */
     AttendanceDto selectAttendanceDetail(int empNo);
+
+    /* 사원 근태기록 조회 */
+    List<AttendanceDto> selectAttendanceList(int empNo);
 
 
     /* 총 갯수 구하기 */

@@ -22,10 +22,39 @@ public class AttendanceController {
         this.attendanceService = attendanceService;
     }
 
-    /* 사원 근태정보 상세 조회 */
+
+    /**
+     * @작성일 : 2023-03-27 027
+     * @작성자 : sik
+     * @메소드설명 : 사원 근태정보 상세 조회
+     */
     @GetMapping("/status/{empNo}")
     public ResponseEntity<ResponseDto> selectAttendanceDetail(@PathVariable (name = "empNo") int empNo) {
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendanceDetail(empNo)));
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendanceDetail(empNo)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+        // return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendanceDetail(empNo)));
+    }
+
+    /**
+     * @작성일 : 2023-03-27 027
+     * @작성자 : sik
+     * @메소드설명 : 사원 근태기록 조회
+     */
+    @GetMapping("/status/histories/{empNo}")
+    public ResponseEntity<ResponseDto> selectAttendanceList(@PathVariable (name = "empNo") int empNo) {
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태기록 조회 성공",  attendanceService.selectAttendanceList(empNo)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+        // return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendanceDetail(empNo)));
     }
 
     /* 총 갯수 구해서 페이징 처리한 스티커 전체 조회 */

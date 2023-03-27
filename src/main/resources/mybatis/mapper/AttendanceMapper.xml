@@ -27,5 +27,57 @@
         ORDER BY sts.STATUS_NAME DESC LIMIT 1;
     </select>
 
+    <!-- 사원 근태 기록 조회  -->
+    <select id="selectAttendanceList" resultType="com.loung.semof.attendance.dto.AttendanceDto">
+        SELECT
+            att.ATD_NO,
+            emp.EMP_NO,
+            emp.EMP_NAME,
+            sts.STATUS_NAME,
+            att.ATD_DATE,
+            att.START_TIME,
+            att.END_TIME,
+            vac.ALL_DAYS,
+            vac.USED_DAYS,
+            vac.LEFT_DAYS
+        FROM tbl_employee emp
+                 JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
+                 JOIN tbl_attendance_status_info ats ON (att.ATD_NO = ats.ATD_NO)
+                 JOIN tbl_attendance_status sts ON (ats.STATUS_CODE = sts.STATUS_CODE)
+                 JOIN tbl_emp_vacation_info vac ON (emp.EMP_NO = vac.EMP_NO)
+        WHERE emp.EMP_NO = #{ empNo }
+        ORDER BY att.ATD_DATE;
+    </select>
+
+    <!-- 사원 연차 현황 조회  -->
+    <select id="selectVacationDetail" resultType="com.loung.semof.attendance.dto.AttendanceDto">
+        SELECT
+            EMP_NAME,
+            ALL_DAYS,
+            USED_DAYS,
+            LEFT_DAYS
+        FROM tbl_employee emp
+                 JOIN tbl_emp_vacation_info vac ON (vac.EMP_NO = emp.EMP_NO)
+        WHERE vac.EMP_NO = 1;
+    </select>
+
+    <!-- 아래부터 사원 출퇴근 변경 -->
+    <!-- 사원 근무정보 행 생성  -->
+    <insert id="insertAttendance">
+        INSERT INTO TBL_ATTENDANCE(EMP_NO, ATD_DATE) VALUES (1, now());
+    </insert>
+
+    <!-- 사원 근무상태정보 기록 생성(출퇴근 발생시간)  -->
+    <insert id="insertAttendanceStatusInfo">
+        INSERT INTO TBL_ATTENDANCE(EMP_NO, ATD_DATE) VALUES (1, now());
+    </insert>
+
+    <!-- 사원 근무정보 출퇴근 시간 변경  -->
+    <update id="insertAttendanceRow">
+        UPDATE tbl_attendance att, tbl_attendance_status_info ati
+        SET att.END_TIME = (SELECT MAX(OCCUR_TIME) FROM tbl_attendance_status_info WHERE ATD_NO = 5 GROUP BY OCCUR_TIME ORDER BY OCCUR_TIME DESC LIMIT 1)
+            WHERE att.ATD_NO = 12;
+    </update>
+
 
 </mapper>
