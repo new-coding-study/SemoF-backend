@@ -1,0 +1,54 @@
+
+server:
+  port: 8090
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/semof?serverTimezone=Asia/Seoul
+    username: semof
+    password: semof1234
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  web:
+    resources:
+      static-locations: classpath:/productimgs/
+
+# \uC774\uBBF8\uC9C0 \uC800\uC7A5\uD560 \uC704\uCE58\uC640 \uC751\uB2F5\uD560 \uB54C \uC774\uBBF8\uC9C0 \uC8FC\uC18C \uC138\uD305
+image:
+  # WebConfig\uC5D0 \uC138\uD305
+  #add-resource-locations: classpath:/static/productimgs/
+  #add-resource-handler: /productimgs/**
+
+  add-resource-locations: /productimgs/
+  add-resource-handler: /productimgs/**
+
+
+  # ProductService\uC5D0 \uC138\uD305
+  #image-dir: src/main/resources/static/productimgs/
+  image-dir: /productimgs/
+  #  image-url: http://192.168.0.165:8090/productimgs/
+  image-url: http://43.200.45.85:8090/productimgs/
+#  image-url: http://localhost:8090/productimgs/
+
+# HS512 \uC54C\uACE0\uB9AC\uC998\uC744 \uC0AC\uC6A9\uD560 \uAC83\uC774\uAE30 \uB54C\uBB38\uC5D0 512bit, \uC989 64byte \uC774\uC0C1\uC758 secret key\uB97C \uC0AC\uC6A9
+# Secret \uAC12\uC740 \uD2B9\uC815 \uBB38\uC790\uC5F4\uC744 Base64 \uB85C \uC778\uCF54\uB529\uD55C \uAC12 \uC0AC\uC6A9
+jwt:
+  secret: dW5pLXJlYWN0LW5naW54LXNwcmluZy1ib290LWp3dC1vcmFjbGUtZG9ja2VyLWVjMi1yZWFjdC1uZ25peC1zcHJpbmctYm9vdC1qd3Qtb3JhY2xlLWRvY2tlci1lYzIK
+
+
+mybatis:
+  # mapper.xml location Setting
+  mapper-locations: mybatis/mapper/*.xml
+  # alias Setting
+  type-aliases-package: com.uni.reactpro
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    root: info
+
+
