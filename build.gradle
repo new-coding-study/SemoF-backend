@@ -22,6 +22,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.3.0'
+    testImplementation 'junit:junit:4.13.1'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'
@@ -38,9 +39,14 @@ dependencies {
     //추가
     implementation 'net.logstash.logback:logstash-logback-encoder:7.2'
 
-    //의존성 이름 : spring-boot-starter-email 역할 : 이메일을 발송에 필요한 각종 기능을 담당한다.
-    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.1'
+    // 의존성 이름 : jackson-databind 기능 : Java Object를 JSON으로 변환하거나 JSON을 Java Object로 변환하는데 사용할 수 있는 Java 라이브러리
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
+   
+    // 의존성 이름 : Mockito 기능 :  mock을 쉽게 만들고 mock의 행동을 정하는 stubbing, 정상적으로 작동하는지에 대한 verify 등 다양한 기능을 제공해주는 프레임워크
+    testImplementation 'org.mockito:mockito-core:3.11.2'
+
+    // 의존성 이름 : spring-boot-starter-mail API 기능 : SMTP 서버 정보, 인증 정보, 수신자 정보, 이메일 내용 등을 설정하고 이메일을 송,수신 가능하게 해주는 API
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 }
 
