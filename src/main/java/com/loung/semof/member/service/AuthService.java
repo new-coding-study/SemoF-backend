@@ -32,15 +32,24 @@ public class AuthService {
     public MemberDto signup(MemberDto memberDto) {
         log.info("[AuthService] Signup Start ===================================");
         log.info("[AuthService] MemberRequestDto {}", memberDto);
-
-        if(memberMapper.selectByEmail(memberDto.getMemberEmail()) != null) {
-            log.info("[AuthService] 이메일이 중복됩니다.");
-            throw new DuplicatedUsernameException("이메일이 중복됩니다.");
+//아이디가 중복되는지 확인
+        if(memberMapper.selectByMemberId(memberDto.getMemberId()) != null) {
+            log.info("[AuthService] 아이디가 중복됩니다.");
+            throw new DuplicatedUsernameException("아이디가 중복됩니다.");
         }
+//        비밀번호 확인은 앞단?
+//        주민번호 받아서? 뭐해야함?
+
 
         log.info("[AuthService] Member Signup Start ==============================");
         memberDto.setMemberPassword(passwordEncoder.encode(memberDto.getMemberPassword()));
         log.info("[AuthService] Member {}", memberDto);
+//주민번호 유효성만 확인??
+//        if (!passwordEncoder.matches(memberDto.getMemberPassword(), member.getMemberPassword())) {
+//            log.info("[AuthService] Password Match Fail!!!!!!!!!!!!");
+//            throw new LoginFailedException("잘못된 아이디 또는 비밀번호입니다");
+//        }
+
         int result = memberMapper.insertMember(memberDto);
         log.info("[AuthService] Member Insert Result {}", result > 0 ? "회원 가입 성공" : "회원 가입 실패");
 
