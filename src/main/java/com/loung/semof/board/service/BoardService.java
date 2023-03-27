@@ -65,19 +65,33 @@ public class BoardService {
     @Transactional
     public Object insertPosting(BoardDto boardDto) {
         int result = boardMapper.insertPosting(boardDto);
-        System.out.println(boardDto);
+        System.out.println("================"+boardDto);
         return (result > 0) ? "게시글등록성공!!":"게시글등록실패ㅠㅠ";
     }
 
+    @Transactional
     public Object updateBoardAll(BoardDto boardDto) {
         int result = boardMapper.updateBoardAll(boardDto);
         System.out.println("업데이트 시작"+boardDto);
-        return (result > 0)? "공지사항 수정 완료!!":"공지사항 수정 실패ㅜㅠ";
+        return (result > 0)? "공지사항&게시글 수정 완료!!":"공지사항&게시글 수정 실패ㅜㅠ";
     }
 
+    @Transactional
     public Object updatePosting(BoardDto boardDto) {
         int result = boardMapper.updatePosting(boardDto);
         System.out.println("업데이트 시작"+boardDto);
         return (result > 0)? "게시글 수정 완료!!":"게시글 수정 실패ㅜㅠ";
+    }
+
+    @Transactional
+    public Object deleteBoardForAdmin(Integer boardNo) {
+        int result = boardMapper.deleteBoardForAdmin(boardNo);
+        return (result >0)? "공지사항 or 게시글 삭제 성공!!" : "공지사항 or 게시글 삭제 실패!!";
+    }
+
+    @Transactional
+    public Object deleteBoardForEmp(int empNo, Integer boardNo) {
+        int result = boardMapper.deleteBoardForEmp(empNo,boardNo);
+        return (result >0)? "게시글 삭제 성공!!" : "게시글 삭제 실패!!";
     }
 }

@@ -28,9 +28,7 @@
 		<typeAlias alias="ApprovOpinDTO" type="com.loung.semof.approval.dto.ApprovOpinDTO"/>
 
 		<typeAlias alias="HumanResourceDto" type="com.loung.semof.humanresource.dto.HumanResourceDto"/>
-<!--		<typeAlias alias="SendEmailDto" type="com.loung.semof.email.dto.SendEmailDto"/>-->
-<!--		<typeAlias alias="ReceiveEmailDto" type="com.loung.semof.email.dto.ReceiveEmailDto"/>-->
-<!--		<typeAlias alias="EmailAttachDto" type="com.loung.semof.email.dto.EmailAttachDto"/>-->
+
 
 		<typeAlias alias="TodoDto" type="com.loung.semof.todo.dto.TodoDto"/>
 	</typeAliases>
@@ -41,7 +39,7 @@
 		<mapper resource="DepartmentMapper.xml" />
 		<mapper resource="BranchMapper.xml" />
 		<mapper resource="HumanResourceMapper.xml" />
-<!--		<mapper resource="EmailMapper.xml" />-->
+
 		<mapper resource="TodoMapper.xml"/>
 
 		<mapper resource="ApprovalMapper.xml"/>
