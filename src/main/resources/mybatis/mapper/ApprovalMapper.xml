@@ -146,7 +146,12 @@
                       ON A.LINE_NO = B.LINE_NO
         ORDER BY A.LINE_NO
     </select>
-
+<!--    등록된 결재라인 수 -->
+    <select id="selectApprovLineTotal" resultType="int">
+        SELECT
+            count(*)
+        FROM tbl_approv_line
+    </select>
 
     <!--    결재라인수정-->
     <update id="updateApprovLine" parameterType="ApprovLineDTO">
@@ -225,33 +230,32 @@
 
     <!--    결재상신함-->
     <select id="selectApprovalListWithPaging" resultType="ApprovalDTO">
-        SELECT
-            P.APP_CATEGORY
+        SELECT P.APP_CATEGORY
              , P.APPROV_TITLE
              , LAST_VALUE(P.STATUS_NAME) OVER (
-	ORDER BY ORDER_NO
-	RANGE BETWEEN
+        RANGE BETWEEN
             	UNBOUNDED PRECEDING AND
             	UNBOUNDED FOLLOWING
 	) STATUS
              , P.APPROV_DATE
-        FROM(
-            SELECT
-                B.APP_CATEGORY
-                 , A.APPROV_TITLE
-                 , C.STATUS_NAME
-                 ,  A.APPROV_DATE
+        FROM (SELECT D.APP_CATEGORY
+                   , A.APPROV_TITLE
+                   , C.STATUS_NAME
+                   , A.APPROV_DATE
+                    ,E.ORDER_NO
 
-            FROM tbl_APPROVAL A
-                     JOIN tbl_APPROV_CATEGORY B
-                          ON (A.APPROV_NO = B.APPROV_NO)
-                     JOIN tbl_APPROV_STATUS
-                          ON (A.APPROV_NO= C.APPROV_NO)
-                     JOIN TBL_EMPLOYEE D
-                          ON( A.EMP_NO = D.EMP_NO)
-            WHERE A.EMP_NO = #{empNo}
-        ) P
-            )  LIMIT ${ startRow -1 }, #{ endRow }
+              FROM tbl_APPROVAL A
+                       JOIN tbl_approv_content B
+                            ON (A.APPROV_NO = B.APPROV_NO)
+                       JOIN tbl_APPROV_STATUS C
+                            ON (A.APPROV_NO = C.APPROV_NO)
+                        JOIN tbl_approv_category D
+                            ON (B.FORM_CODE = D.FORM_CODE)
+                        JOIN tbl_approv_order E
+                            ON (E.ORDER_NO = C.ORDER_NO)
+              ) P
+            LIMIT ${ startRow }
+           , #{ endRow }
     </select>
     <select id="selectApprovalTotal" resultType="int">
         SELECT
