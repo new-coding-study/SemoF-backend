@@ -8,15 +8,22 @@ import com.loung.semof.common.dto.DepartmentDto;
 import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.humanresource.Exception.NotFoundException;
 import com.loung.semof.humanresource.dao.HumanResourceMapper;
+import com.loung.semof.humanresource.dto.EmployeePhotoDto;
 import com.loung.semof.humanresource.dto.HumanResourceDto;
+import com.loung.semof.util.FileUploadUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @파일이름 : HumanResourceService.java
@@ -34,6 +41,11 @@ public class HumanResourceService {
     private final DepartmentMapper departmentMapper;
     private final BranchMapper branchMapper;
     private final HumanResourceMapper humanResourceMapper;
+
+    @Value("${image.image-dir}")
+    private String IMAGE_DIR;
+    @Value("${image.image-url}")
+    private String IMAGE_URL;
 
     public HumanResourceService(EmployeeMapper employeeMapper, DepartmentMapper departmentMapper, BranchMapper branchMapper, HumanResourceMapper humanResourceMapper) {
         this.employeeMapper = employeeMapper;
@@ -115,10 +127,13 @@ public class HumanResourceService {
      * @메소드설명 : 사원 등록 비즈니스 로직을 수행하는 메소드.
      */
     public EmployeeDto insertEmployee(EmployeeDto employeeDto) throws SQLException {
+        log.info("[EmployeeService] insertEmployee Start ===================================");
+
 
         try {
             employeeMapper.insertEmployee(employeeDto);
 
+            log.info("[EmployeeService] employeeDto : " + employeeDto);
             return employeeDto;
 
         } catch (Exception e) {
@@ -129,15 +144,77 @@ public class HumanResourceService {
     }
 
     /**
+     * @작성일 : 2023-03-27
+     * @작성자 : 이현도
+     * @메소드설명 : 사원의 사진 등록 비즈니스 로직을 수행하는 메소드.
+     */
+    public void insertEmployeePhoto(MultipartFile employeePhoto, EmployeeDto employee) throws IOException {
+
+        log.info("[EmployeeService insertEmployeePhoto] employee" + employee);
+
+        // 증명사진 파일 업로드
+        String imageName = UUID.randomUUID().toString().replace("-", "");
+
+        String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, employeePhoto);
+
+        log.info("[EmployeeService] replaceFileName : " + replaceFileName);
+
+        // 증명사진 등록 정보 저장
+        EmployeePhotoDto employeePhotoDto = new EmployeePhotoDto();
+
+        employeePhotoDto.setEmpNo(employee.getEmpNo());
+
+        employeePhotoDto.setFilePath(replaceFileName);
+
+        employeePhotoDto.setOriginName(employeePhoto.getOriginalFilename());
+
+        employeePhotoDto.setChangeName(replaceFileName);
+
+        employeePhotoDto.setUploadDate(LocalDateTime.now());
+
+        humanResourceMapper.insertEmployeePhoto(employeePhotoDto);
+    }
+
+    /**
      * @작성일 : 2023-03-21
      * @작성자 : 이현도
      * @메소드설명 : 사원 정보 수정 비즈니스 로직을 수행하는 메소드
      */
-    public EmployeeDto updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode) throws Exception {
-
+//    public EmployeeDto updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode) throws Exception {
+//
+//        EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
+//
+//        if(employee == null) {
+//            throw new NotFoundException("해당 사원을 찾을 수 없습니다.");
+//        }
+//
+//        if (phone != null) {
+//            employee.setPhone(phone);
+//        }
+//        if (email != null) {
+//            employee.setEmail(email);
+//        }
+//        if (address != null) {
+//            employee.setAddress(address);
+//        }
+//        if (salary != null) {
+//            employee.setSalary(salary);
+//        }
+//        if (jobCode != null) {
+//            employee.setJobCode(jobCode);
+//        }
+//
+//        int affectedRows = employeeMapper.updateEmployee(employee); //update 쿼리가 실행된 결과로, 몇 개의 row가 업데이트 되었는지를 나타내는 변수
+//
+//        if (affectedRows != 1) {
+//            throw new SQLException("사원 정보 업데이트에 실패하였습니다.");
+//        }
+//
+//        return employee;
+//    }
+    public EmployeeDto updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode, MultipartFile employeePhoto) throws Exception {
         EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
-
-        if(employee == null) {
+        if (employee == null) {
             throw new NotFoundException("해당 사원을 찾을 수 없습니다.");
         }
 
@@ -157,7 +234,30 @@ public class HumanResourceService {
             employee.setJobCode(jobCode);
         }
 
-        int affectedRows = employeeMapper.updateEmployee(employee); //update 쿼리가 실행된 결과로, 몇 개의 row가 업데이트 되었는지를 나타내는 변수
+        // 새로운 사진이 업로드된 경우
+        if (employeePhoto != null) {
+            EmployeePhotoDto oldPhoto = humanResourceMapper.selectEmployeePhotoByEmpNo(empNo);
+            if (oldPhoto != null) {
+                FileUploadUtils.deleteFile(IMAGE_DIR, oldPhoto.getChangeName());
+                humanResourceMapper.deleteEmployeePhoto(oldPhoto.getPhotoNo());
+            }
+
+            String imageName = UUID.randomUUID().toString().replace("-", "");
+            String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, employeePhoto);
+
+            EmployeePhotoDto newPhoto = EmployeePhotoDto.builder()
+                    .empNo(empNo)
+                    .filePath(replaceFileName)
+                    .originName(employeePhoto.getOriginalFilename())
+                    .changeName(replaceFileName)
+                    .uploadDate(LocalDateTime.now())
+                    .build();
+
+            // DB에 저장
+            humanResourceMapper.insertEmployeePhoto(newPhoto);
+        }
+
+        int affectedRows = employeeMapper.updateEmployee(employee);
 
         if (affectedRows != 1) {
             throw new SQLException("사원 정보 업데이트에 실패하였습니다.");
@@ -165,6 +265,7 @@ public class HumanResourceService {
 
         return employee;
     }
+
 
     /**
      * @작성일 : 2023-03-21
@@ -308,6 +409,7 @@ public class HumanResourceService {
             }
             return result.get(0); // 첫 번째 사원 반환
         }
+
 
 
 }

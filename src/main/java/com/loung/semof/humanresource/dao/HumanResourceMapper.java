@@ -1,6 +1,7 @@
 package com.loung.semof.humanresource.dao;
 
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.humanresource.dto.EmployeePhotoDto;
 import com.loung.semof.humanresource.dto.HumanResourceDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -34,5 +35,9 @@ public interface HumanResourceMapper {
 
     List<EmployeeDto> selectEmployeeByEmpNo(Long empNo);
 
+    void insertEmployeePhoto(EmployeePhotoDto employeePhotoDto);
 
+    EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo);
+
+    void deleteEmployeePhoto(Long photoNo);
 }

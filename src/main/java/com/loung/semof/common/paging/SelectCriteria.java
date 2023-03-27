@@ -1,7 +1,5 @@
 package com.loung.semof.common.paging;
 
-import java.util.Objects;
-
 public class SelectCriteria {
     private int pageNo;					//요청한 페이지 번호
     private int totalCount;				//전체 게시물 수
@@ -106,26 +104,5 @@ public class SelectCriteria {
         return "SelectCriteria [pageNo=" + pageNo + ", totalCount=" + totalCount + ", limit=" + limit
                 + ", buttonAmount=" + buttonAmount + ", maxPage=" + maxPage + ", startPage=" + startPage + ", endPage="
                 + endPage + ", startRow=" + startRow + ", endRow=" + endRow + "]";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SelectCriteria)) return false;
-        SelectCriteria that = (SelectCriteria) o;
-        return getPageNo() == that.getPageNo() &&
-                getTotalCount() == that.getTotalCount() &&
-                getLimit() == that.getLimit() &&
-                getButtonAmount() == that.getButtonAmount() &&
-                getMaxPage() == that.getMaxPage() &&
-                getStartPage() == that.getStartPage() &&
-                getEndPage() == that.getEndPage() &&
-                getStartRow() == that.getStartRow() &&
-                getEndRow() == that.getEndRow();
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getPageNo(), getTotalCount(), getLimit(), getButtonAmount(), getMaxPage(), getStartPage(), getEndPage(), getStartRow(), getEndRow());
     }
 }

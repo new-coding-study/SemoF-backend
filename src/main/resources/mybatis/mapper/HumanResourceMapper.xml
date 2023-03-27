@@ -57,6 +57,15 @@
         <result property="deptName" column="DEPT_NAME"/>
     </resultMap>
 
+    <resultMap id="employeePhotoResult" type="EmployeePhotoDto">
+        <result property="photoNo" column="photo_no"/>
+        <result property="empNo" column="emp_no"/>
+        <result property="filePath" column="file_path"/>
+        <result property="originName" column="origin_name"/>
+        <result property="changeName" column="change_name"/>
+        <result property="uploadDate" column="upload_date"/>
+    </resultMap>
+
     <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
     <update id="updateEmployee" parameterType="EmployeeDto">
         UPDATE tbl_employee
@@ -157,5 +166,27 @@
         FROM tbl_employee
         WHERE GENDER = #{gender}
     </select>
+
+    <!-- INSERT 쿼리 : 사원 사진 등록  -->
+    <insert id="insertEmployeePhoto" parameterType="EmployeePhotoDto">
+        INSERT INTO tbl_employee_photo
+        VALUES
+            (#{photoNo}, #{empNo}, #{filePath}
+            , #{originName}, #{changeName}, #{uploadDate})
+    </insert>
+
+    <!-- SELECT 쿼리 : 사원 번호로 사원 사진 조회  -->
+    <select id="selectEmployeePhotoByEmpNo" parameterType="long" resultMap="employeePhotoResult">
+        SELECT
+            *
+        FROM tbl_employee_photo
+        WHERE EMP_NO = #{empNo}
+    </select>
+
+    <!-- SELECT 쿼리 : 사진 번호로 사진 삭제  -->
+    <delete id="deleteEmployeePhoto" parameterType="long">
+        DELETE FROM tbl_employee_photo
+        WHERE PHOTO_NO = #{photoNo}
+    </delete>
 
 </mapper>
