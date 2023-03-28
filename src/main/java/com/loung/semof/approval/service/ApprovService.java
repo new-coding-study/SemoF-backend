@@ -3,9 +3,15 @@ package com.loung.semof.approval.service;
 import com.loung.semof.approval.dao.ApprovalMapper;
 import com.loung.semof.approval.dto.*;
 import com.loung.semof.common.paging.SelectCriteria;
+import com.loung.semof.util.FileUploadUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @파일이름 : ApprovService.java
@@ -17,6 +23,13 @@ import java.util.List;
  */
 @Service
 public class ApprovService {
+
+    @Value("${file.file-dir}")
+    private String FILE_DIR;
+
+    @Value("${file.file-url}")
+    private String FILE_URL;
+
     private final ApprovalMapper approvMapper;
 
     public ApprovService(ApprovalMapper approvalMapper) {
@@ -50,16 +63,36 @@ public class ApprovService {
         return(result > 0 ) ? "의견등록성공" : "의견등록실패";
     }
 
-    public Object insertApproval(ApprovalDTO approval, List<ApprovFileDTO> file, List<ApprovContentDTO> contents) {
-        approval.setApprovFileDTOList(file);
+    public Object insertApproval(ApprovalDTO approval, List<MultipartFile> file, List<ApprovContentDTO> contents) {
+        List<ApprovFileDTO> files = new ArrayList<>();
+
+        String otherFileName = null;
+        for(int i =0; i<file.size();i++){
+            ApprovFileDTO fileDTO = new ApprovFileDTO();
+
+            fileDTO.setOriginName(file.get(i).getOriginalFilename());
+
+            String fileName = UUID.randomUUID().toString().replace("-","");
+            fileDTO.setNewName(fileName);
+            try {
+                otherFileName = FileUploadUtils.saveFile(FILE_DIR, fileName,fileDTO.getApprovFile());
+                fileDTO.setFilePath(otherFileName);
+            } catch (IOException e) {
+                FileUploadUtils.deleteFile(FILE_DIR, otherFileName);
+                throw new RuntimeException(e);
+            }
+            files.add(fileDTO);
+        }
+        approval.setApprovFileDTOList(files);
         approval.setApprovContentDTOList(contents);
         int result = 0;
         int approvResult = approvMapper.insertApproval(approval);
         int fileResult = 0;
         int contentResult = 0;
-        for(int i =0; i<file.size();i++){
+        for(int i =0; i<files.size();i++){
             fileResult += approvMapper.insertApprovFile(approval.getApprovFileDTOList().get(i));
         }
+
         for(int i =0; i<contents.size();i++){
             contentResult += approvMapper.insertApprovContent(approval.getApprovContentDTOList().get(i));
         }
@@ -72,6 +105,9 @@ public class ApprovService {
 
     public Object selectApprovalListWithPaging(SelectCriteria selectCriteria) {
         List<ApprovalDTO> approvalList = approvMapper.selectApprovalListWithPaging(selectCriteria);
+        for(int i=0; i<approvalList.size(); i++){
+            approvalList.get(i).getApprovFileDTOList().get(i).setFilePath(FILE_DIR + approvalList.get(i).getApprovFileDTOList().get(i).getFilePath());
+        }
         return approvalList;
     }
 
@@ -98,8 +134,54 @@ public class ApprovService {
         return approvalDTO;
     }
 
-    public Object updateApproval(ApprovalDTO approval, List<ApprovFileDTO> file, List<ApprovContentDTO> contents) {
-        approval.setApprovFileDTOList(file);
+    public Object updateApproval(ApprovalDTO approval, List<MultipartFile> file, List<ApprovContentDTO> contents) {
+        List<ApprovFileDTO> files = new ArrayList<>();
+
+        String otherFileName = null;
+
+        for(int i =0; i<file.size();i++){
+            try {
+            String originPath = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getFilePath();
+
+            String originName = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getOriginName();
+
+            String originNewName = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getNewName();
+
+            MultipartFile originFile = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getApprovFile();
+
+            Integer originNo = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getFileNo();
+
+            ApprovFileDTO fileDTO = new ApprovFileDTO();
+
+            fileDTO.setOriginName(file.get(i).getOriginalFilename());
+
+            if(approval.getApprovFileDTOList().get(i).getApprovFile() != null){
+
+                String fileName = UUID.randomUUID().toString().replace("-","");
+
+                fileDTO.setNewName(fileName);
+
+                otherFileName = FileUploadUtils.saveFile(FILE_DIR, fileName,fileDTO.getApprovFile());
+
+                fileDTO.setFilePath(otherFileName);
+
+                boolean isDelete = FileUploadUtils.deleteFile(FILE_DIR, originPath);
+
+                files.add(fileDTO);
+            }else{
+                fileDTO.setFilePath(originPath);
+                fileDTO.setApprovFile(originFile);
+                fileDTO.setFileNo(originNo);
+                fileDTO.setOriginName(originName);
+                fileDTO.setNewName(originNewName);
+                files.add(fileDTO);
+            }
+        } catch (IOException e) {
+                FileUploadUtils.deleteFile(FILE_DIR, otherFileName);
+                throw new RuntimeException(e);
+            }
+        }
+        approval.setApprovFileDTOList(files);
         approval.setApprovContentDTOList(contents);
         int result = 0;
         int approvResult = approvMapper.updateApproval(approval);

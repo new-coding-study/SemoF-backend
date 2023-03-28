@@ -38,7 +38,7 @@
     </select>
 
     <!-- INSERT 쿼리: EmployeeDto 데이터 등록 -->
-    <insert id="insertEmployee" parameterType="EmployeeDto">
+    <insert id="insertEmployee" parameterType="EmployeeDto" useGeneratedKeys="true" keyProperty="empNo">
         INSERT INTO tbl_employee
         VALUES
             (#{empNo}, #{empName}, #{empReg},
