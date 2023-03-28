@@ -5,9 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @파일이름 : AttendanceMapperTest
@@ -52,6 +56,60 @@ class AttendanceMapperTest {
         // System.out.println(attendanceDtoList);
         assertNotNull(attendanceDtoList);
     }
+
+    @Test
+    void 연차_현황_조회_성공() throws Exception {
+        //given
+
+        //when
+        AttendanceDto attendanceDto = attendanceMapper.selectVacationDetail(1);
+
+        //then
+        System.out.println(attendanceDto);  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        assertNotNull(attendanceDto);
+    }
+
+    @Test
+    void 사원_근태_상태_변경_성공() throws Exception {
+        //given
+        HashMap<String, Integer> atdObject = new HashMap<>();
+        atdObject.put("atdNo", attendanceMapper.selectLastAttendanceNo(1));
+        atdObject.put("statusCode", 2);
+        atdObject.put("empNo", 1);
+
+        //when
+        Date today = attendanceMapper.selectAttendanceDetail(1).getAtdDate();
+        LocalDate currentDate = LocalDate.now();
+        if (!Objects.equals(today.toString(), currentDate.toString())){
+            attendanceMapper.insertAttendance(1);
+            attendanceMapper.insertAttendanceStatusInfo(atdObject);
+        }
+        int result = attendanceMapper.updateAttendance(atdObject);
+
+        //then
+        System.out.println(today);
+        System.out.println(currentDate);
+        System.out.println("selectLastAttendanceNo : " + attendanceMapper.selectLastAttendanceNo(1));
+        System.out.println(result > 0 ? "상태 변경 성공" : "상태 변경 실패");  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        assertEquals(1,result);
+    }
+
+    @Test
+    void 만능_테스트_에오() throws Exception {
+        //given
+
+        //when
+        Date today = attendanceMapper.selectAttendanceDetail(1).getAtdDate();
+        LocalDate currentDate = LocalDate.now();
+        boolean tot = !Objects.equals(today.toString(), currentDate.toString());
+
+        //then
+        System.out.println(today);  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        System.out.println(currentDate);
+        assertTrue(tot);
+    }
+
+
 
     /* @Test
     @DisplayName("신규 메뉴 추가 확인")

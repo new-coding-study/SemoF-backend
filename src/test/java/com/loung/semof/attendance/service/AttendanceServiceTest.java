@@ -53,6 +53,35 @@ class AttendanceServiceTest {
         assertNotNull(attendanceDtoList);
     }
 
+    @Test
+    void 연차_현황_조회_성공() throws Exception {
+        //given
+
+        //when
+        AttendanceDto attendanceDto = attendanceService.selectVacationDetail(1);
+
+        //then
+        System.out.println(attendanceDto);  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        assertNotNull(attendanceDto);
+    }
+
+    // @Test
+    // void 사원_근태_상태_변경_성공() throws Exception {
+    //     //given
+    //     int atdNo = attendanceService.selectLastAttendanceNo(3);
+    //
+    //     //when
+    //     String result = attendanceService.updateAttendance(atdNo, 3, 0);
+    //
+    //     //then
+    //     System.out.println("updateAttendance(result) : " + attendanceService.updateAttendance(atdNo, 3, 0));
+    //     System.out.println("상태 변경 성공");  //로그포제이 안 쓰고 그냥 출력문으로 확인
+    //     assertEquals("상태 변경 성공",result);
+    // }
+
+
+
+
   /*   @Test
     public void 신규_메뉴_등록용_서비스_성공_테스트() throws Exception {
 

@@ -8,13 +8,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * @파일이름 : AttendanceControllerTest
@@ -60,7 +62,7 @@ class AttendanceControllerTest {
     public void 사원_근태_정보_조회_성공() throws Exception {
         // given
         // when, then
-        mockMvc.perform(get("/attendance/status/{userNo}", 1))
+        mockMvc.perform(get("/attendance/status/{empNo}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andDo(print());
@@ -69,7 +71,7 @@ class AttendanceControllerTest {
     public void 사원_근태_정보_조회_실패() throws Exception {
         // given
         // when, then
-        mockMvc.perform(get("/attendance/status/{userNo}", 1))
+        mockMvc.perform(get("/attendance/status/{empNo}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect((ResultMatcher) assertThrows(Exception.class, () -> attendanceController.selectAttendanceDetail(1), "실패"))
@@ -81,9 +83,34 @@ class AttendanceControllerTest {
     public void 사원_근태_기록_조회_성공() throws Exception {
         // given
         // when, then
-        mockMvc.perform(get("/attendance/status/histories/{userNo}", 1))
+        mockMvc.perform(get("/attendance/status/histories/{empNo}", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("selectVacationDetail_success")
+    public void 사원_연차_현황_조회_성공() throws Exception {
+        // given
+        // when, then
+        mockMvc.perform(get("/attendance/annual/{empNo}", 1))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("updateAttendance_success")
+    public void 사원_근태_상태_변경_성공() throws Exception {
+        // given
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();//  폼에서 넘어올 값을 미리 작성
+        params.add("empNo", "1");
+        params.add("statusCode", "0");
+
+        // when, then
+        mockMvc.perform(put("/attendance/status/{empNo}", 1).params(params))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 

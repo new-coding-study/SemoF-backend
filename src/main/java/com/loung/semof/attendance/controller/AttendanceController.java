@@ -5,10 +5,7 @@ import com.loung.semof.common.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -31,13 +28,13 @@ public class AttendanceController {
     @GetMapping("/status/{empNo}")
     public ResponseEntity<ResponseDto> selectAttendanceDetail(@PathVariable (name = "empNo") int empNo) {
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendanceDetail(empNo)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공", attendanceService.selectAttendanceDetail(empNo)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
         }
-        // return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendanceDetail(empNo)));
+        // return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공", attendanceService.selectAttendanceDetail(empNo)));
     }
 
     /**
@@ -48,14 +45,49 @@ public class AttendanceController {
     @GetMapping("/status/histories/{empNo}")
     public ResponseEntity<ResponseDto> selectAttendanceList(@PathVariable (name = "empNo") int empNo) {
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태기록 조회 성공",  attendanceService.selectAttendanceList(empNo)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태기록 조회 성공", attendanceService.selectAttendanceList(empNo)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
         }
-        // return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태정보 조회 성공",  attendanceService.selectAttendanceDetail(empNo)));
     }
+
+    /**
+     * @작성일 : 2023-03-28 027
+     * @작성자 : sik
+     * @메소드설명 : 사원 연차 현황 상세 조회
+     */
+    @GetMapping("/annual/{empNo}")
+    public ResponseEntity<ResponseDto> selectVacationDetail(@PathVariable (name = "empNo") int empNo) {
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 연차 현황 조회 성공", attendanceService.selectVacationDetail(empNo)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
+
+    /**
+     * @작성일 : 2023-03-28 027
+     * @작성자 : sik
+     * @메소드설명 : 사원 근태 상태 변경
+     */
+    @PutMapping("/status/{empNo}")
+    public ResponseEntity<ResponseDto> updateAttendance(@PathVariable (name = "empNo") int empNo, int statusCode) {
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태 상태 변경 성공", attendanceService.updateAttendance(empNo, statusCode)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
+
+
+
+
 
     /* 총 갯수 구해서 페이징 처리한 스티커 전체 조회 */
     /* @GetMapping("/attendances")

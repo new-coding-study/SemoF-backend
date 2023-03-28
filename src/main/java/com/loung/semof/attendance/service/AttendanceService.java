@@ -5,7 +5,11 @@ import com.loung.semof.attendance.dto.AttendanceDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -46,6 +50,47 @@ public class AttendanceService {
         }
         return attendanceDtoList;
     }
+
+    public AttendanceDto selectVacationDetail(int empNo) throws Exception{
+        log.info("[AttendanceService] selectAttendanceDetail Start ===================================");
+        AttendanceDto attendanceDto = attendanceMapper.selectVacationDetail(empNo);
+        log.info("[AttendanceService] selectAttendanceDetail End ===================================");
+        if (attendanceDto == null) {
+            throw new Exception("연차 현황 조회 실패");
+        }
+        return attendanceDto;
+    }
+
+
+    public String updateAttendance(int empNo, int statusCode) throws Exception{
+        log.info("[AttendanceService] updateAttendance Start ===================================");
+        int atdNo = attendanceMapper.selectLastAttendanceNo(empNo);
+
+
+        HashMap<String, Integer> atdObject = new HashMap<>();
+        atdObject.put("atdNo", atdNo);
+        atdObject.put("statusCode", statusCode);
+        atdObject.put("empNo", empNo);
+
+        Date today = attendanceMapper.selectAttendanceDetail(empNo).getAtdDate();
+        LocalDate currentDate = LocalDate.now();
+
+        if (!Objects.equals(today.toString(), currentDate.toString())){
+            attendanceMapper.insertAttendance(empNo);
+            attendanceMapper.insertAttendanceStatusInfo(atdObject);
+        }
+
+        int result = attendanceMapper.updateAttendance(atdObject);
+        log.info("[AttendanceService] updateAttendance End ===================================");
+        log.info("[AttendanceService] result > 0 성공: "+ result);
+        if (result > 0) {
+            return "상태 변경 성공";
+        } else {
+            throw new Exception("상태 변경 실패");
+        }
+    }
+
+
 
     /* 총 갯수 구하기 */
     /* public int selectAttendanceTotal() {
