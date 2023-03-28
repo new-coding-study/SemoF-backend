@@ -14,9 +14,7 @@ import java.time.LocalDateTime;
  * @클래스설명 : 모델(Model)과 뷰(View) 사이에서 데이터 전송을 담당하는 클래스
  */
 @Builder
-@ToString
-@Setter
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class EmployeeDto {
