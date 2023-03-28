@@ -34,26 +34,26 @@ public class ReplyController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "댓글 조회", responseDtoWithPaging));
     }
 
-    @PostMapping("/reply-lists/{empNo}")
+    @PostMapping("/reply-lists")
     public ResponseEntity<ResponseDto> insertReply(@ModelAttribute ReplyDto replyDto, @PathVariable int empNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED,"댓글 등록", replyService.insertReply(replyDto, empNo)));
     }
 
-    @PutMapping("/reply-lists")
+    @PutMapping("/reply-lists-management/{replyCode}")
     public ResponseEntity<ResponseDto> updateReplyForAdmin(@ModelAttribute ReplyDto replyDto){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 수정", replyService.updateReplyForAdmin(replyDto)));
     }
 
-    @PutMapping("/reply-lists/{empNo}")
+    @PutMapping("/reply-lists/{replyCode}")
     public ResponseEntity<ResponseDto> updateReply(@ModelAttribute ReplyDto replyDto, @PathVariable int empNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 수정", replyService.updateReply(replyDto, empNo)));
     }
-    @DeleteMapping("/reply-lists")
+    @DeleteMapping("/reply-lists-management/{replyCode}")
     public ResponseEntity<ResponseDto> deleteReplyForAdmin(@ModelAttribute ReplyDto replyDto){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 삭제", replyService.deleteReplyForAdmin(replyDto)));
     }
 
-    @DeleteMapping("/reply-lists")
+    @DeleteMapping("/reply-lists/{replyCode}")
     public ResponseEntity<ResponseDto> deleteReply(@ModelAttribute ReplyDto replyDto){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 삭제", replyService.deleteReply(replyDto)));
     }

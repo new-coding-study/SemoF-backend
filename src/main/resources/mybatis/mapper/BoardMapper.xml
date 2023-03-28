@@ -42,6 +42,7 @@
             ,TB.WRITE_DATE
             ,TE.EMP_NAME
             ,TC.BOARD_CATEGORY_NAME
+            ,TB.BOARD_CATE_CODE
         FROM tbl_board TB
         JOIN tbl_board_category TC
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -59,6 +60,7 @@
             ,TB.WRITE_DATE
             ,TE.EMP_NAME
             ,TC.BOARD_CATEGORY_NAME
+            ,TB.BOARD_CATE_CODE
         FROM tbl_board TB
         JOIN tbl_board_category TC
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -77,17 +79,17 @@
     </select>
 
 
-    <!-- 페이징 처리를 위해 공지사항 글 갯수를 조회-->
-<!--    <select id="selectNoticeTopTotal" resultType="int">-->
-<!--        SELECT COUNT(*)-->
-<!--        FROM (-->
-<!--                 SELECT *-->
-<!--                 FROM tbl_board-->
-<!--                 WHERE BOARD_CATE_CODE = 1-->
-<!--                 ORDER BY WRITE_DATE DESC-->
-<!--                     LIMIT 3-->
-<!--             ) SUB-->
-<!--    </select>-->
+<!--     페이징 처리를 위해 공지사항 최신 3개 조회-->
+    <select id="selectNoticeTopTotal" resultType="int">
+        SELECT COUNT(*)
+        FROM (
+                 SELECT *
+                 FROM tbl_board
+                 WHERE BOARD_CATE_CODE = 1
+                 ORDER BY WRITE_DATE DESC
+                     LIMIT 3
+             ) SUB
+    </select>
 
 
 <!--    <select id="selectNoticeDetailForEmp" resultType="BoardDto" parameterType="int">-->
@@ -116,6 +118,7 @@
                 ,P.WRITE_DATE
                 ,P.EMP_NAME
                 ,P.BOARD_CATEGORY_NAME
+                ,P.BOARD_CATE_CODE
         FROM
         (SELECT
              ROW_NUMBER() OVER(ORDER BY TB.WRITE_DATE DESC) AS RN
@@ -124,6 +127,7 @@
              ,TB.WRITE_DATE
              ,TE.EMP_NAME
              ,TC.BOARD_CATEGORY_NAME
+             ,TB.BOARD_CATE_CODE
          FROM tbl_board TB
          JOIN tbl_board_category TC
          ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -143,6 +147,7 @@
              ,P.WRITE_DATE
              ,P.EMP_NAME
              ,P.BOARD_CATEGORY_NAME
+             ,P.BOARD_CATE_CODE
         FROM
             (SELECT
                  ROW_NUMBER() OVER(ORDER BY TB.WRITE_DATE DESC) AS RN
@@ -151,6 +156,7 @@
                   ,TB.WRITE_DATE
                   ,TE.EMP_NAME
                   ,TC.BOARD_CATEGORY_NAME
+                  ,TB.BOARD_CATE_CODE
              FROM tbl_board TB
              JOIN tbl_board_category TC
              ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -199,6 +205,7 @@
             ,TB.WRITE_DATE
             ,TE.EMP_NAME
             ,TC.BOARD_CATEGORY_NAME
+            ,TB.BOARD_CATE_CODE
         FROM tbl_board TB
         JOIN tbl_board_category TC
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -216,6 +223,7 @@
             ,TB.WRITE_DATE
             ,TE.EMP_NAME
             ,TC.BOARD_CATEGORY_NAME
+            ,TB.BOARD_CATE_CODE
         FROM tbl_board TB
         JOIN tbl_board_category TC
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -233,6 +241,7 @@
             ,TB.WRITE_DATE
             ,TE.EMP_NAME
             ,TC.BOARD_CATEGORY_NAME
+            ,TB.BOARD_CATE_CODE
         FROM tbl_board TB
         JOIN tbl_board_category TC
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -251,6 +260,7 @@
              ,P.WRITE_DATE
              ,P.EMP_NAME
              ,P.BOARD_CATEGORY_NAME
+             ,P.BOARD_CATE_CODE
         FROM
             (SELECT
                   ROW_NUMBER() over (ORDER BY TB.WRITE_DATE DESC ) AS RN
@@ -259,6 +269,7 @@
                   ,TB.WRITE_DATE
                   ,TE.EMP_NAME
                   ,TC.BOARD_CATEGORY_NAME
+                  ,TB.BOARD_CATE_CODE
              FROM tbl_board TB
              JOIN tbl_board_category TC
              ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -285,6 +296,7 @@
             ,TB.WRITE_DATE
             ,TE.EMP_NAME
             ,TC.BOARD_CATEGORY_NAME
+            ,TB.BOARD_CATE_CODE
         FROM tbl_board TB
         JOIN tbl_board_category TC
         ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -304,6 +316,7 @@
             ,P.WRITE_DATE
             ,P.EMP_NAME
             ,P.BOARD_CATEGORY_NAME
+            ,P.BOARD_CATE_CODE
         FROM
             (SELECT
                  TB.BOARD_NO
@@ -312,6 +325,7 @@
                  ,TB.WRITE_DATE
                  ,TE.EMP_NAME
                  ,TC.BOARD_CATEGORY_NAME
+                 ,TB.BOARD_CATE_CODE
              FROM tbl_board TB
              JOIN tbl_board_category TC
              ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -330,6 +344,7 @@
              ,TB.WRITE_DATE
              ,TE.EMP_NAME
              ,TC.BOARD_CATEGORY_NAME
+             ,TB.BOARD_CATE_CODE
         FROM tbl_board TB
                  JOIN tbl_board_category TC
                       ON (TB.BOARD_CATE_CODE = TC.BOARD_CATEGORY_CODE)
@@ -353,7 +368,7 @@
                 (
                  #{boardTitle}
                , #{boardContent}
-               , 1
+               , #{boardCateCode}
                , #{empNo}
                 )
     </insert>
@@ -371,7 +386,7 @@
             (
               #{boardTitle}
             , #{boardContent}
-            , 2
+            , #{boardCateCode}
             , #{empNo}
             )
     </insert>
