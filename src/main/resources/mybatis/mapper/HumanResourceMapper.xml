@@ -57,6 +57,14 @@
         <result property="deptName" column="DEPT_NAME"/>
     </resultMap>
 
+    <resultMap id="employeeEvaluationMap" type="EmployeeEvaluationDto">
+        <id column="EMP_NO" property="empNo" />
+        <result column="EMP_NAME" property="empName" />
+        <result column="JOB_NAME" property="jobName" />
+        <result column="DEPT_NAME" property="deptName" />
+        <result column="BRANCH_NAME" property="branchName" />
+    </resultMap>
+
     <resultMap id="employeePhotoResult" type="EmployeePhotoDto">
         <result property="photoNo" column="photo_no"/>
         <result property="empNo" column="emp_no"/>

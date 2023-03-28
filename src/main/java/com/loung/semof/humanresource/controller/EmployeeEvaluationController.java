@@ -2,6 +2,7 @@ package com.loung.semof.humanresource.controller;
 
 
 import com.loung.semof.common.ResponseDto;
+import com.loung.semof.humanresource.Exception.NotFoundException;
 import com.loung.semof.humanresource.dto.EmployeeEvaluationDto;
 import com.loung.semof.humanresource.service.EmployeeEvaluationService;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class EmployeeEvaluationController {
      * @메소드설명 : 사원의 월별 출근, 결근율을 조회하는 메소드
      */
     @GetMapping("/attendances/{empNo}")
-    public ResponseEntity<ResponseDto> selectAttendanceSummary(@PathVariable("empNo") int empNo) {
+    public ResponseEntity<ResponseDto> selectAttendanceSummary(@PathVariable("empNo") Long empNo) {
 
         Map<String, Object> summary = employeeEvaluationService.selectAttendanceSummary(empNo);
 
@@ -93,7 +94,7 @@ public class EmployeeEvaluationController {
      * @메소드설명 : 사원의 근태 평가 점수를 조회하는 메소드
      */
     @GetMapping("/evaluation/attendance/{empNo}")
-    public ResponseEntity<ResponseDto> selectAttendanceGrade(@PathVariable("empNo") int empNo) {
+    public ResponseEntity<ResponseDto> selectAttendanceGrade(@PathVariable("empNo") Long empNo) {
         
         try {
             List<EmployeeEvaluationDto> attendanceList = employeeEvaluationService.selectAttendanceGrade(empNo);
@@ -118,7 +119,7 @@ public class EmployeeEvaluationController {
      * @메소드설명 : 사원의 기여도 평가 점수를 조회하는 메소드
      */
     @GetMapping("/evaluation/contributions/{empNo}")
-    public ResponseEntity<ResponseDto> selectContributionGrade(@PathVariable("empNo") int empNo) {
+    public ResponseEntity<ResponseDto> selectContributionGrade(@PathVariable("empNo") Long empNo) {
         try {
             List<EmployeeEvaluationDto> contributionList = employeeEvaluationService.selectContributionGrade(empNo);
 
@@ -205,19 +206,14 @@ public class EmployeeEvaluationController {
      */
     @DeleteMapping("/evaluation/attendances/{empNo}")
     public ResponseEntity<ResponseDto> deleteAttendanceGrade(@PathVariable("empNo") Long empNo) {
-
         try {
+            log.info("[EmployeeEvaluationController] empNo: {}", empNo);
 
-            EmployeeEvaluationDto employeeEvaluationDto = new EmployeeEvaluationDto();
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "근태 평가 정보 삭제 성공", employeeEvaluationService.deleteAttendanceGrade(empNo)));
 
-            // employeeEvaluationDto에 empNo 설정
-            employeeEvaluationDto.setEmpNo(empNo);
-
-            log.info("[EmployeeEvaluationController] employeeEvaluationDto" + employeeEvaluationDto);
-
-            return ResponseEntity.ok()
-                    .body(new ResponseDto(HttpStatus.OK, "근태 평가 정보 삭제 성공", employeeEvaluationService.deleteAttendanceGrade(employeeEvaluationDto)));
-
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ResponseDto(HttpStatus.NOT_FOUND, e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "근태 평가 정보 삭제 중 오류가 발생했습니다.", null));

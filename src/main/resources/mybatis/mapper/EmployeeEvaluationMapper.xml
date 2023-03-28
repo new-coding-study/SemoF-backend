@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.humanresource.dao.EmployeeEvaluationMapper">
+
+    <resultMap id="attendanceEvaluationMap" type="EmployeeEvaluationDto">
+        <id column="EMP_NO" property="empNo" />
+        <result column="EMP_NAME" property="empName" />
+        <result column="JOB_NAME" property="jobName" />
+        <result column="DEPT_NAME" property="deptName" />
+        <result column="BRANCH_NAME" property="branchName" />
+    </resultMap>
+
+    <resultMap id="contributeEvaluationMap" type="EmployeeEvaluationDto">
+        <id property="empNo" column="EMP_NO" />
+        <result property="empName" column="EMP_NAME" />
+        <result property="projAContribution" column="PROJECT_A_CONTRIBUTION" />
+        <result property="projBContribution" column="PROJECT_B_CONTRIBUTION" />
+        <result property="projCContribution" column="PROJECT_C_CONTRIBUTION" />
+    </resultMap>
+
+    <!-- SELECT 쿼리 : 출근율, 결근율 정보를 조회-->
+    <select id="selectAttendanceSummary" parameterType="EmployeeEvaluationDto" resultMap="attendanceEvaluationMap">
+        SELECT
+            EMP_NO, COUNT(ATD_NO) AS working_days
+        FROM tbl_attendance
+        WHERE EMP_NO = #{empNo}
+          AND YEAR(ATD_DATE) = #{year} AND MONTH(ATD_DATE) = #{month}
+        GROUP BY EMP_NO;
+    </select>
+
+    <!-- SELECT 쿼리 : 프로젝트 기여도 정보를 조회-->
+    <select id="selectProjectContributionRates" parameterType="EmployeeEvaluationDto" resultMap="contributeEvaluationMap">
+        SELECT
+            ec.EMP_NO,
+            e.EMP_NAME,
+            ec.PROJECT_A_CONTRIBUTION,
+            ec.PROJECT_B_CONTRIBUTION,
+            ec.PROJECT_C_CONTRIBUTION
+        FROM
+            TBL_EMPLOYEE e
+                JOIN tbl_contribution ec ON e.EMP_NO = ec.EMP_NO
+        WHERE
+            ec.EMP_NO = #{empNo}
+    </select>
+
+    <!-- SELECT 쿼리 : 사원번호로 사원의 근태 평가 조회-->
+    <select id="selectAttendanceEvaluationByEmpNo" resultType="EmployeeEvaluationDto">
+        SELECT
+        *
+        FROM tbl_attendance_evaluation
+        WHERE EMP_NO = #{empNo}
+    </select>
+
+    <!-- SELECT 쿼리 : 사원번호로 사원의 기여도 평가 조회-->
+    <select id="selectContributionEvaluationByEmpNo" resultType="EmployeeEvaluationDto">
+        SELECT
+            EVAL_CONT_NO AS evalContNo,
+            CONT_NO AS contNo,
+            CATEGORY_NO AS categoryNo,
+            GRADE
+        FROM tbl_contribution_evaluation
+        WHERE CONT_NO IN (
+            SELECT CONT_NO
+            FROM tbl_contribution
+            WHERE EMP_NO = #{empNo}
+        )
+        ORDER BY EVAL_CONT_NO DESC
+    </select>
+
+    <!-- INSERT 쿼리 : 근태 평가 점수 삽입-->
+    <insert id="insertAttendanceGrade">
+        INSERT INTO tbl_attendance_evaluation
+        VALUES (#{evalAtdNo}, #{empNo}, #{categoryNo}, #{grade})
+    </insert>
+
+    <!-- INSERT 쿼리 : 기여도 평가 점수 삽입-->
+    <insert id="insertContributionGrade">
+        INSERT INTO tbl_contribution_evaluation
+            (CONT_NO, CATEGORY_NO, GRADE)
+        VALUES (
+                   (SELECT CONT_NO FROM tbl_contribution
+                    WHERE EMP_NO = #{empNo} LIMIT 1),
+                   #{categoryNo},
+                   #{grade}
+               )
+    </insert>
+
+    <!-- SELECT 쿼리 : 근태 평가 카운트를 조회-->
+    <select id="countAttendanceEvaluation" parameterType="EmployeeEvaluationDto" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM tbl_attendance_evaluation
+        WHERE EMP_NO = #{empNo}
+          AND CATEGORY_NO = #{categoryNo}
+    </select>
+
+    <!-- SELECT 쿼리 : 기여도 평가 카운트를 조회-->
+    <select id="countContributionEvaluation" parameterType="EmployeeEvaluationDto" resultType="int">
+        SELECT COUNT(*) FROM tbl_contribution_evaluation
+        WHERE CONT_NO IN (
+            SELECT CONT_NO FROM tbl_contribution
+            WHERE EMP_NO = #{empNo}
+        ) AND CATEGORY_NO = #{categoryNo}
+    </select>
+
+    <!-- SELECT 쿼리 : 해당 사원의 근태 정보 조회 -->
+    <select id="selectAttendanceByEmpNo" parameterType="EmployeeEvaluationDto" resultType="EmployeeEvaluationDto">
+        SELECT *
+        FROM tbl_attendance
+        WHERE EMP_NO = #{empNo}
+    </select>
+
+    <!-- SELECT 쿼리 : 해당 사원의 기여도 정보 조회 -->
+    <select id="selectContributionByEmpNo" parameterType="java.lang.Long" resultType="EmployeeEvaluationDto">
+        SELECT *
+        FROM tbl_contribution
+        WHERE EMP_NO = #{empNo}
+    </select>
+
+
+    <!-- UPDATE 쿼리 : 사원의 근태 평가를 수정 -->
+    <update id="updateAttendanceGrade" parameterType="EmployeeEvaluationDto">
+        UPDATE tbl_attendance_evaluation
+        SET CATEGORY_NO = #{categoryNo},
+            GRADE = #{grade}
+        WHERE EVAL_ATD_NO = #{evalAtdNo}
+          AND EMP_NO = #{empNo}
+    </update>
+
+    <!-- UPDATE 쿼리 : 사원의 기여도 평가를 수정 -->
+    <update id="updateContributionGrade" parameterType="EmployeeEvaluationDto">
+        UPDATE tbl_contribution_evaluation
+        SET GRADE = #{grade}
+        WHERE EVAL_CONT_NO = #{evalContNo}
+          AND CATEGORY_NO = #{categoryNo}
+    </update>
+
+    <!-- DELETE 쿼리 : 사원의 근태 평가를 삭제 -->
+    <delete id="deleteAttendanceGradeByEmpNo" parameterType="java.lang.Long">
+        DELETE FROM tbl_attendance_evaluation
+        WHERE EMP_NO = #{targetNumber}
+    </delete>
+
+    <!-- DELETE 쿼리 : 사원의 기여도 평가를 삭제 -->
+    <delete id="deleteContributionEvaluationByContNo" parameterType="java.lang.Long">
+        DELETE FROM tbl_contribution_evaluation
+        WHERE CONT_NO = #{targetNumber}
+    </delete>
+
+
+</mapper>
