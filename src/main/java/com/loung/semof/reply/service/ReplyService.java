@@ -19,7 +19,7 @@ public class ReplyService {
         int result = replyMapper.selectReplyTotal();
         return result;
     }
-
+//
     public Object selectReplyListWithPaging(SelectCriteria selectCriteria){
         List<ReplyDto> replyList = replyMapper.selectReplyListWithPaging(selectCriteria);
         for(int i = 0; i<replyList.size(); i++);

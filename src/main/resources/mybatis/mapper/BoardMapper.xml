@@ -20,7 +20,7 @@
 <!--        <result property="deptCode" column="DEPT_CODE"/>-->
 <!--        <result property="bCode" column="B_CODE"/>-->
 <!--    </resultMap>-->
-<!--   -->
+
 <!--    <resultMap id="boardResultMap" type="com.loung.semof.board.dto.BoardDto">-->
 <!--        <id property="boardNo" column="BOARD_NO"/>-->
 <!--        <result property="boardTitle" column="BOARD_TITLE"/>-->

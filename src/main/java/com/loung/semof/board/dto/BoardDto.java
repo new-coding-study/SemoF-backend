@@ -21,5 +21,6 @@ public class BoardDto {
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
     private LocalDate writeDate;
     private int boardCateCode;
+//
 
 }

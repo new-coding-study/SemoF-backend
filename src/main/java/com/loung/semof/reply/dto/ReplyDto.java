@@ -12,4 +12,5 @@ public class ReplyDto {
     private Integer replyCode;
     private String replyContent;
 
+//
 }

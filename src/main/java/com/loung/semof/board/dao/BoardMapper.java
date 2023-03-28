@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface BoardMapper {
     int selectNoticeTotal();
-
+//
     List<BoardDto> selectNoticeListWithPaging(SelectCriteria selectCriteria);
 
     int selectPostingTotal();

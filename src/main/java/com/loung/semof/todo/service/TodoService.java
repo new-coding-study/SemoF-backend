@@ -25,7 +25,7 @@ public class TodoService {
         return todoMapper.selectTodoList(empNo);
 
     }
-
+//
     public TodoDto selectTodoDetail(Long todoNo) throws NotFoundException{
 
         TodoDto todo = todoMapper.selectTodoDetail(todoNo);

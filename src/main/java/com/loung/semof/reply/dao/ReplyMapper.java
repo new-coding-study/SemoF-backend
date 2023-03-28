@@ -15,4 +15,5 @@ public interface ReplyMapper {
     int updateReply(ReplyDto replyDto, int empNo);
     int deleteReplyForAdmin(ReplyDto replyDto);
     int deleteReply(ReplyDto replyDto);
+//
 }

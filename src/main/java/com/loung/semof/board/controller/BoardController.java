@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/boards")
 public class BoardController {
-
+//
     private final BoardService boardService;
 
     public BoardController(BoardService boardService) {
