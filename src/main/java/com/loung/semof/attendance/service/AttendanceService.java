@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,11 +64,11 @@ public class AttendanceService {
         log.info("[AttendanceService] updateAttendance Start ===================================");
 
         // 사원의 마지막 근무기록의 날짜 추출, 시스템 현재 날짜 조회
-        Date today = attendanceMapper.selectAttendanceDetail(empNo).getAtdDate();
+        AttendanceDto lastDate = attendanceMapper.selectAttendanceDetail(empNo);
         LocalDate currentDate = LocalDate.now();
 
         // 사원 마지막 근무 날짜와 현재 날짜가 같지 않을때만 근무기록행 추가 (날짜 같다면 당일 근무 기록이 이미 있음을 뜻함)
-        if (!Objects.equals(today.toString(), currentDate.toString())){
+        if (lastDate == null || !Objects.equals(currentDate.toString(), lastDate.getAtdDate().toString())){
             log.info("-------------날짜 비교 if문 진입-------------");
             attendanceMapper.insertAttendance(empNo);
         }
@@ -99,16 +97,16 @@ public class AttendanceService {
         int atdNo = attendanceMapper.selectLastAttendanceNo(empNo);
 
         // 전달할 파라미터 값 저장
-        HashMap<String, Integer> atdObject = new HashMap<>();
-        atdObject.put("atdNo", atdNo);
-        atdObject.put("statusCode", statusCode);
-        atdObject.put("empNo", empNo);
+        // HashMap<String, Integer> atdObject = new HashMap<>();
+        // atdObject.put("atdNo", atdNo);
+        // atdObject.put("statusCode", statusCode);
+        // atdObject.put("empNo", empNo);
 
         // 파라미터 전달하여 근무상태기록
-        attendanceMapper.insertAttendanceStatusInfo(atdObject);
+        attendanceMapper.insertAttendanceStatusInfo(atdNo, statusCode);
 
         // 파라미터 전달하여 근무 상태 변경
-        int result = attendanceMapper.updateAttendance(atdObject);
+        int result = attendanceMapper.updateAttendance(atdNo, empNo, statusCode);
         log.info("[AttendanceService] updateAttendance End ===================================");
         log.info("[AttendanceService] result > 0 성공: "+ result);
         if (result > 0) {

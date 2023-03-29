@@ -2,8 +2,8 @@ package com.loung.semof.attendance.dao;
 
 import com.loung.semof.attendance.dto.AttendanceDto;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
-import java.util.HashMap;
 import java.util.List;
 
 @Mapper
@@ -29,10 +29,16 @@ public interface AttendanceMapper {
     int insertAttendance(int empNo);
 
     /* 사원 근무상태정보 기록 생성(출퇴근 발생시간) */
-    int insertAttendanceStatusInfo(HashMap<String, Integer> atdObject);
+    int insertAttendanceStatusInfo(@Param("atdNo") int atdNo, @Param("statusCode") int statusCode);
+    // int insertAttendanceStatusInfo(HashMap<String, Integer> atdObject);
 
     /* 사원 근무정보 출퇴근 시간 변경 */
-    int updateAttendance(HashMap<String, Integer> atdObject);
+    int updateAttendance(@Param("atdNo") int atdNo, @Param("empNo") int empNo, @Param("statusCode") int statusCode);
+    // int updateAttendance(HashMap<String, Integer> atdObject);
+
+
+
+
 
 
     /* 총 갯수 구하기 */

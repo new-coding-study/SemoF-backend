@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -72,12 +71,12 @@ class AttendanceMapperTest {
     @Test
     void 사원_근태_상태_변경_성공() throws Exception {
         //given
-        int empNo = 2;
+        int empNo = 4;
 
         //when
-        Date today = attendanceMapper.selectAttendanceDetail(empNo).getAtdDate();
+        AttendanceDto lastDate = attendanceMapper.selectAttendanceDetail(empNo);
         LocalDate currentDate = LocalDate.now();
-        if (!Objects.equals(today.toString(), currentDate.toString())){
+        if (lastDate == null || !Objects.equals(currentDate.toString(), lastDate.getAtdDate().toString())){
             System.out.println("-------------날짜 비교 if문 진입-------------");
             attendanceMapper.insertAttendance(empNo);
         }
@@ -98,16 +97,16 @@ class AttendanceMapperTest {
                 throw new Exception("에러 발생 (오늘 근무가 종료되었거나 잘못된 입력값");
         }
         int atdNo = attendanceMapper.selectLastAttendanceNo(empNo);
-        HashMap<String, Integer> atdObject = new HashMap<>();
-        atdObject.put("atdNo", atdNo);
-        atdObject.put("statusCode", statusCode);
-        atdObject.put("empNo", empNo);
-        attendanceMapper.insertAttendanceStatusInfo(atdObject);
-        int result = attendanceMapper.updateAttendance(atdObject);
+        // HashMap<String, Integer> atdObject = new HashMap<>();
+        // atdObject.put("atdNo", atdNo);
+        // atdObject.put("statusCode", statusCode);
+        // atdObject.put("empNo", empNo);
+        attendanceMapper.insertAttendanceStatusInfo(atdNo, statusCode);
+        int result = attendanceMapper.updateAttendance(atdNo, empNo, statusCode);
 
         //then
-        System.out.println(today);
-        System.out.println(currentDate);
+        System.out.println("lastDate" + lastDate);
+        System.out.println("currentDate" + currentDate);
         System.out.println("selectCountAttendanceStatusInfo : " + attendanceMapper.selectCountAttendanceStatusInfo(empNo));
         System.out.println("selectLastAttendanceNo : " + attendanceMapper.selectLastAttendanceNo(empNo));
         System.out.println(result > 0 ? "상태 변경 성공" : "상태 변경 실패");  //로그포제이 안 쓰고 그냥 출력문으로 확인

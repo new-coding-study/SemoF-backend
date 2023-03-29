@@ -8,15 +8,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * @파일이름 : AttendanceControllerTest
@@ -104,20 +103,28 @@ class AttendanceControllerTest {
     @DisplayName("updateAttendance_success")
     public void 사원_근태_상태_변경_성공() throws Exception {
         // given
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();//  폼에서 넘어올 값을 미리 작성
-        params.add("empNo", "1");
-        params.add("statusCode", "0");
+        int empNo = 1;
 
         // when, then
-        mockMvc.perform(put("/attendance/status/{empNo}", 1).params(params))
+        mockMvc.perform(put("/attendance/status/{empNo}", empNo))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
 
+    // MultiValueMap<String, String> params = new LinkedMultiValueMap<>();// 폼에서 넘어올 값을 미리 작성
+    //         params.add("empNo", "1");
+    //         params.add("statusCode", "0");
+
+    // mockMvc.perform(put("/attendance/status/{empNo}", empNo)) uriVariables 바로 대입가능 (ex: 1)
+
     // DB랑 연결해서 TDD 실행하여 조회하는게 맞음, R은 실제 DB에 접근해서 조회고 CUD는 실제 DB에 반영되면 안 되므로 트랜젝션 처리를 가상으로 해주기 위해 가상의 값을 넣어서 테스트 함
 
     // .param() | .accept(MediaType.APPLICATION_JSON)
+
+
+
+
 
     // AttendanceDto attendanceDto = new AttendanceDto();
     //         attendanceDto.setAtdNo(1);
@@ -159,17 +166,6 @@ class AttendanceControllerTest {
         //then
         assertNotNull(attendanceDto1);
         assertEquals("사원 근태정보 조회 성공", "사원 근태정보 조회 성공", attendanceDto1.getBody().getMessage()); */
-
-
-
-        /* assertEquals(예상, 실제) - 예상 값과 실제 값이 같은지 비교합니다.
-        assertTrue(조건) - 주어진 조건이 참임을 확인합니다.
-        assertFalse(조건) - 주어진 조건이 거짓임을 확인합니다.
-        assertNull(object) - 주어진 객체가 null임을 확인합니다.
-        assertNotNull(object) - 주어진 객체가 null이 아님을 확인합니다.
-        assertSame(예상, 실제) - 예상 객체와 실제 객체가 동일한지(즉, 동일한 메모리 참조를 가짐) 비교합니다.
-        assertNotSame(expected, actual) - 예상 객체와 실제 객체가 같지 않은지 비교합니다. */
-
 
     // MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     // params.add('');

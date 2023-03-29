@@ -85,12 +85,36 @@
     </insert>
 
     <!-- 사원 근무상태정보 기록 생성(출퇴근 발생시간)  -->
-    <insert id="insertAttendanceStatusInfo" parameterType="hashmap">
+    <insert id="insertAttendanceStatusInfo" parameterType="int">
         INSERT INTO TBL_ATTENDANCE_STATUS_INFO(ATD_NO, STATUS_CODE, OCCUR_TIME) VALUES (#{ atdNo }, #{ statusCode }, NOW());
     </insert>
 
     <!-- 사원 근무정보 출퇴근 시간 변경  -->
-    <update id="updateAttendance" parameterType="hashmap">
+    <update id="updateAttendance" parameterType="int">
+        UPDATE tbl_attendance att
+        <set>
+            <if test="statusCode == 1">
+                att.START_TIME = (SELECT MAX(ati.OCCUR_TIME)
+                                    FROM tbl_attendance_status_info ati
+                                   WHERE ati.ATD_NO = #{ atdNo }
+                                GROUP BY ati.OCCUR_TIME
+                                ORDER BY ati.OCCUR_TIME DESC LIMIT 1)
+            </if>
+            <if test="statusCode != 1">
+                att.END_TIME = (SELECT MAX(ati.OCCUR_TIME)
+                                  FROM tbl_attendance_status_info ati
+                                 WHERE ati.ATD_NO = #{ atdNo }
+                              GROUP BY ati.OCCUR_TIME
+                              ORDER BY ati.OCCUR_TIME DESC LIMIT 1)
+            </if>
+        </set>
+        WHERE att.ATD_NO = (SELECT * FROM (SELECT MAX(ATD_NO)
+                                             FROM tbl_attendance
+                                            WHERE EMP_NO = #{ empNo }
+                                         GROUP BY ATD_NO
+                                         ORDER BY ATD_NO DESC LIMIT 1) A);
+    </update>
+    <!-- <update id="updateAttendance" parameterType="int">
         UPDATE tbl_attendance att
         <if test="statusCode == 1">
             SET att.START_TIME = (SELECT MAX(ati.OCCUR_TIME)
@@ -116,7 +140,7 @@
                             GROUP BY ATD_NO
                             ORDER BY ATD_NO DESC LIMIT 1) A);
         </if>
-    </update>
+    </update> -->
 
 
 </mapper>
