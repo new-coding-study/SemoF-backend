@@ -22,6 +22,9 @@ public interface AttendanceMapper {
     /* 해당 사원의 마지막 근무번호 불러오기 */
     int selectLastAttendanceNo(int empNo);
 
+    /* 사원 근무상태정보 기록 카운팅 (갯수를 기준으로 출퇴근 처리 제한) */
+    int selectCountAttendanceStatusInfo(int empNo);
+
     /* 사원 근무정보 행 생성 */
     int insertAttendance(int empNo);
 

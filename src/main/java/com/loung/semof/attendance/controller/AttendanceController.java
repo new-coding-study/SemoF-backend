@@ -75,9 +75,9 @@ public class AttendanceController {
      * @메소드설명 : 사원 근태 상태 변경
      */
     @PutMapping("/status/{empNo}")
-    public ResponseEntity<ResponseDto> updateAttendance(@PathVariable (name = "empNo") int empNo, int statusCode) {
+    public ResponseEntity<ResponseDto> updateAttendance(@PathVariable (name = "empNo") int empNo) {
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태 상태 변경 성공", attendanceService.updateAttendance(empNo, statusCode)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태 상태 변경 성공", attendanceService.updateAttendance(empNo)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

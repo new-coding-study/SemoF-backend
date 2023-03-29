@@ -72,24 +72,44 @@ class AttendanceMapperTest {
     @Test
     void 사원_근태_상태_변경_성공() throws Exception {
         //given
-        HashMap<String, Integer> atdObject = new HashMap<>();
-        atdObject.put("atdNo", attendanceMapper.selectLastAttendanceNo(1));
-        atdObject.put("statusCode", 2);
-        atdObject.put("empNo", 1);
+        int empNo = 2;
 
         //when
-        Date today = attendanceMapper.selectAttendanceDetail(1).getAtdDate();
+        Date today = attendanceMapper.selectAttendanceDetail(empNo).getAtdDate();
         LocalDate currentDate = LocalDate.now();
         if (!Objects.equals(today.toString(), currentDate.toString())){
-            attendanceMapper.insertAttendance(1);
-            attendanceMapper.insertAttendanceStatusInfo(atdObject);
+            System.out.println("-------------날짜 비교 if문 진입-------------");
+            attendanceMapper.insertAttendance(empNo);
         }
+        int countAtt = attendanceMapper.selectCountAttendanceStatusInfo(empNo);
+        int statusCode;
+        // 상태값과 카운트된 기록에 따라 처리
+        switch (countAtt) {
+            case 0:
+                System.out.println("-------------countAtt : 0(공석) -> 상태코드 : 1(출근)-------------");
+                statusCode = 1;
+                break;
+            case 1:
+                System.out.println("-------------countAtt : 1(출근) -> 상태코드 : 2(퇴근)-------------");
+                statusCode = 2;
+                break;
+            default:
+                System.out.println("-------------countAtt : 2(퇴근) -> 없음-------------");
+                throw new Exception("에러 발생 (오늘 근무가 종료되었거나 잘못된 입력값");
+        }
+        int atdNo = attendanceMapper.selectLastAttendanceNo(empNo);
+        HashMap<String, Integer> atdObject = new HashMap<>();
+        atdObject.put("atdNo", atdNo);
+        atdObject.put("statusCode", statusCode);
+        atdObject.put("empNo", empNo);
+        attendanceMapper.insertAttendanceStatusInfo(atdObject);
         int result = attendanceMapper.updateAttendance(atdObject);
 
         //then
         System.out.println(today);
         System.out.println(currentDate);
-        System.out.println("selectLastAttendanceNo : " + attendanceMapper.selectLastAttendanceNo(1));
+        System.out.println("selectCountAttendanceStatusInfo : " + attendanceMapper.selectCountAttendanceStatusInfo(empNo));
+        System.out.println("selectLastAttendanceNo : " + attendanceMapper.selectLastAttendanceNo(empNo));
         System.out.println(result > 0 ? "상태 변경 성공" : "상태 변경 실패");  //로그포제이 안 쓰고 그냥 출력문으로 확인
         assertEquals(1,result);
     }
@@ -99,7 +119,7 @@ class AttendanceMapperTest {
         //given
 
         //when
-        Date today = attendanceMapper.selectAttendanceDetail(1).getAtdDate();
+        Date today = attendanceMapper.selectAttendanceDetail(2).getAtdDate();
         LocalDate currentDate = LocalDate.now();
         boolean tot = !Objects.equals(today.toString(), currentDate.toString());
 

@@ -62,24 +62,52 @@ public class AttendanceService {
     }
 
 
-    public String updateAttendance(int empNo, int statusCode) throws Exception{
+    public String updateAttendance(int empNo) throws Exception{
         log.info("[AttendanceService] updateAttendance Start ===================================");
+
+        // 사원의 마지막 근무기록의 날짜 추출, 시스템 현재 날짜 조회
+        Date today = attendanceMapper.selectAttendanceDetail(empNo).getAtdDate();
+        LocalDate currentDate = LocalDate.now();
+
+        // 사원 마지막 근무 날짜와 현재 날짜가 같지 않을때만 근무기록행 추가 (날짜 같다면 당일 근무 기록이 이미 있음을 뜻함)
+        if (!Objects.equals(today.toString(), currentDate.toString())){
+            log.info("-------------날짜 비교 if문 진입-------------");
+            attendanceMapper.insertAttendance(empNo);
+        }
+
+        // 사원 근무상태 기록 카운트 조회
+        int countAtt = attendanceMapper.selectCountAttendanceStatusInfo(empNo);
+
+        int statusCode;
+
+        // 상태값과 카운트된 기록에 따라 처리 (0, 1 아니면 이미 퇴근한 상태니까 상태 변경할게 없음, 카운팅된 1이 퇴근일 케이스도 없음 0일때만 출근처리하고 그땐 출근으로 처리함)
+        switch (countAtt) {
+            case 0:
+                log.info("-------------countAtt : 0(공석) -> 상태코드 : 1(출근)-------------");
+                statusCode = 1;
+                break;
+            case 1:
+                log.info("-------------countAtt : 1(출근) -> 상태코드 : 2(퇴근)-------------");
+                statusCode = 2;
+                break;
+            default:
+                log.info("-------------countAtt : 2(퇴근) -> 없음-------------");
+                throw new Exception("에러 발생");
+        }
+
+        // 사원의 마지막 근무번호 조회(위에 생성된 기록 조회)
         int atdNo = attendanceMapper.selectLastAttendanceNo(empNo);
 
-
+        // 전달할 파라미터 값 저장
         HashMap<String, Integer> atdObject = new HashMap<>();
         atdObject.put("atdNo", atdNo);
         atdObject.put("statusCode", statusCode);
         atdObject.put("empNo", empNo);
 
-        Date today = attendanceMapper.selectAttendanceDetail(empNo).getAtdDate();
-        LocalDate currentDate = LocalDate.now();
+        // 파라미터 전달하여 근무상태기록
+        attendanceMapper.insertAttendanceStatusInfo(atdObject);
 
-        if (!Objects.equals(today.toString(), currentDate.toString())){
-            attendanceMapper.insertAttendance(empNo);
-            attendanceMapper.insertAttendanceStatusInfo(atdObject);
-        }
-
+        // 파라미터 전달하여 근무 상태 변경
         int result = attendanceMapper.updateAttendance(atdObject);
         log.info("[AttendanceService] updateAttendance End ===================================");
         log.info("[AttendanceService] result > 0 성공: "+ result);
@@ -89,6 +117,54 @@ public class AttendanceService {
             throw new Exception("상태 변경 실패");
         }
     }
+
+
+    // 아래 if문을 swith로 간결하게 변환 (전달받은 상태값에 따라 조건 달라지고 그 안에서 카운팅된 갯수로 출퇴근 상태 및 에러 처리)
+        /* switch (statusCode) {
+            case 1:
+                log.info("-------------상태코드 : 1(출근상태)-------------");
+                if (countAtt == 0 || countAtt == 2){
+                    log.info("-------------에러 발생-------------");
+                    throw new Exception("퇴근 실패)");
+                }
+                statusCode = 2;
+                break;
+            case 2:
+                log.info("-------------상태코드 : 2(퇴근상태)-------------");
+                if (countAtt == 0 || countAtt == 1 || countAtt == 2){
+                    log.info("-------------에러 발생-------------");
+                    throw new Exception("에러 발생");
+                }
+                break;
+            default:
+                log.info("-------------상태코드 : 3(공석상태)-------------");
+                if (countAtt == 1 || countAtt == 2){
+                    log.info("-------------에러 발생-------------");
+                    throw new Exception("출근 실패");
+                }
+                break;
+        } */
+        /* if (statusCode == 1) {
+            log.info("-------------상태코드 : 1(출근상태)-------------");
+            if (countAtt == 0 || countAtt == 2){
+                log.info("-------------에러 발생-------------");
+                throw new Exception("퇴근 실패)");
+            }
+        } else if (statusCode == 2) {
+            log.info("-------------상태코드 : 2(퇴근상태)-------------");
+            if (countAtt == 0 || countAtt == 1 || countAtt == 2){
+                log.info("-------------에러 발생-------------");
+                throw new Exception("에러 발생");
+            }
+        } else {
+            log.info("-------------상태코드 : 3(공석상태)-------------");
+            if (countAtt == 1 || countAtt == 2){
+                log.info("-------------에러 발생-------------");
+                throw new Exception("출근 실패");
+            }
+        } */
+
+
 
 
 
