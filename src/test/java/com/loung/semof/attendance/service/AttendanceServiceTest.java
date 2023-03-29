@@ -31,9 +31,10 @@ class AttendanceServiceTest {
     @Test
     void 근태정보_조회_성공() throws Exception {
         //given
+        int empNo = 1;
 
         //when
-        AttendanceDto attendanceDto = attendanceService.selectAttendanceDetail(1);
+        AttendanceDto attendanceDto = attendanceService.selectAttendanceDetail(empNo);
 
         //then
         System.out.println(attendanceDto);  //로그포제이 안 쓰고 그냥 출력문으로 확인
@@ -43,15 +44,52 @@ class AttendanceServiceTest {
     @Test
     void 근태기록_조회_성공() throws Exception {
         //given
+        int empNo = 1;
 
         //when
-        List<AttendanceDto> attendanceDtoList = attendanceService.selectAttendanceList(1);
+        List<AttendanceDto> attendanceDtoList = attendanceService.selectAttendanceList(empNo);
 
         //then
         attendanceDtoList.forEach(attendanceDto -> System.out.println("attendanceDto = " + attendanceDto));  //로그포제이 안 쓰고 그냥 출력문으로 확인
         // System.out.println(attendanceDtoList);
         assertNotNull(attendanceDtoList);
     }
+
+    @Test
+    void 연차_현황_조회_성공() throws Exception {
+        //given
+        int empNo = 1;
+
+        //when
+        AttendanceDto attendanceDto = attendanceService.selectVacationDetail(empNo);
+
+        //then
+        System.out.println(attendanceDto);  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        assertNotNull(attendanceDto);
+    }
+
+    @Test
+    void 사원_근태_상태_변경_성공() throws Exception {
+        //given
+        int empNo = 1;
+
+        //when
+        String result = attendanceService.updateAttendance(empNo);
+
+        //then
+        System.out.println("상태 변경 성공");  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        assertEquals("상태 변경 성공",result);
+    }
+
+
+
+/*      assertEquals(예상, 실제) - 예상 값과 실제 값이 같은지 비교합니다.
+        assertTrue(조건) - 주어진 조건이 참임을 확인합니다.
+        assertFalse(조건) - 주어진 조건이 거짓임을 확인합니다.
+        assertNull(object) - 주어진 객체가 null임을 확인합니다.
+        assertNotNull(object) - 주어진 객체가 null이 아님을 확인합니다.
+        assertSame(예상, 실제) - 예상 객체와 실제 객체가 동일한지(즉, 동일한 메모리 참조를 가짐) 비교합니다.
+        assertNotSame(expected, actual) - 예상 객체와 실제 객체가 같지 않은지 비교합니다. */
 
   /*   @Test
     public void 신규_메뉴_등록용_서비스_성공_테스트() throws Exception {

@@ -5,7 +5,9 @@ import com.loung.semof.attendance.dto.AttendanceDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -46,6 +48,123 @@ public class AttendanceService {
         }
         return attendanceDtoList;
     }
+
+    public AttendanceDto selectVacationDetail(int empNo) throws Exception{
+        log.info("[AttendanceService] selectAttendanceDetail Start ===================================");
+        AttendanceDto attendanceDto = attendanceMapper.selectVacationDetail(empNo);
+        log.info("[AttendanceService] selectAttendanceDetail End ===================================");
+        if (attendanceDto == null) {
+            throw new Exception("연차 현황 조회 실패");
+        }
+        return attendanceDto;
+    }
+
+
+    public String updateAttendance(int empNo) throws Exception{
+        log.info("[AttendanceService] updateAttendance Start ===================================");
+
+        // 사원의 마지막 근무기록의 날짜 추출, 시스템 현재 날짜 조회
+        AttendanceDto lastDate = attendanceMapper.selectAttendanceDetail(empNo);
+        LocalDate currentDate = LocalDate.now();
+
+        // 사원 마지막 근무 날짜와 현재 날짜가 같지 않을때만 근무기록행 추가 (날짜 같다면 당일 근무 기록이 이미 있음을 뜻함)
+        if (lastDate == null || !Objects.equals(currentDate.toString(), lastDate.getAtdDate().toString())){
+            log.info("-------------날짜 비교 if문 진입-------------");
+            attendanceMapper.insertAttendance(empNo);
+        }
+
+        // 사원 근무상태 기록 카운트 조회
+        int countAtt = attendanceMapper.selectCountAttendanceStatusInfo(empNo);
+
+        int statusCode;
+
+        // 상태값과 카운트된 기록에 따라 처리 (0, 1 아니면 이미 퇴근한 상태니까 상태 변경할게 없음, 카운팅된 1이 퇴근일 케이스도 없음 0일때만 출근처리하고 그땐 출근으로 처리함)
+        switch (countAtt) {
+            case 0:
+                log.info("-------------countAtt : 0(공석) -> 상태코드 : 1(출근)-------------");
+                statusCode = 1;
+                break;
+            case 1:
+                log.info("-------------countAtt : 1(출근) -> 상태코드 : 2(퇴근)-------------");
+                statusCode = 2;
+                break;
+            default:
+                log.info("-------------countAtt : 2(퇴근) -> 없음-------------");
+                throw new Exception("에러 발생");
+        }
+
+        // 사원의 마지막 근무번호 조회(위에 생성된 기록 조회)
+        int atdNo = attendanceMapper.selectLastAttendanceNo(empNo);
+
+        // 전달할 파라미터 값 저장
+        // HashMap<String, Integer> atdObject = new HashMap<>();
+        // atdObject.put("atdNo", atdNo);
+        // atdObject.put("statusCode", statusCode);
+        // atdObject.put("empNo", empNo);
+
+        // 파라미터 전달하여 근무상태기록
+        attendanceMapper.insertAttendanceStatusInfo(atdNo, statusCode);
+
+        // 파라미터 전달하여 근무 상태 변경
+        int result = attendanceMapper.updateAttendance(atdNo, empNo, statusCode);
+        log.info("[AttendanceService] updateAttendance End ===================================");
+        log.info("[AttendanceService] result > 0 성공: "+ result);
+        if (result > 0) {
+            return "상태 변경 성공";
+        } else {
+            throw new Exception("상태 변경 실패");
+        }
+    }
+
+
+    // 아래 if문을 swith로 간결하게 변환 (전달받은 상태값에 따라 조건 달라지고 그 안에서 카운팅된 갯수로 출퇴근 상태 및 에러 처리)
+        /* switch (statusCode) {
+            case 1:
+                log.info("-------------상태코드 : 1(출근상태)-------------");
+                if (countAtt == 0 || countAtt == 2){
+                    log.info("-------------에러 발생-------------");
+                    throw new Exception("퇴근 실패)");
+                }
+                statusCode = 2;
+                break;
+            case 2:
+                log.info("-------------상태코드 : 2(퇴근상태)-------------");
+                if (countAtt == 0 || countAtt == 1 || countAtt == 2){
+                    log.info("-------------에러 발생-------------");
+                    throw new Exception("에러 발생");
+                }
+                break;
+            default:
+                log.info("-------------상태코드 : 3(공석상태)-------------");
+                if (countAtt == 1 || countAtt == 2){
+                    log.info("-------------에러 발생-------------");
+                    throw new Exception("출근 실패");
+                }
+                break;
+        } */
+        /* if (statusCode == 1) {
+            log.info("-------------상태코드 : 1(출근상태)-------------");
+            if (countAtt == 0 || countAtt == 2){
+                log.info("-------------에러 발생-------------");
+                throw new Exception("퇴근 실패)");
+            }
+        } else if (statusCode == 2) {
+            log.info("-------------상태코드 : 2(퇴근상태)-------------");
+            if (countAtt == 0 || countAtt == 1 || countAtt == 2){
+                log.info("-------------에러 발생-------------");
+                throw new Exception("에러 발생");
+            }
+        } else {
+            log.info("-------------상태코드 : 3(공석상태)-------------");
+            if (countAtt == 1 || countAtt == 2){
+                log.info("-------------에러 발생-------------");
+                throw new Exception("출근 실패");
+            }
+        } */
+
+
+
+
 
     /* 총 갯수 구하기 */
     /* public int selectAttendanceTotal() {
