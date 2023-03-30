@@ -29,6 +29,14 @@
         WHERE EMP_NO = #{empNo}
     </select>
 
+    <!-- SELECT 쿼리: 사원번호(empNo)로 EmployeeDto 조회 -->
+    <select id="selectByEmpNo" parameterType="java.lang.Long" resultType="EmployeeDto">
+        SELECT
+        *
+        FROM tbl_employee
+        WHERE EMP_NO = #{empNo}
+    </select>
+
     <!-- INSERT 쿼리: EmployeeDto 데이터 등록 -->
     <insert id="insertEmployee" parameterType="EmployeeDto">
         INSERT INTO tbl_employee

@@ -4,10 +4,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.humanresource.dao.HumanResourceMapper">
 
-    <sql id="employeeColumns">
+    <sql id="employeeSelectColumns">
         EMP_NO
 		, EMP_NAME
-		, EMP_REG
 		, EMAIL
 		, PHONE
 		, ADDRESS
@@ -21,15 +20,143 @@
         , BRANCH_CODE
     </sql>
 
+    <!-- ResultMap EmployeeDto -->
+    <resultMap id="employeeResult" type="EmployeeDto">
+        <id property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
+        <result property="empReg" column="EMP_REG"/>
+        <result property="email" column="EMAIL"/>
+        <result property="phone" column="PHONE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="salary" column="SALARY"/>
+        <result property="enrollDate" column="ENROLL_DATE"/>
+        <result property="retireDate" column="RETIRE_DATE"/>
+        <result property="workStatus" column="WORK_STATUS"/>
+        <result property="gender" column="GENDER"/>
+        <result property="jobCode" column="JOB_CODE"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="branchCode" column="BRANCH_CODE"/>
+    </resultMap>
+
+    <!-- ResultMap HumanResourceDto -->
+    <resultMap id="employeesResultExtend" type="HumanResourceDto">
+        <id property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
+        <result property="email" column="EMAIL"/>
+        <result property="phone" column="PHONE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="salary" column="SALARY"/>
+        <result property="enrollDate" column="ENROLL_DATE"/>
+        <result property="retireDate" column="RETIRE_DATE"/>
+        <result property="workStatus" column="WORK_STATUS"/>
+        <result property="gender" column="GENDER"/>
+        <result property="jobCode" column="JOB_CODE"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="branchCode" column="BRANCH_CODE"/>
+        <result property="branchName" column="BRANCH_NAME"/>
+        <result property="deptName" column="DEPT_NAME"/>
+    </resultMap>
+
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
     <update id="updateEmployee" parameterType="EmployeeDto">
         UPDATE tbl_employee
         SET DEPT_CODE = #{deptCode}
         WHERE EMP_NO = #{empNo}
     </update>
 
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
     <update id="updateEmployeeBranch" parameterType="EmployeeDto">
         UPDATE tbl_employee
         SET BRANCH_CODE = #{branchCode}
         WHERE EMP_NO = #{empNo}
     </update>
+
+    <!-- SELECT 쿼리 - 페이지네이션 포함 : 사원 전체 조회 -->
+    <select id="selectEmployeeListWithPaging" parameterType="map" resultMap="employeeResult">
+        SELECT
+        <include refid="employeeSelectColumns"/>
+        FROM tbl_employee
+        ORDER BY EMP_NO DESC
+        LIMIT #{startRow}, #{endRow}
+    </select>
+
+    <!-- SELECT 쿼리 : 사원 전체 숫자 조회 -->
+    <select id="selectEmployeeTotal" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_employee
+    </select>
+
+    <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
+    <select id="selectEmployee"  resultMap="employeeResult">
+        SELECT
+        <include refid="employeeSelectColumns"/>
+        FROM tbl_employee
+        WHERE EMP_NAME = #{empName}
+        <if test="deptCode != null and deptCode != ''">
+            AND DEPT_CODE = #{deptCode}
+        </if>
+        <if test="branchCode != null">
+            AND BRANCH_CODE = #{branchCode}
+        </if>
+    </select>
+
+    <!-- SELECT 쿼리 : 이번달에 생일이 있는 사원 조회 -->
+    <select id="selectEmployeeByBirthMonth" resultMap="employeeResult">
+        SELECT *
+        FROM tbl_employee
+        WHERE MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) = #{monthValue}
+    </select>
+
+    <!-- SELECT 쿼리 : 다음달에 생일이 있는 사원 조회 -->
+    <select id="selectEmployeeByBirthMonthAfter" resultMap="employeeResult">
+        SELECT *
+        FROM tbl_employee
+        WHERE MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) &gt;= #{monthValue}
+        ORDER BY MONTH(STR_TO_DATE(SUBSTR(EMP_REG, 3, 4), '%y%m%d')) ASC
+    </select>
+
+
+    <!-- SELECT 쿼리 : 조직도 검색 - 사원 이름과 일치하는 사원 조회  -->
+    <select id="selectByEmpName" resultMap="employeesResultExtend" parameterType="String">
+        SELECT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                 JOIN tbl_job J ON E.job_code = J.job_code
+                 JOIN tbl_department D ON E.dept_code = D.dept_code
+                 JOIN tbl_branch B ON E.branch_code = B.branch_code
+        WHERE E.EMP_NAME = #{empName}
+    </select>
+
+    <!-- SELECT 쿼리 : 조직도 검색 - 부서명과 일치하는 부서의 전체 사원 조회  -->
+    <select id="selectByDeptName" resultMap="employeesResultExtend" parameterType="String">
+        SELECT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                 JOIN tbl_job J ON E.JOB_CODE = J.JOB_CODE
+                 JOIN tbl_department D ON E.DEPT_CODE = D.DEPT_CODE
+                 JOIN tbl_branch B ON E.BRANCH_CODE = B.BRANCH_CODE
+        WHERE D.DEPT_NAME = #{deptName}
+    </select>
+
+    <!-- SELECT 쿼리 : 조직도 검색 - 지점명과 일치하는 지점의 전체 사원 조회  -->
+    <select id="selectByBranchName" resultMap="employeesResultExtend" parameterType="String">
+        SELECT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                JOIN tbl_job J ON E.JOB_CODE = J.JOB_CODE
+                JOIN tbl_department D ON E.DEPT_CODE = D.DEPT_CODE
+                JOIN tbl_branch B ON E.BRANCH_CODE = B.BRANCH_CODE
+        WHERE B.BRANCH_NAME = #{branchName}
+    </select>
+
 </mapper>

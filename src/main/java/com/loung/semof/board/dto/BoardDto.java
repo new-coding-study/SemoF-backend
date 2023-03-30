@@ -13,12 +13,13 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 public class BoardDto {
-    private int boardNo;
+    private Integer boardNo;
     private int empNo;
     private String empName;
     private String boardTitle;
     private String boardContent;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
     private LocalDate writeDate;
-
+    private int boardCateCode;
+    private Long rowNum;
 }

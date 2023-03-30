@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.todo.dao.TodoMapper">
+
+    <resultMap id="todoResultMap" type="com.loung.semof.todo.dto.TodoDto">
+        <id property="todoNo" column="TODO_NO"/>
+        <result property="todoName" column="TODO_NAME"/>
+        <result property="todoDate" column="TODO_DATE"/>
+        <result property="todoTime" column="TODO_TIME"/>
+        <result property="todoContent" column="TODO_CONTENT"/>
+        <result property="todoFinish" column="TODO_FINISH"/>
+        <result property="todoStar  " column="TODO_STAR"/>
+        <result property="cateNo" column="CATE_NO"/>
+        <result property="cateName" column="CATE_NAME"/>
+        <result property="cateColor" column="CATE_COLOR"/>
+        <result property="empNo" column="EMP_NO"/>
+<!--        <association property="emp" resultMap="empDto"/>-->
+    </resultMap>
+
+<!--    <resultMap id="todoCateResultMap" type="com.loung.semof.board.dto.TodoDto">-->
+<!--        <id property="cateNo" column="CATE_NO"/>-->
+<!--        <result property="cateName" column="CATE_NAME"/>-->
+<!--        <result property="cateColor" column="CATE_COLOR"/>-->
+<!--        <result property="empNo" column="EMP_NO"/>-->
+<!--    </resultMap>-->
+
+    <select id="selectTodoList" resultType="TodoDto">
+        <![CDATA[
+            SELECT
+                A.*
+                ,B.*
+            FROM tbl_todo A
+                JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
+                JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
+            WHERE B.EMP_NO = #{empNo}
+            AND TODO_DATE >= DATE(NOW())
+            ORDER BY TODO_DATE, TODO_TIME
+        ]]>
+    </select>
+
+    <select id="selectTodoDetail" parameterType="java.lang.Long" resultType="TodoDto">
+        SELECT
+            A.*
+            ,B.*
+        FROM tbl_todo A
+                 JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
+                 JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
+        WHERE TODO_NO =  #{todoNo}
+    </select>
+
+    <insert id="insertCategory" parameterType="TodoDto">
+        INSERT INTO tbl_todo_category
+        (
+            CATE_NAME
+            ,CATE_COLOR
+            ,EMP_NO
+        )
+        VALUES
+        (
+            #{cateName},
+            #{cateColor},
+            #{empNo}
+        )
+    </insert>
+
+    <update id="updateCategory" parameterType="TodoDto">
+        UPDATE tbl_todo_category
+        SET CATE_NAME = #{cateName}
+            ,CATE_COLOR = #{cateColor}
+        WHERE CATE_NO = #{cateNo}
+    </update>
+
+    <delete id="deleteCategory" parameterType="java.lang.Long">
+        DELETE FROM tbl_todo_category
+        WHERE CATE_NO = #{cateNo}
+    </delete>
+
+    <insert id="insertTodo" parameterType="TodoDto">
+        INSERT INTO tbl_todo
+        (
+            TODO_NAME
+            ,TODO_DATE
+            ,TODO_TIME
+            ,TODO_CONTENT
+            ,TODO_FINISH
+            ,TODO_STAR
+            ,CATE_NO
+        )
+        VALUES
+        (
+            #{todoName}
+            ,#{todoDate}
+            ,#{todoTime}
+            ,#{todoContent}
+            ,#{todoFinish}
+            ,#{todoStar}
+            ,#{cateNo}
+        )
+    </insert>
+
+    <update id="updateTodo" parameterType="TodoDto">
+        UPDATE tbl_todo
+        SET TODO_NAME = #{todoName}
+            ,TODO_DATE = #{todoDate}
+            ,TODO_TIME = #{todoTime}
+            ,TODO_CONTENT = #{todoContent}
+            ,TODO_FINISH = #{todoFinish}
+            ,TODO_STAR = #{todoStar}
+            ,CATE_NO = #{todoName}
+        WHERE TODO_NO = #{todoNo}
+    </update>
+
+    <delete id="deleteTodo" parameterType="java.lang.Long">
+        DELETE FROM tbl_todo
+        WHERE TODO_NO = #{todoNo}
+    </delete>
+
+    <!-- 할 일 검색 쿼리 추가 하기 -->
+
+
+    <select id="checkStar" resultType="_int">
+        SELECT TODO_STAR
+        FROM tbl_todo
+        WHERE TODO_NO = #{todoNo}
+    </select>
+
+    <update id="updateStar" parameterType="java.lang.Long">
+        UPDATE tbl_todo
+        SET TODO_STAR = #{changeStar}
+        WHERE TODO_NO = #{todoNo}
+    </update>
+
+</mapper>

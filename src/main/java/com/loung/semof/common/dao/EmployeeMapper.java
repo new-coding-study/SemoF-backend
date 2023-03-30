@@ -3,6 +3,8 @@ package com.loung.semof.common.dao;
 import com.loung.semof.common.dto.EmployeeDto;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Optional;
+
 /**
  * @파일이름 : EmployeeMapper.java
  * @프로젝트 : SemoF
@@ -18,7 +20,9 @@ public interface EmployeeMapper {
 
     void insertEmployee(EmployeeDto employeeDto);
 
-    void updateEmployee(EmployeeDto employee);
+    int updateEmployee(EmployeeDto employee);
 
-    void updateEmployeeStatus(EmployeeDto employee);
+    int updateEmployeeStatus(EmployeeDto employee);
+
+    Optional<EmployeeDto> selectByEmpNo(Long empNo);
 }
