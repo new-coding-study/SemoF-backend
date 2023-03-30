@@ -12,7 +12,7 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias alias="MemberDto" type="com.loung.semof.member.dto.MemberDto"/>
+		<typeAlias alias="MemberDto" type="com.loung.semof.loginInfo.dto.MemberDto"/>
 		<typeAlias alias="EmployeeDto" type="com.loung.semof.common.dto.EmployeeDto"/>
 		<typeAlias alias="DepartmentDto" type="com.loung.semof.common.dto.DepartmentDto"/>
 		<typeAlias alias="BranchDto" type="com.loung.semof.common.dto.BranchDto"/>

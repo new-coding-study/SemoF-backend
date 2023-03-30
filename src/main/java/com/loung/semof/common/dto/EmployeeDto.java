@@ -36,4 +36,7 @@ public class EmployeeDto {
     private Long jobCode;   //직급
     private String deptCode;    //부서
     private Long branchCode; //지점
+    private String memberRole;
+
+
 }

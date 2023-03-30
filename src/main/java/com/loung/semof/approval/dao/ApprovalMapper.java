@@ -30,9 +30,9 @@ public interface ApprovalMapper {
 
     int updateApprovOrder(ApprovOrderDTO order);
 
-    int deleteApprovOrder(int orderNo);
+//    int deleteApprovOrder(int orderNo);
 
-    List<ApprovalDTO> selectApprovalListWithPaging(SelectCriteria selectCriteria);
+    List<ApprovalDTO> selectApprovalInWithPaging(SelectCriteria selectCriteria);
 
     ApprovalDTO selectApproval(Integer approvNo);
 
@@ -46,7 +46,7 @@ public interface ApprovalMapper {
 
     int updateApprovFile(ApprovFileDTO file);
 
-    int deleteFile(int fileNo);
+//    int deleteFile(int fileNo);
 
 //    ApprovContentDTO selectApprovContent(ApprovContentDTO content);
 
@@ -54,7 +54,7 @@ public interface ApprovalMapper {
 
     int updateContent(ApprovContentDTO content);
 
-    int deleteContent(int contentNo);
+//    int deleteContent(int contentNo);
 
 //    ApprovOpinDTO selectOpinion(int opinNo);
 
@@ -62,8 +62,9 @@ public interface ApprovalMapper {
 
     int updateStatus(ApprovStatusDTO status);
 
-
     int selectApprovalTotal();
 
     int selectApprovLineTotal();
+
+    String selectLatestStatus();
 }
