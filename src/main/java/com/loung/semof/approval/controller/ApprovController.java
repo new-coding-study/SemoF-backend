@@ -7,9 +7,12 @@ import com.loung.semof.common.paging.Pagenation;
 import com.loung.semof.common.paging.ResponseDtoWithPaging;
 import com.loung.semof.common.paging.SelectCriteria;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -38,13 +41,11 @@ public class ApprovController {
     public ResponseEntity<ResponseDto> insertOpinion(@ModelAttribute ApprovOpinDTO opinion){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "의견등록", approvService.insertOpinion(opinion)));
     }
-    /**
-     * @작성일 : 2023.03.23
-     * @작성자 : 박유리
-     * @메소드설명 : 결재 상신(결재문서 등록)
-     */
-    @PostMapping(value="/approval")
-    public ResponseEntity<ResponseDto> insertApproval(@ModelAttribute ApprovalDTO approval, List<ApprovFileDTO> file,List<ApprovContentDTO> contents) {
+
+
+    @PostMapping(value="/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> insertApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @RequestPart List<ApprovContentDTO> contents) {
+
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재상신", approvService.insertApproval(approval, file, contents)));
     }
     /**
@@ -103,13 +104,11 @@ public class ApprovController {
     public ResponseEntity<ResponseDto> updateApprovLine(@ModelAttribute ApprovLineDTO line, List<ApprovOrderDTO> orders){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 업데이트", approvService.updateApprovLine(line, orders)));
     }
-    /**
-     * @작성일 : 2023.03.23
-     * @작성자 : 박유리
-     * @메소드설명 : 미확인, 반려 결재문서를 수정
-     */
-    @PutMapping(value = "/approval")
-    public ResponseEntity<ResponseDto> updateApproval(@ModelAttribute ApprovalDTO approval, List<ApprovFileDTO> file,List<ApprovContentDTO> contents){
+
+
+    @PutMapping(value = "/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> updateApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @RequestPart List<ApprovContentDTO> contents){
+
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재서류 업데이트", approvService.updateApproval(approval, file, contents)));
     }
     /**

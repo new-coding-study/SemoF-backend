@@ -1,5 +1,7 @@
 package com.loung.semof.approval.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 /**
@@ -11,6 +13,8 @@ import lombok.NoArgsConstructor;
  * @클래스설명 : 설명을 여기에 작성한다.
  */
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Data
 public class ApprovOrderDTO {
   private Integer orderNo;

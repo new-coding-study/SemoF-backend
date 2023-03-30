@@ -1,9 +1,10 @@
 package com.loung.semof.approval.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -19,7 +20,8 @@ import java.util.List;
 public class ApprovalDTO {
     private Integer approvNo;
     private String approvTitle;
-    private Date approvDate;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
+    private LocalDateTime approvDate;
     private Integer lineNo;
     private Integer empNo;
     private List<ApprovFileDTO> approvFileDTOList;

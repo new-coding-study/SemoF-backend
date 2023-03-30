@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,13 +97,17 @@ public class HumanResourceController {
      * @메소드설명 : 사원 등록을 수행하는 메소드
      */
     @PostMapping("/register")
-    public ResponseEntity<ResponseDto> insertEmployee(@RequestBody EmployeeDto employeeDto) throws SQLException {
-
+    public ResponseEntity<ResponseDto> insertEmployee(@ModelAttribute EmployeeDto employeeDto,
+                                                      @RequestPart(value = "employeePhoto", required = false) MultipartFile employeePhoto) throws SQLException {
         try {
             EmployeeDto employee = humanResourceService.insertEmployee(employeeDto);
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", employee));
 
-        } catch (SQLException e) {
+            log.info("[HumanResourceController] employee" + employee);
+
+            humanResourceService.insertEmployeePhoto(employeePhoto, employee);
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", employee));
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -115,13 +121,13 @@ public class HumanResourceController {
      * @메소드설명 : 사원 정보 수정을 수행하는 메소드
      */
     @PutMapping("/present")
-    public ResponseEntity<ResponseDto> updateEmployee(@RequestBody EmployeeDto employeeDto) {
-
+    public ResponseEntity<ResponseDto> updateEmployee(@ModelAttribute EmployeeDto employeeDto,
+                                                      @RequestPart(value = "employeePhoto", required = false) MultipartFile employeePhoto) {
         try {
             EmployeeDto employee = humanResourceService.updateEmployee(employeeDto.getEmpNo(),
                     employeeDto.getPhone(), employeeDto.getEmail(),
                     employeeDto.getAddress(), employeeDto.getSalary(),
-                    employeeDto.getJobCode());
+                    employeeDto.getJobCode(), employeePhoto);
 
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "수정 성공", employee));
 
@@ -202,7 +208,7 @@ public class HumanResourceController {
     /**
      * @작성일 : 2023-03-21
      * @작성자 : 이현도
-     * @메소드설명 : 사원의 이름으로 사원을 조회하는 메소드
+     * @메소드설명 : 사원을 조건으로 조회하는 메소드
      */
     @GetMapping("/present")
     public ResponseEntity<ResponseDto> selectEmployee(@RequestParam(required = false) String empName,
@@ -210,11 +216,13 @@ public class HumanResourceController {
                                                       @RequestParam(required = false) Long branchCode) throws Exception {
 
         try {
-            EmployeeDto employee = humanResourceService.selectEmployee(empName, deptCode, branchCode);
+            List<EmployeeDto> employees = humanResourceService.selectEmployees(empName, deptCode, branchCode);
 
-            if (employee != null) {
+            log.info(" [HumanResourceController] Employees: " + employees);
+
+            if (!employees.isEmpty()) {
                 return ResponseEntity.ok()
-                        .body(new ResponseDto(HttpStatus.OK, "조회 성공", employee));
+                        .body(new ResponseDto(HttpStatus.OK, "조회 성공", employees));
 
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -262,18 +270,45 @@ public class HumanResourceController {
      * @메소드설명 : 조직도를 위한 조건 검색 메소드
      */
     @GetMapping("/chart")
-    public List<HumanResourceDto> SelectEmployees(@RequestParam(required = false) String empName,
+    public ResponseEntity<ResponseDto> SelectEmployeesForChart(@RequestParam(required = false) String empName,
                                          @RequestParam(required = false) String deptName,
                                          @RequestParam(required = false) String branchName) {
-        if (empName != null && !empName.isEmpty()) {
-            return humanResourceService.selectByEmpName(empName);
+
+        try {
+            List<HumanResourceDto> employees = humanResourceService.SelectEmployeesForChart(empName, deptName, branchName);
+
+            log.info("[HumanResourceController] Employees: " + employees);
+
+            if (!employees.isEmpty()) {
+                return ResponseEntity.ok(new ResponseDto(HttpStatus.OK, "조회 성공", employees));
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
         }
-        if (deptName != null && !deptName.isEmpty()) {
-            return humanResourceService.selectByDeptName(deptName);
+    }
+
+    /**
+     * @작성일 : 2023-03-24
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 번호로 사원을 조회하는 메소드.
+     */
+    @GetMapping("/present/{empNo}")
+    public ResponseEntity<ResponseDto> selectEmployeeByEmpNo(@PathVariable("empNo") Long empNo) {
+
+        EmployeeDto employee = humanResourceService.selectEmployeeByEmpNo(empNo);
+
+        if (employee != null) {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", employee));
+            
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto(HttpStatus.NOT_FOUND, "조회 실패", null));
         }
-        if (branchName != null && !branchName.isEmpty()) {
-            return humanResourceService.selectByBranchName(branchName);
-        }
-        throw new IllegalArgumentException("사원 이름(empName), 부서명(deptName), 또는 지점명(branchName) 중 하나가 제공되어야합니다.");
     }
 }
