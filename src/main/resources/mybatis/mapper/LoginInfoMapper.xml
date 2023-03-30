@@ -2,9 +2,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.uni.reactpro.member.dao.MemberMapper">
 
-    <select id="selectByMemberId" resultType="MemberDto">
+
+<mapper namespace="com.loung.semof.loginInfo.dao.MemberMapper">
+
+    <select id="selectByMemberId" resultType="LoginInfoDto">
         SELECT
             MEMBER_CODE
              ,  MEMBER_ID
@@ -16,7 +18,7 @@
         WHERE MEMBER_ID = #{memberId}
     </select>
 
-    <select id="selectByEmail" resultType="MemberDto">
+    <select id="selectByEmail" resultType="LoginInfoDto">
         SELECT
                 MEMBER_CODE
              ,  MEMBER_ID
@@ -28,7 +30,7 @@
         WHERE MEMBER_EMAIL = #{email}
     </select>
 
-    <select id="findByEmail" resultType="MemberDto">
+    <select id="findByEmail" resultType="LoginInfoDto">
         SELECT
                 MEMBER_CODE
              ,  MEMBER_ID
@@ -52,7 +54,7 @@
         WHERE MEMBER_ID = #{memberId}
     </select>
 
-    <insert id="insertMember" parameterType="MemberDto">
+    <insert id="insertMember" parameterType="LoginInfoDto">
         INSERT INTO TBL_MEMBER
         (
             MEMBER_CODE,

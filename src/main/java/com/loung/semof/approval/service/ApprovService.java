@@ -103,8 +103,9 @@ public class ApprovService {
         return(result>0)? "결재상신성공" : "결재상신실패";
     }
 
-    public Object selectApprovalListWithPaging(SelectCriteria selectCriteria) {
-        List<ApprovalDTO> approvalList = approvMapper.selectApprovalListWithPaging(selectCriteria);
+    public Object selectApprovalInWithPaging(SelectCriteria selectCriteria) {
+        List<ApprovalDTO> approvalList = approvMapper.selectApprovalInWithPaging(selectCriteria);
+        String status = approvMapper.selectLatestStatus();
         for(int i=0; i<approvalList.size(); i++){
             approvalList.get(i).getApprovFileDTOList().get(i).setFilePath(FILE_DIR + approvalList.get(i).getApprovFileDTOList().get(i).getFilePath());
         }
@@ -222,42 +223,76 @@ public class ApprovService {
         return(result > 0 ) ? "결재라인업데이트성공" : "결재라인업데이트실패";
     }
 
-    public Object deleteApprovLine(ApprovLineDTO line) {
-        int result = 0;
-        int lineResult = approvMapper.deleteApprovLine(line.getLineNo());
+//    public Object deleteApprovLine(ApprovLineDTO line) {
+//        int result = 0;
+//        int lineResult = approvMapper.deleteApprovLine(line.getLineNo());
+//
+//        int orderResult = 0;
+//        List<ApprovOrderDTO> orders = line.getApprovOrderDTOList();
+//
+//        if(!orders.isEmpty()){
+//            orderResult = approvMapper.deleteApprovOrder(line.getLineNo());
+//        }
+//
+//        result = lineResult+orderResult;
+//
+//        return (result>1) ? "결재라인 삭제성공": "결재라인 삭제 실패";
+//    }
+    public Object deleteApprovLine(Integer lineNo) {
+//        int result = 0;
+        int lineResult = approvMapper.deleteApprovLine(lineNo);
 
-        int orderResult = 0;
-        List<ApprovOrderDTO> orders = line.getApprovOrderDTOList();
+//        int orderResult = 0;
+//        List<ApprovOrderDTO> orders = line.getApprovOrderDTOList();
+//
+//        if(!orders.isEmpty()){
+//            orderResult = approvMapper.deleteApprovOrder(line.getLineNo());
+//        }
 
-        if(!orders.isEmpty()){
-            orderResult = approvMapper.deleteApprovOrder(line.getLineNo());
-        }
+//        result = lineResult+orderResult;
 
-        result = lineResult+orderResult;
+        return (lineResult>0) ? "결재라인 삭제성공": "결재라인 삭제 실패";
+    }
+    public Object deleteApproval(Integer approvNo) {
+//        int result = 0;
+        int approvResult = approvMapper.deleteApproval(approvNo);
 
-        return (result>1) ? "결재라인 삭제성공": "결재라인 삭제 실패";
+//        int fileResult = 0;
+//        List<ApprovFileDTO> files = approval.getApprovFileDTOList();
+//
+//        if(!files.isEmpty()){
+//            fileResult = approvMapper.deleteFile(approval.getApprovNo());
+//        }
+//        int contentResult = 0;
+//        List<ApprovContentDTO> content = approval.getApprovContentDTOList();
+//
+//        if(!content.isEmpty()){
+//            contentResult = approvMapper.deleteContent(approval.getApprovNo());
+//        }
+//        result = approvResult+fileResult+contentResult;
+
+        return (approvResult>0) ? "결재서류 삭제성공": "결재서류 삭제 실패";
     }
 
-    public Object deleteApproval(ApprovalDTO approval) {
-        int result = 0;
-        int approvResult = approvMapper.deleteApproval(approval.getApprovNo());
-
-        int fileResult = 0;
-        List<ApprovFileDTO> files = approval.getApprovFileDTOList();
-
-        if(!files.isEmpty()){
-            fileResult = approvMapper.deleteFile(approval.getApprovNo());
-        }
-        int contentResult = 0;
-        List<ApprovContentDTO> content = approval.getApprovContentDTOList();
-
-        if(!content.isEmpty()){
-            contentResult = approvMapper.deleteContent(approval.getApprovNo());
-        }
-        result = approvResult+fileResult+contentResult;
-
-        return (result>2) ? "결재서류 삭제성공": "결재서류 삭제 실패";
-    }
-
+//    public Object deleteApproval(ApprovalDTO approval) {
+//        int result = 0;
+//        int approvResult = approvMapper.deleteApproval(approval.getApprovNo());
+//
+//        int fileResult = 0;
+//        List<ApprovFileDTO> files = approval.getApprovFileDTOList();
+//
+//        if(!files.isEmpty()){
+//            fileResult = approvMapper.deleteFile(approval.getApprovNo());
+//        }
+//        int contentResult = 0;
+//        List<ApprovContentDTO> content = approval.getApprovContentDTOList();
+//
+//        if(!content.isEmpty()){
+//            contentResult = approvMapper.deleteContent(approval.getApprovNo());
+//        }
+//        result = approvResult+fileResult+contentResult;
+//
+//        return (result>2) ? "결재서류 삭제성공": "결재서류 삭제 실패";
+//    }
 
 }

@@ -1,8 +1,12 @@
-package com.loung.semof.member.controller;
+package com.loung.semof.loginInfo.controller;
 
 
 import com.loung.semof.common.ResponseDto;
-import com.loung.semof.member.service.MemberService;
+
+
+import com.loung.semof.loginInfo.dto.LoginInfoDto;
+import com.loung.semof.loginInfo.service.MemberService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +28,12 @@ public class MemberController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.selectMyInfo(memberId)));
     }
+
+// @GetMapping("/members/{memberId}")
+// public ResponseEntity<ResponseDto> selectMyMemberInfo(@AuthenticationPrincipal LoginInfoDto member) {
+// String memberId = member.getMemberId();
+//     return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.selectMyInfo(memberId)));
+// }
 
 
 

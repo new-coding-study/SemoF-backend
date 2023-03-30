@@ -178,11 +178,11 @@
         WHERE LINE_NO=#{lineNo}
     </delete>
     <!--    결재순서 삭제-->
-    <delete id="deleteApprovOrder" parameterType="ApprovOrderDTO">
-        DELETE
-        FROM TBL_APPROV_order
-        WHERE LINE_NO=#{lineNo}
-    </delete>
+<!--    <delete id="deleteApprovOrder" parameterType="ApprovOrderDTO">-->
+<!--        DELETE-->
+<!--        FROM TBL_APPROV_order-->
+<!--        WHERE LINE_NO=#{lineNo}-->
+<!--    </delete>-->
 
 
     <!--    결재문서-->
@@ -229,10 +229,10 @@
     </insert>
 
     <!--    결재상신함-->
-    <select id="selectApprovalListWithPaging" resultType="ApprovalDTO">
+    <select id="selectApprovalInWithPaging" resultType="ApprovalDTO">
         SELECT P.APP_CATEGORY
              , P.APPROV_TITLE
-             , LAST_VALUE(P.STATUS_NAME) OVER (
+             , LAST_VALUE(P.STATUS) OVER (
         RANGE BETWEEN
             	UNBOUNDED PRECEDING AND
             	UNBOUNDED FOLLOWING
@@ -242,20 +242,130 @@
                    , A.APPROV_TITLE
                    , C.STATUS_NAME
                    , A.APPROV_DATE
-                    ,E.ORDER_NO
+                   ,E.ORDER_NO
+                   ,F.EMP_NO
+
 
               FROM tbl_APPROVAL A
                        JOIN tbl_approv_content B
                             ON (A.APPROV_NO = B.APPROV_NO)
                        JOIN tbl_APPROV_STATUS C
                             ON (A.APPROV_NO = C.APPROV_NO)
-                        JOIN tbl_approv_category D
+                       JOIN tbl_approv_category D
                             ON (B.FORM_CODE = D.FORM_CODE)
-                        JOIN tbl_approv_order E
+                       JOIN tbl_approv_order E
                             ON (E.ORDER_NO = C.ORDER_NO)
-              ) P
+                       JOIN tbl_employee F
+                            ON (F.EMP_NO = A.EMP_NO)
+
+             ) P
+        WHERE P.EMP_NO = #{empNo}
+
             LIMIT ${ startRow }
-           , #{ endRow }
+            , #{ endRow }
+    </select>
+
+
+<!--    완료된 결재상신-->
+    <select id="selectFinApprovalInWithPaging" resultType="ApprovalDTO">
+        SELECT P.APP_CATEGORY
+             , P.APPROV_TITLE
+             , LAST_VALUE(P.STATUS) OVER (
+        RANGE BETWEEN
+            	UNBOUNDED PRECEDING AND
+            	UNBOUNDED FOLLOWING
+	) STATUS
+             , P.APPROV_DATE
+        FROM (SELECT D.APP_CATEGORY
+                   , A.APPROV_TITLE
+                   , C.STATUS_NAME
+                   , A.APPROV_DATE
+                   ,E.ORDER_NO
+                   ,F.EMP_NO
+
+
+              FROM tbl_APPROVAL A
+                       JOIN tbl_approv_content B
+                            ON (A.APPROV_NO = B.APPROV_NO)
+                       JOIN tbl_APPROV_STATUS C
+                            ON (A.APPROV_NO = C.APPROV_NO)
+                       JOIN tbl_approv_category D
+                            ON (B.FORM_CODE = D.FORM_CODE)
+                       JOIN tbl_approv_order E
+                            ON (E.ORDER_NO = C.ORDER_NO)
+                       JOIN tbl_employee F
+                            ON (F.EMP_NO = A.EMP_NO)
+
+             ) P
+        WHERE P.EMP_NO = #{empNo}
+          AND STATUS = '승인'
+            LIMIT ${ startRow }
+            , #{ endRow }
+    </select>
+<!--    결재수신함-->
+    <select id="selectApprovalOutWithPaging" resultType="ApprovalDTO">
+        SELECT P.APP_CATEGORY
+             , P.APPROV_TITLE
+             , P.T
+             , P.APPROV_DATE
+        FROM (SELECT D.APP_CATEGORY
+                   , A.APPROV_TITLE
+                   , C.STATUS_NAME
+                   , A.APPROV_DATE
+                   ,E.ORDER_NO
+                   ,E.EMP_NO T
+                   ,F.EMP_NO G
+
+
+              FROM tbl_APPROVAL A
+                       JOIN tbl_approv_content B
+                            ON (A.APPROV_NO = B.APPROV_NO)
+                       JOIN tbl_APPROV_STATUS C
+                            ON (A.APPROV_NO = C.APPROV_NO)
+                       JOIN tbl_approv_category D
+                            ON (B.FORM_CODE = D.FORM_CODE)
+                       JOIN tbl_approv_order E
+                            ON (E.ORDER_NO = C.ORDER_NO)
+                       JOIN tbl_employee F
+                            ON (F.EMP_NO = A.EMP_NO)
+
+             ) P
+        WHERE P.G = #{empNo}
+            LIMIT ${ startRow }
+            , #{ endRow }
+    </select>
+<!--    완료된 결재 수신-->
+    <select id="selectFinApprovalOutWithPaging" resultType="ApprovalDTO">
+        SELECT P.APP_CATEGORY
+             , P.APPROV_TITLE
+             , P.T
+             , P.APPROV_DATE
+        FROM (SELECT D.APP_CATEGORY
+                   , A.APPROV_TITLE
+                   , C.STATUS_NAME
+                   , A.APPROV_DATE
+                   ,E.ORDER_NO
+                   ,E.EMP_NO T
+                   ,F.EMP_NO G
+
+
+              FROM tbl_APPROVAL A
+                       JOIN tbl_approv_content B
+                            ON (A.APPROV_NO = B.APPROV_NO)
+                       JOIN tbl_APPROV_STATUS C
+                            ON (A.APPROV_NO = C.APPROV_NO)
+                       JOIN tbl_approv_category D
+                            ON (B.FORM_CODE = D.FORM_CODE)
+                       JOIN tbl_approv_order E
+                            ON (E.ORDER_NO = C.ORDER_NO)
+                       JOIN tbl_employee F
+                            ON (F.EMP_NO = A.EMP_NO)
+
+             ) P
+        WHERE P.G = #{empNo}
+          AND STATUS = '승인'
+            LIMIT ${ startRow }
+            , #{ endRow }
     </select>
 
     <!--페이징 처리를 위한 결재문서 개수 조회-->
@@ -328,21 +438,21 @@
         SELECT 1
         FROM tbl_approv_status C
         WHERE A.APPROV_NO = C.APPROV_NO
-        AND C.STATUS_CODE <> 'C'
+        AND C.STATUS <> '미확인'
         );
         ]]>
     </delete>
     <!--    where절에 미확인-->
-    <delete id="deleteFile" parameterType="_int">
-        DELETE
-        FROM TBL_APPROV_file
-        WHERE APPROV_NO=#{approvNo}
-    </delete>
-    <delete id="deleteContent" parameterType="_int">
-        DELETE
-        FROM TBL_APPROV_content
-        WHERE APPROV_NO=#{approvNo}
-    </delete>
+<!--    <delete id="deleteFile" parameterType="_int">-->
+<!--        DELETE-->
+<!--        FROM TBL_APPROV_file-->
+<!--        WHERE APPROV_NO=#{approvNo}-->
+<!--    </delete>-->
+<!--    <delete id="deleteContent" parameterType="_int">-->
+<!--        DELETE-->
+<!--        FROM TBL_APPROV_content-->
+<!--        WHERE APPROV_NO=#{approvNo}-->
+<!--    </delete>-->
 
     <!--    완료된 결재-->
     <!--    상태 올 승인-->
@@ -372,4 +482,19 @@
             )
     </insert>
     <!--    댓글처럼-->
+<!--    최종 상태값을 받아오는 쿼리-->
+    <select id="selectLatestStatus" resultType="String">
+        SELECT
+            STATUS
+        FROM TBL_APPROV_ORDER
+        WHERE ORDER_NO =
+              (
+                  SELECT
+                      MAX(A.ORDER_NO)
+                  FROM TBL_APPROV_ORDER A
+                           JOIN TBL_APPROV_LINE B
+                            ON A.LINE_NO = B.LINE_NO
+                  WHERE A.LINE_NO = #{lineNo}
+              )
+    </select>
 </mapper>

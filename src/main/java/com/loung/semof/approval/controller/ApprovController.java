@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
+
 import java.util.List;
 
 @RestController
@@ -53,8 +53,8 @@ public class ApprovController {
      * @작성자 : 박유리
      * @메소드설명 : 결재 문서 목록을 조회
      */
-    @GetMapping("/approvList")
-    public ResponseEntity<ResponseDto> selectApprovalListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
+    @GetMapping("/approv-list")
+    public ResponseEntity<ResponseDto> selectApprovalInWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         int totalCount = approvService.selectApprovalTotal();
         int limit = 10;
         int buttonAmount = 10;
@@ -63,16 +63,31 @@ public class ApprovController {
 
         ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
         responseDtoWithPaging.setPageInfo(selectCriteria);
-        responseDtoWithPaging.setData(approvService.selectApprovalListWithPaging(selectCriteria));
-
+        responseDtoWithPaging.setData(approvService.selectApprovalInWithPaging(selectCriteria));
+//        responseDtoWithPaging.setData(approvService.selectLatestStatus());
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
     }
+//    @GetMapping("/approv-in-box")
+//    public ResponseEntity<ResponseDto> selectApprovalInWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
+//        int totalCount = approvService.selectApprovalTotal();
+//        int limit = 10;
+//        int buttonAmount = 10;
+//
+//        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+//
+//        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+//        responseDtoWithPaging.setPageInfo(selectCriteria);
+//        responseDtoWithPaging.setData(approvService.selectApprovalListWithPaging(selectCriteria));
+//
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
+//    }
+
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
      * @메소드설명 : 설정된 결재라인 조회
      */
-    @GetMapping("/lineList")
+    @GetMapping("/line-list")
     public ResponseEntity<ResponseDto> selectApprovLineListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         int totalCount = approvService.selectApprovalLineTotal();
         int limit = 10;
@@ -125,17 +140,27 @@ public class ApprovController {
      * @작성자 : 박유리
      * @메소드설명 : 결재라인을 삭제
      */
-    @DeleteMapping(value = "/line")
-    public ResponseEntity<ResponseDto> deleteApprovLine(ApprovLineDTO line){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재라인 삭제", approvService.deleteApprovLine(line)));
+//    @DeleteMapping(value = "/line")
+//    public ResponseEntity<ResponseDto> deleteApprovLine(ApprovLineDTO line){
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재라인 삭제", approvService.deleteApprovLine(line)));
+//    }
+    @DeleteMapping(value = "/line/{lineNo}")
+    public ResponseEntity<ResponseDto> deleteApprovLine(Integer lineNo){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재라인 삭제", approvService.deleteApprovLine(lineNo)));
     }
 /**
  * @작성일 : 2023.03.23
  * @작성자 : 박유리
  * @메소드설명 : 미확인 결재문서를 삭제
  */
-    @DeleteMapping(value = "/approval")
-    public ResponseEntity<ResponseDto> deleteApproval(ApprovalDTO approval){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재서류 삭제", approvService.deleteApproval(approval)));
+//    @DeleteMapping(value = "/approval")
+//    public ResponseEntity<ResponseDto> deleteApproval(ApprovalDTO approval){
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재서류 삭제", approvService.deleteApproval(approval)));
+//    }
+
+    @DeleteMapping(value = "/approval/{approvNo}")
+    public ResponseEntity<ResponseDto> deleteApproval(Integer approvNo){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재서류 삭제", approvService.deleteApproval(approvNo)));
     }
+
 }
