@@ -36,13 +36,11 @@ public class TodoController {
      * @작성자 : 박지희
      * @메소드설명 : 로그인한 사원의 할 일을 전체 조회하는 메소드
      */
-    @GetMapping("/todolist/{empNo}")
-    public ResponseEntity<ResponseDto> selectTodoList(@PathVariable Long empNo){
-
-//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 전체 조회 성공", todoService.selectTodoList(empNo)));
+    @GetMapping("/todolist/today/{empNo}")
+    public ResponseEntity<ResponseDto> selectTodayTodoList(@PathVariable Long empNo){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 전체 조회 성공", todoService.selectTodoList(empNo)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 전체 조회 성공", todoService.selectTodayTodoList(empNo)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -51,11 +49,52 @@ public class TodoController {
         }
     }
 
+    @GetMapping("/todolist/intended/{empNo}")
+    public ResponseEntity<ResponseDto> selectIntendedTodoList(@PathVariable Long empNo){
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 전체 조회 성공", todoService.selectIntendedTodoList(empNo)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
+
+
     @GetMapping("/todo/{todoNo}")
-    public ResponseEntity<ResponseDto> selectTodo(@PathVariable Long todoNo){
+    public ResponseEntity<ResponseDto> selectTodoDetail(@PathVariable Long todoNo){
 
         try {
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 상세 조회 성공", todoService.selectTodoDetail(todoNo)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
+
+    @GetMapping("/todo/search")
+    public ResponseEntity<ResponseDto> selectSearchTodo(@RequestParam(name="searchWord") String searchWord, @RequestParam(name="empNo") String empNo){
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 검색 성공", todoService.selectSearchTodo(searchWord, empNo)));
+//        try {
+//
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+//
+//        }
+    }
+
+
+    @GetMapping("/category/{empNo}")
+    public ResponseEntity<ResponseDto> selectCategoryList(@PathVariable Long empNo){
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 조회 성공", todoService.selectCategoryList(empNo)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -68,7 +107,7 @@ public class TodoController {
     public ResponseEntity<ResponseDto> insertCategory(@ModelAttribute TodoDto categoryDto){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "트", todoService.insertCategory(categoryDto)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "카테고리 생성 성공", todoService.insertCategory(categoryDto)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -154,8 +193,6 @@ public class TodoController {
 
         }
     }
-
-//    검색 메소드 만들어야 함
 
 
 }

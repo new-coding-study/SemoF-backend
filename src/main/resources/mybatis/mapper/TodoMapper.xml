@@ -26,7 +26,7 @@
 <!--        <result property="empNo" column="EMP_NO"/>-->
 <!--    </resultMap>-->
 
-    <select id="selectTodoList" resultType="TodoDto">
+    <select id="selectTodayTodoList" resultType="TodoDto">
         <![CDATA[
             SELECT
                 A.*
@@ -35,8 +35,22 @@
                 JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
                 JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
             WHERE B.EMP_NO = #{empNo}
-            AND TODO_DATE >= DATE(NOW())
+            AND TODO_DATE = DATE(NOW())
             ORDER BY TODO_DATE, TODO_TIME
+        ]]>
+    </select>
+
+    <select id="selectIntendedTodoList" resultType="TodoDto">
+        <![CDATA[
+        SELECT
+            A.*
+             ,B.*
+        FROM tbl_todo A
+                 JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
+                 JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
+        WHERE B.EMP_NO = #{empNo}
+          AND TODO_DATE > DATE(NOW())
+        ORDER BY TODO_DATE, TODO_TIME
         ]]>
     </select>
 
@@ -49,6 +63,31 @@
                  JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
         WHERE TODO_NO =  #{todoNo}
     </select>
+
+    <select id="selectSearchTodo" parameterType="String" resultType="TodoDto">
+        SELECT
+            A.*
+        FROM
+            (
+                SELECT
+                    A.*
+                     ,B.CATE_COLOR
+                     ,B.CATE_NAME
+                FROM tbl_todo A
+                         JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
+                         JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
+                WHERE A.TODO_NAME LIKE CONCAT('%',#{searchWord},'%')
+                  AND B.EMP_NO = #{empNo}
+            ) AS A
+    </select>
+
+    <select id="selectCategoryList" parameterType="java.lang.Long" resultType="TodoDto">
+        SELECT
+            *
+        FROM tbl_todo_category
+        WHERE EMP_NO =  #{empNo}
+    </select>
+
 
     <insert id="insertCategory" parameterType="TodoDto">
         INSERT INTO tbl_todo_category

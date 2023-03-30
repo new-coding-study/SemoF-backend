@@ -53,8 +53,8 @@ public class TokenProvider {
         //유저 권한정보 담기
         Claims claims = Jwts
                 .claims()
-                .setSubject(member.getMemberId()); // sub : Subject. 토큰 제목을 나타낸다.
-                //.setSubject(String.valueOf(member.getMemberCode()));
+//                .setSubject(member.getMemberId()); // sub : Subject. 토큰 제목을 나타낸다.
+                .setSubject(String.valueOf(member.getMemberCode()));
         claims.put(AUTHORITIES_KEY, roles);// 권한 담기
 
         long now = (new Date()).getTime();
