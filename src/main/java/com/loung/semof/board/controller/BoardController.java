@@ -22,12 +22,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/boards")
 public class BoardController {
-//
+
     private final BoardService boardService;
 
     public BoardController(BoardService boardService) {
         this.boardService = boardService;
     }
+
 
     /**
      * @작성일 : 2023.03.23

@@ -18,7 +18,8 @@
 		<typeAlias alias="BranchDto" type="com.loung.semof.common.dto.BranchDto"/>
 
 		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
-
+		<typeAlias alias="ReplyDto" type="com.loung.semof.reply.dto.ReplyDto"/>
+		
 		<typeAlias alias="ApprovalDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
 		<typeAlias alias="ApprovLineDTO" type="com.loung.semof.approval.dto.ApprovLineDTO"/>
 		<typeAlias alias="ApprovOrderDTO" type="com.loung.semof.approval.dto.ApprovOrderDTO"/>

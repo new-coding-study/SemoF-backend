@@ -34,4 +34,7 @@ public interface BoardMapper {
     int deleteBoardForAdmin(Integer boardNo);
 
     int deleteBoardForEmp(int empNo, Integer boardNo);
+    
+    List<BoardDto> selectNoticeTop3ListWithPaging(SelectCriteria selectCriteria);
+
 }
