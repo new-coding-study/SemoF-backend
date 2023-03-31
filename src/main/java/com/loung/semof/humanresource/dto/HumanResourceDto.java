@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class HumanResourceDto extends EmployeeDto {
 
-    public HumanResourceDto(Long empNo, String empName, String empReg, String email, String phone, String address, Integer salary, LocalDateTime enrollDate, LocalDateTime retireDate, String workStatus, String gender, Long jobCode, String deptCode, Long branchCode, String jobName, String deptName, String branchName) {
-        super(empNo, empName, empReg, email, phone, address, salary, enrollDate, retireDate, workStatus, gender, jobCode, deptCode, branchCode);
+    public HumanResourceDto(Long empNo, String empName, String empReg, String email, String phone, String address, Integer salary, LocalDateTime enrollDate, LocalDateTime retireDate, String workStatus, String gender, Long jobCode, String deptCode, Long branchCode, String jobName, String deptName, String branchName, String memberRole) {
+        super(empNo, empName, empReg, email, phone, address, salary, enrollDate, retireDate, workStatus, gender, jobCode, deptCode, branchCode, memberRole);
         this.jobName = jobName;
         this.deptName = deptName;
         this.branchName = branchName;

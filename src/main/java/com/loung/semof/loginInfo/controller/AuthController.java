@@ -31,10 +31,10 @@ public class AuthController {
     }
 
 
-//    @PostMapping("/login")
-//    public ResponseEntity<ResponseDto> login(@RequestBody LoginInfoDto memberDto) {
-//
-//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "로그인 성공", authService.login(memberDto)));
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<ResponseDto> login(@RequestBody LoginInfoDto memberDto) {
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "로그인 성공", authService.login(memberDto)));
+    }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 /**
@@ -38,11 +39,11 @@ public class MemberController {
 //        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.selectMyInfo(memberId)));
 //    }
 
-@GetMapping("/members/{memberId}")
-public ResponseEntity<ResponseDto> selectMyMemberInfo(@AuthenticationPrincipal LoginInfoDto member) {
-String memberId = member.getMemberId();
-    return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.selectMyInfo(memberId)));
-}
+    @GetMapping("/members/{memberId}")
+    public ResponseEntity<ResponseDto> selectMyMemberInfo(@AuthenticationPrincipal LoginInfoDto member) {
+        String memberId = member.getMemberId();
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.selectMyInfo(memberId)));
+    }
 
 
 }

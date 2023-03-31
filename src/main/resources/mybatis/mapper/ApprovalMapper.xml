@@ -267,106 +267,106 @@
 
 
 <!--    완료된 결재상신-->
-    <select id="selectFinApprovalInWithPaging" resultType="ApprovalDTO">
-        SELECT P.APP_CATEGORY
-             , P.APPROV_TITLE
-             , LAST_VALUE(P.STATUS) OVER (
-        RANGE BETWEEN
-            	UNBOUNDED PRECEDING AND
-            	UNBOUNDED FOLLOWING
-	) STATUS
-             , P.APPROV_DATE
-        FROM (SELECT D.APP_CATEGORY
-                   , A.APPROV_TITLE
-                   , C.STATUS_NAME
-                   , A.APPROV_DATE
-                   ,E.ORDER_NO
-                   ,F.EMP_NO
+<!--    <select id="selectFinApprovalInWithPaging" resultType="ApprovalDTO">-->
+<!--        SELECT P.APP_CATEGORY-->
+<!--             , P.APPROV_TITLE-->
+<!--             , LAST_VALUE(P.STATUS) OVER (-->
+<!--        RANGE BETWEEN-->
+<!--            	UNBOUNDED PRECEDING AND-->
+<!--            	UNBOUNDED FOLLOWING-->
+<!--	) STATUS-->
+<!--             , P.APPROV_DATE-->
+<!--        FROM (SELECT D.APP_CATEGORY-->
+<!--                   , A.APPROV_TITLE-->
+<!--                   , C.STATUS_NAME-->
+<!--                   , A.APPROV_DATE-->
+<!--                   ,E.ORDER_NO-->
+<!--                   ,F.EMP_NO-->
 
 
-              FROM tbl_APPROVAL A
-                       JOIN tbl_approv_content B
-                            ON (A.APPROV_NO = B.APPROV_NO)
-                       JOIN tbl_APPROV_STATUS C
-                            ON (A.APPROV_NO = C.APPROV_NO)
-                       JOIN tbl_approv_category D
-                            ON (B.FORM_CODE = D.FORM_CODE)
-                       JOIN tbl_approv_order E
-                            ON (E.ORDER_NO = C.ORDER_NO)
-                       JOIN tbl_employee F
-                            ON (F.EMP_NO = A.EMP_NO)
+<!--              FROM tbl_APPROVAL A-->
+<!--                       JOIN tbl_approv_content B-->
+<!--                            ON (A.APPROV_NO = B.APPROV_NO)-->
+<!--                       JOIN tbl_APPROV_STATUS C-->
+<!--                            ON (A.APPROV_NO = C.APPROV_NO)-->
+<!--                       JOIN tbl_approv_category D-->
+<!--                            ON (B.FORM_CODE = D.FORM_CODE)-->
+<!--                       JOIN tbl_approv_order E-->
+<!--                            ON (E.ORDER_NO = C.ORDER_NO)-->
+<!--                       JOIN tbl_employee F-->
+<!--                            ON (F.EMP_NO = A.EMP_NO)-->
 
-             ) P
-        WHERE P.EMP_NO = #{empNo}
-          AND STATUS = '승인'
-            LIMIT ${ startRow }
-            , #{ endRow }
-    </select>
-<!--    결재수신함-->
-    <select id="selectApprovalOutWithPaging" resultType="ApprovalDTO">
-        SELECT P.APP_CATEGORY
-             , P.APPROV_TITLE
-             , P.T
-             , P.APPROV_DATE
-        FROM (SELECT D.APP_CATEGORY
-                   , A.APPROV_TITLE
-                   , C.STATUS_NAME
-                   , A.APPROV_DATE
-                   ,E.ORDER_NO
-                   ,E.EMP_NO T
-                   ,F.EMP_NO G
-
-
-              FROM tbl_APPROVAL A
-                       JOIN tbl_approv_content B
-                            ON (A.APPROV_NO = B.APPROV_NO)
-                       JOIN tbl_APPROV_STATUS C
-                            ON (A.APPROV_NO = C.APPROV_NO)
-                       JOIN tbl_approv_category D
-                            ON (B.FORM_CODE = D.FORM_CODE)
-                       JOIN tbl_approv_order E
-                            ON (E.ORDER_NO = C.ORDER_NO)
-                       JOIN tbl_employee F
-                            ON (F.EMP_NO = A.EMP_NO)
-
-             ) P
-        WHERE P.G = #{empNo}
-            LIMIT ${ startRow }
-            , #{ endRow }
-    </select>
-<!--    완료된 결재 수신-->
-    <select id="selectFinApprovalOutWithPaging" resultType="ApprovalDTO">
-        SELECT P.APP_CATEGORY
-             , P.APPROV_TITLE
-             , P.T
-             , P.APPROV_DATE
-        FROM (SELECT D.APP_CATEGORY
-                   , A.APPROV_TITLE
-                   , C.STATUS_NAME
-                   , A.APPROV_DATE
-                   ,E.ORDER_NO
-                   ,E.EMP_NO T
-                   ,F.EMP_NO G
+<!--             ) P-->
+<!--        WHERE P.EMP_NO = #{empNo}-->
+<!--          AND STATUS = '승인'-->
+<!--            LIMIT ${ startRow }-->
+<!--            , #{ endRow }-->
+<!--    </select>-->
+<!--&lt;!&ndash;    결재수신함&ndash;&gt;-->
+<!--    <select id="selectApprovalOutWithPaging" resultType="ApprovalDTO">-->
+<!--        SELECT P.APP_CATEGORY-->
+<!--             , P.APPROV_TITLE-->
+<!--             , P.T-->
+<!--             , P.APPROV_DATE-->
+<!--        FROM (SELECT D.APP_CATEGORY-->
+<!--                   , A.APPROV_TITLE-->
+<!--                   , C.STATUS_NAME-->
+<!--                   , A.APPROV_DATE-->
+<!--                   ,E.ORDER_NO-->
+<!--                   ,E.EMP_NO T-->
+<!--                   ,F.EMP_NO G-->
 
 
-              FROM tbl_APPROVAL A
-                       JOIN tbl_approv_content B
-                            ON (A.APPROV_NO = B.APPROV_NO)
-                       JOIN tbl_APPROV_STATUS C
-                            ON (A.APPROV_NO = C.APPROV_NO)
-                       JOIN tbl_approv_category D
-                            ON (B.FORM_CODE = D.FORM_CODE)
-                       JOIN tbl_approv_order E
-                            ON (E.ORDER_NO = C.ORDER_NO)
-                       JOIN tbl_employee F
-                            ON (F.EMP_NO = A.EMP_NO)
+<!--              FROM tbl_APPROVAL A-->
+<!--                       JOIN tbl_approv_content B-->
+<!--                            ON (A.APPROV_NO = B.APPROV_NO)-->
+<!--                       JOIN tbl_APPROV_STATUS C-->
+<!--                            ON (A.APPROV_NO = C.APPROV_NO)-->
+<!--                       JOIN tbl_approv_category D-->
+<!--                            ON (B.FORM_CODE = D.FORM_CODE)-->
+<!--                       JOIN tbl_approv_order E-->
+<!--                            ON (E.ORDER_NO = C.ORDER_NO)-->
+<!--                       JOIN tbl_employee F-->
+<!--                            ON (F.EMP_NO = A.EMP_NO)-->
 
-             ) P
-        WHERE P.G = #{empNo}
-          AND STATUS = '승인'
-            LIMIT ${ startRow }
-            , #{ endRow }
-    </select>
+<!--             ) P-->
+<!--        WHERE P.G = #{empNo}-->
+<!--            LIMIT ${ startRow }-->
+<!--            , #{ endRow }-->
+<!--    </select>-->
+<!--&lt;!&ndash;    완료된 결재 수신&ndash;&gt;-->
+<!--    <select id="selectFinApprovalOutWithPaging" resultType="ApprovalDTO">-->
+<!--        SELECT P.APP_CATEGORY-->
+<!--             , P.APPROV_TITLE-->
+<!--             , P.T-->
+<!--             , P.APPROV_DATE-->
+<!--        FROM (SELECT D.APP_CATEGORY-->
+<!--                   , A.APPROV_TITLE-->
+<!--                   , C.STATUS_NAME-->
+<!--                   , A.APPROV_DATE-->
+<!--                   ,E.ORDER_NO-->
+<!--                   ,E.EMP_NO T-->
+<!--                   ,F.EMP_NO G-->
+
+
+<!--              FROM tbl_APPROVAL A-->
+<!--                       JOIN tbl_approv_content B-->
+<!--                            ON (A.APPROV_NO = B.APPROV_NO)-->
+<!--                       JOIN tbl_APPROV_STATUS C-->
+<!--                            ON (A.APPROV_NO = C.APPROV_NO)-->
+<!--                       JOIN tbl_approv_category D-->
+<!--                            ON (B.FORM_CODE = D.FORM_CODE)-->
+<!--                       JOIN tbl_approv_order E-->
+<!--                            ON (E.ORDER_NO = C.ORDER_NO)-->
+<!--                       JOIN tbl_employee F-->
+<!--                            ON (F.EMP_NO = A.EMP_NO)-->
+
+<!--             ) P-->
+<!--        WHERE P.G = #{empNo}-->
+<!--          AND STATUS = '승인'-->
+<!--            LIMIT ${ startRow }-->
+<!--            , #{ endRow }-->
+<!--    </select>-->
 
     <!--페이징 처리를 위한 결재문서 개수 조회-->
     <select id="selectApprovalTotal" resultType="int">

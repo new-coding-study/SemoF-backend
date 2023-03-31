@@ -35,6 +35,7 @@ public class BoardController {
      * @메소드설명 : 공지사항에 대한 페이링 처리 및 리스트를 불러오기 위한 메소드
      */
     @GetMapping("/board-notice-lists")
+//    @CrossOrigin("*")
     public ResponseEntity<ResponseDto> selectNoticeListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         System.out.println("selectNoticeListWithPaging execute" + offset);
 
@@ -54,6 +55,7 @@ public class BoardController {
     }
 
     @GetMapping("/board-notice-top3")
+//    @CrossOrigin("*")
     public ResponseEntity<ResponseDto> selectNoticeTop3WithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         System.out.println("selectNoticeListWithPaging execute" + offset);
 
@@ -80,6 +82,7 @@ public class BoardController {
     }
 
     @GetMapping("/board-posting-lists")
+//    @CrossOrigin("*")
     public ResponseEntity<ResponseDto> selectPostingListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         System.out.println("selectPostingListWithPaging execute" + offset);
 
