@@ -8,7 +8,7 @@ import java.util.List;
 @Mapper
 public interface EmployeeEvaluationMapper {
 
-    List<EmployeeEvaluationDto> selectAttendanceSummary(int year, int month, int empNo);
+    List<EmployeeEvaluationDto> selectAttendanceSummary(int year, int month, Long empNo);
 
     List<EmployeeEvaluationDto> selectProjectContributionRates(Long empNo);
 
@@ -20,9 +20,9 @@ public interface EmployeeEvaluationMapper {
 
     int countAttendanceEvaluation(EmployeeEvaluationDto employeeEvaluationDto);
 
-    List<EmployeeEvaluationDto> selectAttendanceEvaluationByEmpNo(int empNo);
+    List<EmployeeEvaluationDto> selectAttendanceEvaluationByEmpNo(Long empNo);
 
-    List<EmployeeEvaluationDto> selectContributionEvaluationByEmpNo(int empNo);
+    List<EmployeeEvaluationDto> selectContributionEvaluationByEmpNo(Long empNo);
 
     EmployeeEvaluationDto selectAttendanceEvaluationByEvalAtdNo(Long evalAtdNo);
 

@@ -29,6 +29,7 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 이지형

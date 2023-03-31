@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 public class TodoDto {
     private Long todoNo;
     private String todoName;
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
-    private LocalDateTime todoDate;
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="HH:mm:ss", timezone="Asia/Seoul")
-    private LocalDateTime todoTime;
+//    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
+    private String todoDate;
+//    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="HH:mm:ss", timezone="Asia/Seoul")
+    private String todoTime;
     private String todoContent;
     private int todoFinish;
     private int todoStar;
@@ -29,5 +29,5 @@ public class TodoDto {
     private String cateName;
     private String cateColor;
     private Long empNo;
-
+//
 }

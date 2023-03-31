@@ -17,14 +17,22 @@ import java.util.List;
 @Mapper
 public interface TodoMapper {
 
-    List<TodoDto> selectTodoList(Long empNo);
+    List<TodoDto> selectTodayTodoList(Long empNo);
+
+    List<TodoDto> selectIntendedTodoList(Long empNo);
     TodoDto selectTodoDetail(Long todoNo);
+    List<TodoDto> selectSearchTodo(String searchWord, String empNo);
+    List<TodoDto> selectCategoryList(Long empNo);
     int insertCategory(TodoDto categoryDto);
     int updateCategory(TodoDto categoryDto);
     int deleteCategory(Long cateNo);
     int insertTodo(TodoDto todoDto);
     int updateTodo(TodoDto todoDto);
     int deleteTodo(Long todoNo);
+
     int checkStar(Long todoNo);
+
     int updateStar(Long todoNo, Long changeStar);
+
+//
 }

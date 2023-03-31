@@ -44,6 +44,7 @@ public class TokenProvider {
 
 
     // Authentication 객체(유저)의 권한정보를 이용해서 토큰을 생성
+
     public TokenDto generateTokenDto(LoginInfoDto member) {
         log.info("[TokenProvider] generateTokenDto Start ===================================");
 //        log.info("[TokenProvider] {}", member.getMemberRole());
@@ -70,6 +71,7 @@ public class TokenProvider {
 
         return new TokenDto(BEARER_TYPE, member.getEmpName(), accessToken, accessTokenExpiresIn.getTime());
     }
+
 
     public String getUserId(String accessToken) {
         return Jwts

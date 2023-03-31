@@ -5,7 +5,11 @@ import com.loung.semof.todo.dao.TodoMapper;
 import com.loung.semof.todo.dto.TodoDto;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +22,15 @@ public class TodoService {
         this.todoMapper = todoMapper;
     }
 
-    public List<TodoDto> selectTodoList(Long empNo) {
+    public List<TodoDto> selectTodayTodoList(Long empNo) {
 
-//        List<TodoDto> todoList = todoMapper.selectTodoList(empNo);
+        return todoMapper.selectTodayTodoList(empNo);
 
-        return todoMapper.selectTodoList(empNo);
+    }
+
+    public List<TodoDto> selectIntendedTodoList(Long empNo) {
+
+        return todoMapper.selectIntendedTodoList(empNo);
 
     }
 
@@ -34,6 +42,23 @@ public class TodoService {
             throw new NotFoundException("할 일 상세보기 조회 실패");
         }
         return todo;
+    }
+
+    public List<TodoDto> selectSearchTodo(String searchWord, String empNo) {
+
+        return todoMapper.selectSearchTodo(searchWord, empNo);
+
+    }
+
+    public List<TodoDto> selectCategoryList(Long empNo) {
+
+        List<TodoDto> categoryList = todoMapper.selectCategoryList(empNo);
+
+        if (categoryList.isEmpty()) {
+            throw new NotFoundException("카테고리 조회 실패");
+        }
+
+        return categoryList;
     }
 
     public String insertCategory(TodoDto categoryDto) throws SQLException {
@@ -70,6 +95,19 @@ public class TodoService {
     }
 
     public String insertTodo(TodoDto todoDto) throws SQLException {
+
+        if (todoDto.getTodoDate() == null) {
+
+            LocalDateTime now = LocalDateTime.now();
+            // 포맷 정의
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            // 포맷 적용
+            todoDto.setTodoDate((now.format(formatter)));
+        }
+
+        if (todoDto.getTodoTime() == null) {
+            todoDto.setTodoTime(("18:00:00"));
+        }
 
         int result = todoMapper.insertTodo(todoDto);
 
@@ -119,4 +157,6 @@ public class TodoService {
 
         return "중요 표시 변경 성공";
     }
+
+
 }

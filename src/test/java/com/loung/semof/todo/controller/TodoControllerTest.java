@@ -150,13 +150,13 @@ class TodoControllerTest {
         // given
         MultiValueMap<String, String> todo = new LinkedMultiValueMap<>();
 
-        todo.add("todoName", "todo-test");
+        todo.add("todoName", "todo-test-2");
 
-        todo.add("todoDate", "2023-03-23");
+//        todo.add("todoDate", "2023-03-23");
 
-        todo.add("todoTime", "19:00:00");
+//        todo.add("todoTime", "19:00:00");
 
-        todo.add("todoContent", "todo-test를 test하는 MockUp");
+        todo.add("todoContent", "todo-test를 test하는 MockUp-2");
 
         todo.add("todoFinish", "0");
 
@@ -167,8 +167,8 @@ class TodoControllerTest {
         // when
         // then
         mockMvc.perform(MockMvcRequestBuilders.post("/todos/todo").params(todo))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
-//                .andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andDo(MockMvcResultHandlers.print());
 
     }

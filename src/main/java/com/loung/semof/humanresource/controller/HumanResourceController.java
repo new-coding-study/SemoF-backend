@@ -13,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -95,13 +97,17 @@ public class HumanResourceController {
      * @메소드설명 : 사원 등록을 수행하는 메소드
      */
     @PostMapping("/register")
-    public ResponseEntity<ResponseDto> insertEmployee(@RequestBody EmployeeDto employeeDto) throws SQLException {
-
+    public ResponseEntity<ResponseDto> insertEmployee(@ModelAttribute EmployeeDto employeeDto,
+                                                      @RequestPart(value = "employeePhoto", required = false) MultipartFile employeePhoto) throws SQLException {
         try {
             EmployeeDto employee = humanResourceService.insertEmployee(employeeDto);
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", employee));
 
-        } catch (SQLException e) {
+            log.info("[HumanResourceController] employee" + employee);
+
+            humanResourceService.insertEmployeePhoto(employeePhoto, employee);
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", employee));
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -115,13 +121,13 @@ public class HumanResourceController {
      * @메소드설명 : 사원 정보 수정을 수행하는 메소드
      */
     @PutMapping("/present")
-    public ResponseEntity<ResponseDto> updateEmployee(@RequestBody EmployeeDto employeeDto) {
-
+    public ResponseEntity<ResponseDto> updateEmployee(@ModelAttribute EmployeeDto employeeDto,
+                                                      @RequestPart(value = "employeePhoto", required = false) MultipartFile employeePhoto) {
         try {
             EmployeeDto employee = humanResourceService.updateEmployee(employeeDto.getEmpNo(),
                     employeeDto.getPhone(), employeeDto.getEmail(),
                     employeeDto.getAddress(), employeeDto.getSalary(),
-                    employeeDto.getJobCode());
+                    employeeDto.getJobCode(), employeePhoto);
 
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "수정 성공", employee));
 

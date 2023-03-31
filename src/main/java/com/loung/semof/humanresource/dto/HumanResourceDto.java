@@ -1,3 +1,4 @@
+
 package com.loung.semof.humanresource.dto;
 
 import com.loung.semof.common.dto.EmployeeDto;

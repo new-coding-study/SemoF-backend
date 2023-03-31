@@ -30,36 +30,24 @@ public class EmployeeEvaluationService {
      * @작성자 : 이현도
      * @메소드설명 : 사원의 출근, 결근율 계산 비즈니스 로직을 수행하는 메소드
      */
-    public Map<String, Object> selectAttendanceSummary(int empNo) {
+    public Map<String, Object> selectAttendanceSummary(Long empNo) {
 
         Map<String, Object> summary = new HashMap<>();
 
         int year = LocalDate.now().getYear();
-
         int month = LocalDate.now().getMonthValue();
 
         summary.put("year", year);
-
         summary.put("month", month);
-
         List<EmployeeEvaluationDto> list = employeeEvaluationMapper.selectAttendanceSummary(year, month, empNo);
-
         summary.put("attendance", list);
-
         double totalDays = YearMonth.of(year, month).lengthOfMonth();
-
         double totalWorkingDays = list.stream().mapToDouble(EmployeeEvaluationDto::getWorkingDays).sum();
-
         double absenceDays = totalDays - totalWorkingDays;
-
         double attendanceRate = totalWorkingDays / totalDays * 100;
-
         double absenceRate = absenceDays / totalDays * 100;
-
         summary.put("attendanceRate", attendanceRate);
-
         summary.put("absenceRate", absenceRate);
-
         return summary;
     }
 
@@ -160,7 +148,7 @@ public class EmployeeEvaluationService {
      * @작성자 : 이현도
      * @메소드설명 : 사원의 근태 평가 점수 조회 비즈니스 로직을 수행하는 메소드
      */
-    public List<EmployeeEvaluationDto> selectAttendanceGrade(int empNo) {
+    public List<EmployeeEvaluationDto> selectAttendanceGrade(Long empNo) {
 
         List<EmployeeEvaluationDto> attendanceList = employeeEvaluationMapper.selectAttendanceEvaluationByEmpNo(empNo);
 
@@ -172,7 +160,7 @@ public class EmployeeEvaluationService {
      * @작성자 : 이현도
      * @메소드설명 : 사원의 기여도 평가 점수 조회 비즈니스 로직을 수행하는 메소드
      */
-    public List<EmployeeEvaluationDto> selectContributionGrade(int empNo) {
+    public List<EmployeeEvaluationDto> selectContributionGrade(Long empNo) {
 
         List<EmployeeEvaluationDto> contributionList = employeeEvaluationMapper.selectContributionEvaluationByEmpNo(empNo);
 
@@ -229,11 +217,13 @@ public class EmployeeEvaluationService {
      * @메소드설명 : 사원의 근태 평가 점수 삭제 비즈니스 로직을 수행하는 메소드
      */
     @Transactional
-    public String deleteAttendanceGrade(EmployeeEvaluationDto employeeEvaluationDto) {
+    public int deleteAttendanceGrade(Long empNo) {
 
-        List<EmployeeEvaluationDto> employeeEvaluationList = employeeEvaluationMapper.selectAttendanceByEmpNo(employeeEvaluationDto.getEmpNo());
+        log.info("[EmployeeEvaluationService] empNo: {}", empNo);
 
-        log.info("[EmployeeEvaluationService] employeeEvaluationList: " + employeeEvaluationList);
+        List<EmployeeEvaluationDto> employeeEvaluationList = employeeEvaluationMapper.selectAttendanceByEmpNo(empNo);
+
+        log.info("[EmployeeEvaluationService] employeeEvaluationList: {}", employeeEvaluationList);
 
         if (employeeEvaluationList == null || employeeEvaluationList.isEmpty()) {
             throw new NotFoundException("존재하지 않는 근태 정보입니다.");
@@ -242,12 +232,13 @@ public class EmployeeEvaluationService {
         int result = 0;
 
         for (EmployeeEvaluationDto evaluation : employeeEvaluationList) {
-
             Long targetNumber = evaluation.getEmpNo();
-
+            log.info("[EmployeeEvaluationService] targetNumber: {}", targetNumber);
             result += employeeEvaluationMapper.deleteAttendanceGradeByEmpNo(targetNumber);
+            log.info("[EmployeeEvaluationService] result: {}", result);
         }
-        return (result > 0) ? "삭제 성공" :  "삭제 실패";
+
+        return result;
     }
 
     /**
