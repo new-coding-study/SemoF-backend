@@ -80,12 +80,12 @@ public class SecurityConfig  {
                 .and()
                 .authorizeRequests()// http servletRequest 를 사용하는 요청들에 대한 접근제한을 설정
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                 .antMatchers("/api/v1/products-management").hasRole("ADMIN")  // 나머지 API 는 전부 인증 필요
-
-                 .antMatchers("/auth/**").permitAll()// 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
-                .antMatchers("/api/v1/products/**").permitAll()// 제품 누구나 접근가능
-                .antMatchers("/api/v1/reviews/**").permitAll()// 리뷰도 누구나 접근가능
-                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")  // 나머지 API 는 전부 인증 필요
+//                 .antMatchers("/api/v1/products-management").hasRole("ADMIN")  // 나머지 API 는 전부 인증 필요
+//
+//                 .antMatchers("/auth/**").permitAll()// 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
+//                .antMatchers("/api/v1/products/**").permitAll()// 제품 누구나 접근가능
+//                .antMatchers("/api/v1/reviews/**").permitAll()// 리뷰도 누구나 접근가능
+//                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")  // 나머지 API 는 전부 인증 필요
 
                  .and()
                  .cors()
@@ -102,7 +102,7 @@ public class SecurityConfig  {
 //         configuration.setAllowedOrigins(Arrays.asList("http://43.200.45.85:3000" ));// 해당 ip만 응답
 
         configuration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE"));// 해당메소드만응답하겠다
-//        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Content-Type", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With"));// 해당 헤더의 응답만허용
+        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Content-Type", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With"));// 해당 헤더의 응답만허용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
