@@ -77,7 +77,7 @@ public class TodoController {
     }
 
     @GetMapping("/todo/search")
-    public ResponseEntity<ResponseDto> selectSearchTodo(@RequestParam(name="searchWord") String searchWord, @RequestParam(name="empNo") String empNo){
+    public ResponseEntity<ResponseDto> selectSearchTodo(@RequestParam(name="s") String searchWord, @RequestParam(name="e") String empNo){
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 검색 성공", todoService.selectSearchTodo(searchWord, empNo)));
 //        try {
