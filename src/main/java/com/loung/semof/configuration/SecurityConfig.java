@@ -84,7 +84,9 @@ public class SecurityConfig  {
 //                .antMatchers("/api/v1/products/**").permitAll()// 제품 누구나 접근가능
 //                .antMatchers("/api/v1/reviews/**").permitAll()// 리뷰도 누구나 접근가능
 //                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")  // 나머지 API 는 전부 인증 필요
+
                  .antMatchers("/**").permitAll() // 임시 전체 접근 허용
+
 
                  .and() // 여기서 정의를 해줬기 때문에 corsConfigurationSource가 작동
                  .cors()

@@ -432,6 +432,7 @@
         SET
             TB.BOARD_TITLE = #{boardTitle}
            ,TB.BOARD_CONTENT = #{boardContent}
+           ,TB.BOARD_CATE_CODE = #{boardCateCode}
         WHERE TB.BOARD_NO = #{boardNo}
     </update>
 
