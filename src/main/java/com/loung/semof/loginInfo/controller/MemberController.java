@@ -23,17 +23,22 @@ public class MemberController {
         this.memberService = memberService;
     }
 
-    @GetMapping("/members/{memberId}")
-    public ResponseEntity<ResponseDto> selectMyMemberInfo(@PathVariable String memberId) {
+/**
+ * @작성일 :
+ * @작성자 : 박유리
+ * @메소드설명 : 설명을 여기에 작성한다.
+ */
+//    @GetMapping("/members/{memberId}")
+//    public ResponseEntity<ResponseDto> selectMyMemberInfo(@PathVariable String memberId) {
+//
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.selectMyInfo(memberId)));
+//    }
 
+    @GetMapping("/members/{memberId}")
+    public ResponseEntity<ResponseDto> selectMyMemberInfo(@AuthenticationPrincipal LoginInfoDto member) {
+        String memberId = member.getMemberId();
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.selectMyInfo(memberId)));
     }
-
-// @GetMapping("/members/{memberId}")
-// public ResponseEntity<ResponseDto> selectMyMemberInfo(@AuthenticationPrincipal LoginInfoDto member) {
-// String memberId = member.getMemberId();
-//     return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", memberService.selectMyInfo(memberId)));
-// }
 
 
 

@@ -2,9 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-
-<mapper namespace="com.loung.semof.loginInfo.dao.MemberMapper">
+<mapper namespace="com.loung.semof.loginInfo.dao.LoginInfoMapper">
 
     <select id="selectByMemberId" resultType="LoginInfoDto">
         SELECT
@@ -42,7 +40,7 @@
         WHERE MEMBER_EMAIL = #{email}
     </select>
 
-    <select id="findByMemberId" resultType="MemberDto">
+    <select id="findByMemberId" resultType="LoginInfoDto">
         SELECT
                 MEMBER_CODE
              ,  MEMBER_ID

@@ -9,10 +9,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
 
-    @Value("${image.add-resource-locations}")
+    @Value("${file.add-resource-locations}")
     private String ADD_RESOURCE_LOCATION;
 
-    @Value("${image.add-resource-handler}")
+    @Value("${file.add-resource-handler}")
     private String ADD_RESOURCE_HANDLER;
 
     @Override

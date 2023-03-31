@@ -21,16 +21,11 @@ public class LoginInfoDto implements UserDetails {
     private String empReg;
     private String memberRole;
 
+    private String empName;
 
 
-////    public LoginInfoDto(Long empNo, String empName, String empReg, String email, String phone, String address, Integer salary, LocalDateTime enrollDate, LocalDateTime retireDate, String workStatus, String gender, Long jobCode, String deptCode, Long branchCode, Long memberCode) {
-////        super(empNo, empName, empReg, email, phone, address, salary, enrollDate, retireDate, workStatus, gender, jobCode, deptCode, branchCode);
-////        this.memberCode = memberCode;
-////    }
-//    public LoginInfoDto(String empReg, String memberRole) {
-//        super(empReg, memberRole);
-////        this.memberCode = memberCode;
-//    }
+
+
     // 이하 코드는 security 를 위한 용도
     private Collection<? extends GrantedAuthority> authorities;
 
