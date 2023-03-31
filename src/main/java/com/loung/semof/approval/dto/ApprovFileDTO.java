@@ -19,7 +19,7 @@ public class ApprovFileDTO {
     private String originName;
     private String newName;
     private String filePath;
-//    private Integer approvNo;
+    private Integer approvNo;
 
     private MultipartFile approvFile;
 }

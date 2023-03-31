@@ -1,9 +1,10 @@
-package com.loung.semof.member.service;
+package com.loung.semof.loginInfo.service;
 
 
 import com.loung.semof.exception.UserNotFoundException;
-import com.loung.semof.member.dao.MemberMapper;
-import com.loung.semof.member.dto.MemberDto;
+import com.loung.semof.loginInfo.dao.MemberMapper;
+import com.loung.semof.loginInfo.dto.LoginInfoDto;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UserNotFoundException(memberId + "> 찾을 수 없습니다."));
     }
 
-    private MemberDto addAuthorities(MemberDto member) {
+    private LoginInfoDto addAuthorities(LoginInfoDto member) {
         member.setAuthorities(Arrays.asList(new SimpleGrantedAuthority(member.getMemberRole())));
 
         return member;

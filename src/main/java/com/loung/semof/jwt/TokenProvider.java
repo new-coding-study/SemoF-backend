@@ -2,8 +2,9 @@ package com.loung.semof.jwt;
 
 
 import com.loung.semof.exception.TokenException;
-import com.loung.semof.member.dto.MemberDto;
-import com.loung.semof.member.dto.TokenDto;
+import com.loung.semof.loginInfo.dto.LoginInfoDto;
+
+import com.loung.semof.loginInfo.dto.TokenDto;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -43,19 +44,20 @@ public class TokenProvider {
 
 
     // Authentication 객체(유저)의 권한정보를 이용해서 토큰을 생성
-    public TokenDto generateTokenDto(MemberDto member) {
+
+    public TokenDto generateTokenDto(LoginInfoDto member) {
         log.info("[TokenProvider] generateTokenDto Start ===================================");
-        log.info("[TokenProvider] {}", member.getMemberRole());
+//        log.info("[TokenProvider] {}", member.getMemberRole());
 
         // 권한들 가져오기
-        List<String> roles =  Collections.singletonList(member.getMemberRole());
+//        List<String> roles =  Collections.singletonList(member.getMemberRole());
 
         //유저 권한정보 담기
         Claims claims = Jwts
                 .claims()
-//                .setSubject(member.getMemberId()); // sub : Subject. 토큰 제목을 나타낸다.
-                .setSubject(String.valueOf(member.getMemberCode()));
-        claims.put(AUTHORITIES_KEY, roles);// 권한 담기
+                .setSubject(member.getMemberId()); // sub : Subject. 토큰 제목을 나타낸다.
+                //.setSubject(String.valueOf(member.getMemberCode()));
+//        claims.put(AUTHORITIES_KEY, roles);// 권한 담기
 
         long now = (new Date()).getTime();
 
@@ -67,8 +69,9 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS512)   // header "alg": "HS512"  // "alg": "서명 시 사용하는 알고리즘",
                 .compact();
 
-        return new TokenDto(BEARER_TYPE, member.getMemberName(), accessToken, accessTokenExpiresIn.getTime());
+        return new TokenDto(BEARER_TYPE, member.getEmpName(), accessToken, accessTokenExpiresIn.getTime());
     }
+
 
     public String getUserId(String accessToken) {
         return Jwts
@@ -132,4 +135,6 @@ public class TokenProvider {
             return e.getClaims();
         }
     }
+
+
 }

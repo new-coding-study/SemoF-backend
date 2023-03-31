@@ -1,4 +1,4 @@
-package com.loung.semof.member.dto;
+package com.loung.semof.loginInfo.dto;
 
 
 public class TokenDto {

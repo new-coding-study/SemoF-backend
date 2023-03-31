@@ -22,7 +22,6 @@ public class BoardService {
 
         return result;
     }
-//
     public Object selectNoticeListWithPaging(SelectCriteria selectCriteria) {
         List<BoardDto> boardList = boardMapper.selectNoticeListWithPaging(selectCriteria);
         for(int i = 0; i < boardList.size(); i++);

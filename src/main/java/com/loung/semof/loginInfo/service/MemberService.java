@@ -1,8 +1,9 @@
-package com.loung.semof.member.service;
+package com.loung.semof.loginInfo.service;
 
 
-import com.loung.semof.member.dao.MemberMapper;
-import com.loung.semof.member.dto.MemberDto;
+import com.loung.semof.loginInfo.dao.MemberMapper;
+import com.loung.semof.loginInfo.dto.LoginInfoDto;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,10 +18,10 @@ public class MemberService {
     }
 
     @GetMapping
-    public MemberDto selectMyInfo(@PathVariable String memberId) {
+    public LoginInfoDto selectMyInfo(@PathVariable String memberId) {
         log.info("[MemberService] getMyInfo Start ==============================");
 
-        MemberDto member = memberMapper.selectByMemberId(memberId);
+        LoginInfoDto member = memberMapper.selectByMemberId(memberId);
         log.info("[MemberService] {}", member);
         log.info("[MemberService] getMyInfo End ==============================");
 

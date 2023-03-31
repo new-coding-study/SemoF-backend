@@ -12,13 +12,14 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias alias="MemberDto" type="com.loung.semof.member.dto.MemberDto"/>
+		<typeAlias alias="LoginInfoDto" type="com.loung.semof.loginInfo.dto.LoginInfoDto"/>
 		<typeAlias alias="EmployeeDto" type="com.loung.semof.common.dto.EmployeeDto"/>
 		<typeAlias alias="DepartmentDto" type="com.loung.semof.common.dto.DepartmentDto"/>
 		<typeAlias alias="BranchDto" type="com.loung.semof.common.dto.BranchDto"/>
 
 		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
-
+		<typeAlias alias="ReplyDto" type="com.loung.semof.reply.dto.ReplyDto"/>
+		
 		<typeAlias alias="ApprovalDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
 		<typeAlias alias="ApprovLineDTO" type="com.loung.semof.approval.dto.ApprovLineDTO"/>
 		<typeAlias alias="ApprovOrderDTO" type="com.loung.semof.approval.dto.ApprovOrderDTO"/>
@@ -39,7 +40,7 @@
 	</typeAliases>
 
 	<mappers>
-		<mapper resource="MemberMapper.xml" />
+		<mapper resource="LoginInfoMapper.xml" />
 		<mapper resource="EmployeeMapper.xml" />
 		<mapper resource="DepartmentMapper.xml" />
 		<mapper resource="BranchMapper.xml" />
