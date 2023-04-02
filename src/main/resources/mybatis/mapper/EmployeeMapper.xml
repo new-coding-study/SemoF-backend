@@ -66,5 +66,4 @@
             WORK_STATUS = 'N'
         WHERE EMP_NO = #{empNo}
     </update>
-
 </mapper>

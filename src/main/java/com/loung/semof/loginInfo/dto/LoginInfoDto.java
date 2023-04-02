@@ -14,15 +14,13 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LoginInfoDto implements UserDetails {
-    private Long memberCode;
-    private String memberId;
-    private String memberPassword;
+//    private Long memberCode;
+    private String loginId;
+    private String loginPwd;
     private Integer empNo;
     private String empReg;
     private String memberRole;
-
     private String empName;
-
 
 
 
@@ -36,12 +34,12 @@ public class LoginInfoDto implements UserDetails {
 
     @Override
     public String getPassword() {
-        return this.memberPassword;
+        return this.loginPwd;
     }
 
     @Override
     public String getUsername() {
-        return this.memberId;
+        return this.loginId;
     }
 
     @Override
@@ -64,13 +62,5 @@ public class LoginInfoDto implements UserDetails {
         return true;
     }
 
-    @Override
-    public String toString() {
-        return "MemberDto{" +
-                "memberCode=" + memberCode +
-                ", memberId='" + memberId + '\'' +
-                ", memberPassword='" + memberPassword + '\'' +
-                ", authorities=" + authorities +
-                '}';
-    }
+
 }
