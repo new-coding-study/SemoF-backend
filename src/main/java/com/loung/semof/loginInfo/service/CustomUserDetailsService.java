@@ -2,7 +2,7 @@ package com.loung.semof.loginInfo.service;
 
 
 import com.loung.semof.exception.UserNotFoundException;
-import com.loung.semof.loginInfo.dao.MemberMapper;
+import com.loung.semof.loginInfo.dao.LoginInfoMapper;
 import com.loung.semof.loginInfo.dto.LoginInfoDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +17,9 @@ import java.util.Arrays;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final MemberMapper mapper;
+    private final LoginInfoMapper mapper;
 
-    public CustomUserDetailsService(MemberMapper mapper) {
+    public CustomUserDetailsService(LoginInfoMapper mapper) {
         this.mapper = mapper;
     }
 

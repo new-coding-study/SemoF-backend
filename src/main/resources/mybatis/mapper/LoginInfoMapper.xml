@@ -15,7 +15,21 @@
         FROM TBL_MEMBER
         WHERE MEMBER_ID = #{memberId}
     </select>
-
+    <select id="selectByEmpReg" resultType="LoginInfoDto">
+        SELECT
+            B.EMP_REG
+            , A.EMP_NO
+        FROM tbl_login_info A
+        JOIN tbl_employee B
+        ON A.EMP_NO = B.EMP_NO
+        WHERE B.EMP_REG= #{empReg}
+    </select>
+    <select id="selectById" resultType="string">
+        SELECT
+            LOGIN_ID
+        FROM tbl_login_info
+        WHERE LOGIN_ID= #{loginId}
+    </select>
     <select id="selectByEmail" resultType="LoginInfoDto">
         SELECT
                 MEMBER_CODE
@@ -53,21 +67,17 @@
     </select>
 
     <insert id="insertMember" parameterType="LoginInfoDto">
-        INSERT INTO TBL_MEMBER
+        INSERT INTO tbl_login_info
         (
-            MEMBER_CODE,
-            MEMBER_ID,
-            MEMBER_NAME,
-            MEMBER_PASSWORD,
-            MEMBER_EMAIL
+            EMP_NO
+            , LOGIN_ID
+            , LOGIN_PWD
         )
         VALUES
         (
-            SEQ_MEMBER_CODE.NEXTVAL,
-            #{memberId},
-            #{memberName},
-            #{memberPassword},
-            #{memberEmail}
+           #{empNo}
+           , #{loginId}
+           , #{loginPwd}
         )
     </insert>
 
