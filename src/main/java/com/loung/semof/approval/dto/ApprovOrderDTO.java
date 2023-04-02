@@ -19,6 +19,6 @@ import lombok.NoArgsConstructor;
 public class ApprovOrderDTO {
   private Integer orderNo;
   private Integer lineNo;
-  private String jobName;
+  private Integer empNo;
   private ApprovStatusDTO approvStatusDTO;
 }

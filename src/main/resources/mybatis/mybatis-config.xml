@@ -27,6 +27,7 @@
 		<typeAlias alias="ApprovContentDTO" type="com.loung.semof.approval.dto.ApprovContentDTO"/>
 		<typeAlias alias="ApprovStatusDTO" type="com.loung.semof.approval.dto.ApprovStatusDTO"/>
 		<typeAlias alias="ApprovOpinDTO" type="com.loung.semof.approval.dto.ApprovOpinDTO"/>
+		<typeAlias alias="ApprovCategoryDTO" type="com.loung.semof.approval.dto.ApprovCategoryDTO"/>
 
 		<typeAlias alias="HumanResourceDto" type="com.loung.semof.humanresource.dto.HumanResourceDto"/>
 		<typeAlias alias="EmployeePhotoDto" type="com.loung.semof.humanresource.dto.EmployeePhotoDto"/>

@@ -26,4 +26,5 @@ public class ApprovalDTO {
     private Integer empNo;
     private List<ApprovFileDTO> approvFileDTOList;
     private List <ApprovContentDTO> approvContentDTOList;
+    private List<ApprovStatusDTO> approvStatusDTOList;
 }

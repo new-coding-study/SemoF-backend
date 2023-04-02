@@ -68,8 +68,8 @@ public class TokenProvider {
                 .setExpiration(accessTokenExpiresIn)       // payload "exp": 1516239022 (예시) // exp : Expiration Time. 토큰 만료 시각을 나타낸다.
                 .signWith(key, SignatureAlgorithm.HS512)   // header "alg": "HS512"  // "alg": "서명 시 사용하는 알고리즘",
                 .compact();
-
-        return new TokenDto(BEARER_TYPE, member.getEmpName(), accessToken, accessTokenExpiresIn.getTime());
+// empNo로 받자니 integer를 못받아옴,,
+        return new TokenDto(BEARER_TYPE, member.getEmpNo(), accessToken, accessTokenExpiresIn.getTime());
     }
 
 

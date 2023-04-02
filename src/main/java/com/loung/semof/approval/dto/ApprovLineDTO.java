@@ -1,5 +1,6 @@
 package com.loung.semof.approval.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,11 @@ public class ApprovLineDTO {
     private Integer empNo;
     private String branchName;
     private Integer branchCode;
-    private String line;
     private List<ApprovOrderDTO> approvOrderDTOList;
 }
+
+
+//    @JsonCreator
+//    public MyClass(@JsonProperty("myList") List<String> myList) {
+//        this.myList = myList;
+//    }

@@ -1,7 +1,9 @@
 package com.loung.semof.approval.service;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.loung.semof.approval.dao.ApprovalMapper;
 import com.loung.semof.approval.dto.*;
+import com.loung.semof.common.dto.BranchDto;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.util.FileUploadUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,15 +39,17 @@ public class ApprovService {
         this.approvMapper = approvalMapper;
     }
 
-    public Object insertApprovLine(ApprovLineDTO line, List<ApprovOrderDTO> orders) {
-        line.setApprovOrderDTOList(orders);
+    public Object insertApprovLine(ApprovLineDTO line) {
+        System.out.println("line = " + line);
+//        System.out.println("orders = " + orders);
+//        line.setApprovOrderDTOList(orders);
         int result = 0;
         int lineResult = approvMapper.insertApprovLine(line);
         int orderResult = 0;
-        for(int i =0; i<orders.size();i++){
+        for(int i =0; i<line.getApprovOrderDTOList().size();i++){
             orderResult += approvMapper.insertApprovOrder(line.getApprovOrderDTOList().get(i));
         }
-        if(lineResult>0 && orderResult == orders.size()){
+        if(lineResult>0 && orderResult == line.getApprovOrderDTOList().size()){
             result = 1;
         }
         return(result > 0 ) ? "결재라인등록성공" : "결재라인등록실패";
@@ -63,7 +68,7 @@ public class ApprovService {
         return(result > 0 ) ? "의견등록성공" : "의견등록실패";
     }
 
-    public Object insertApproval(ApprovalDTO approval, List<MultipartFile> file, List<ApprovContentDTO> contents) {
+    public Object insertApproval(ApprovalDTO approval, List<MultipartFile> file) {
         List<ApprovFileDTO> files = new ArrayList<>();
 
         String otherFileName = null;
@@ -84,7 +89,7 @@ public class ApprovService {
             files.add(fileDTO);
         }
         approval.setApprovFileDTOList(files);
-        approval.setApprovContentDTOList(contents);
+//        approval.setApprovContentDTOList(contents);
         int result = 0;
         int approvResult = approvMapper.insertApproval(approval);
         int fileResult = 0;
@@ -93,10 +98,10 @@ public class ApprovService {
             fileResult += approvMapper.insertApprovFile(approval.getApprovFileDTOList().get(i));
         }
 
-        for(int i =0; i<contents.size();i++){
+        for(int i =0; i<approval.getApprovContentDTOList().size();i++){
             contentResult += approvMapper.insertApprovContent(approval.getApprovContentDTOList().get(i));
         }
-        if(approvResult>0 && fileResult == file.size() && contentResult == contents.size()){
+        if(approvResult>0 && fileResult == file.size() && contentResult == approval.getApprovContentDTOList().size()){
             result = 1;
         }
 
@@ -105,7 +110,7 @@ public class ApprovService {
 
     public Object selectApprovalInWithPaging(SelectCriteria selectCriteria) {
         List<ApprovalDTO> approvalList = approvMapper.selectApprovalInWithPaging(selectCriteria);
-        String status = approvMapper.selectLatestStatus();
+//        String status = approvMapper.selectLatestStatus();
         for(int i=0; i<approvalList.size(); i++){
             approvalList.get(i).getApprovFileDTOList().get(i).setFilePath(FILE_DIR + approvalList.get(i).getApprovFileDTOList().get(i).getFilePath());
         }
@@ -273,6 +278,52 @@ public class ApprovService {
 
         return (approvResult>0) ? "결재서류 삭제성공": "결재서류 삭제 실패";
     }
+
+    public Object selectFormTitle() {
+        List<String> formTitle = new ArrayList<>();
+                formTitle=approvMapper.selectFormTitle();
+//        if (formTitle != null && !formTitle.isEmpty()) {
+//            String formCode = formTitle.get("FORM_CODE");
+//            String formTitleValue = formTitle.get("FORM_TITLE");
+//            return formTitle;
+//        } else {
+//            System.out.println("안돼~~~~~");
+            return formTitle;
+//        }
+    }
+
+    public Object selectBranch() {
+        List<BranchDto> branch = new ArrayList<>();
+        branch = approvMapper.selectBranch();
+        return branch;
+    }
+    public Object selectDept() {
+        List<String> dept = new ArrayList<>();
+        dept = approvMapper.selectDepartment();
+        return dept;
+    }
+    public Object selectJobNEmpName() {
+        List<String> jobNEmpName = new ArrayList<>();
+        jobNEmpName = approvMapper.selectJobNEmpName();
+        return jobNEmpName;
+    }
+
+//    public Object insertApprovOrders(List<ApprovOrderDTO> orders) {
+//        int result = approvMapper.insertApprovOrders(orders);
+//        return (result>0)?"결재순서 등록 성공": "결재순서 등록 실패";
+//    }
+//
+//    public Object insertLine(ApprovLineDTO line) {
+//        int result =0;
+//
+//        result = approvMapper.insertLine(line);
+//
+//        return(result > 0 ) ? "라인등록성공" : "라인등록실패";
+//    }
+//    public Object insertApprovLines(List<ApprovLineDTO> lines) {
+//        int result = approvMapper.insertApprovLines(lines);
+//        return (result > 0) ? "결재라인 등록 성공" : "결재라인 등록 실패";
+//    }
 
 //    public Object deleteApproval(ApprovalDTO approval) {
 //        int result = 0;
