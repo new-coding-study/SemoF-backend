@@ -20,39 +20,39 @@ public class ReplyService {
         return result;
     }
 //
-    public Object selectReplyListWithPaging(SelectCriteria selectCriteria){
-        List<ReplyDto> replyList = replyMapper.selectReplyListWithPaging(selectCriteria);
+    public Object selectReplyWithPaging(SelectCriteria selectCriteria, int boardNo){
+        List<ReplyDto> replyList = replyMapper.selectReplyWithPaging(selectCriteria, boardNo);
         for(int i = 0; i<replyList.size(); i++);
         return replyList;
     }
 
     @Transactional
-    public Object insertReply(ReplyDto replyDto, int empNo){
-        int result = replyMapper.insertReply(replyDto, empNo);
+    public Object insertReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode){
+        int result = replyMapper.insertReply(replyDto, empNo, boardNo, replyCode);
         return (result > 0)? "댓글추가 성공" : "댓글추가 실패";
     }
 
+//    @Transactional
+//    public Object updateReplyForAdmin(ReplyDto replyDto){
+//        int result = replyMapper.updateReplyForAdmin(replyDto);
+//        return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
+//    }
+
     @Transactional
-    public Object updateReplyForAdmin(ReplyDto replyDto){
-        int result = replyMapper.updateReplyForAdmin(replyDto);
+    public Object updateReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode){
+        int result = replyMapper.updateReply(replyDto, empNo, boardNo, replyCode);
         return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
     }
 
     @Transactional
-    public Object updateReply(ReplyDto replyDto, int empNo){
-        int result = replyMapper.updateReply(replyDto, empNo);
-        return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
-    }
-
-    @Transactional
-    public Object deleteReplyForAdmin(ReplyDto replyDto){
-        int result = replyMapper.deleteReplyForAdmin(replyDto);
+    public Object deleteForAdmin(ReplyDto replyDto, int replyCode, int boardNo){
+        int result = replyMapper.deleteForAdmin(replyDto, replyCode, boardNo);
         return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
     }
 
     @Transactional
-    public Object deleteReply(ReplyDto replyDto){
-        int result = replyMapper.deleteReply(replyDto);
+    public Object deleteForEmp(ReplyDto replyDto, int empNo, int replyCode, int boardNo){
+        int result = replyMapper.deleteForEmp(replyDto, empNo, replyCode, boardNo);
         return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
     }
 }

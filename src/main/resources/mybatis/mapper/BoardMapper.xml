@@ -21,18 +21,18 @@
 <!--        <result property="bCode" column="B_CODE"/>-->
 <!--    </resultMap>-->
 
-<!--    <resultMap id="boardResultMap" type="com.loung.semof.board.dto.BoardDto">-->
-<!--        <id property="boardNo" column="BOARD_NO"/>-->
-<!--        <result property="rowNum" column="RN"/>-->
-<!--        <result property="boardTitle" column="BOARD_TITLE"/>-->
-<!--        <result property="boardContent" column="BOARD_CONTENT"/>-->
-<!--        <result property="writeDate" column="WRITE_DATE"/>-->
-<!--        <result property="boardCateCode" column="BOARD_CATE_CODE"/>-->
-<!--        <result property="empNo" column="EMP_NO"/>-->
-<!--        <result property="empName" column="EMP_NAME"/>-->
-<!--        <result property="boardCategoryCode" column="BOARD_CATEGORY_CODE"/>-->
-<!--        <result property="boardCategoryName" column="BOARD_CATEGORY_NAME"/>-->
-<!--    </resultMap>-->
+    <resultMap id="boardResultMap" type="com.loung.semof.board.dto.BoardDto">
+        <id property="boardNo" column="BOARD_NO"/>
+        <result property="rowNum" column="RN"/>
+        <result property="boardTitle" column="BOARD_TITLE"/>
+        <result property="boardContent" column="BOARD_CONTENT"/>
+        <result property="writeDate" column="WRITE_DATE"/>
+        <result property="boardCateCode" column="BOARD_CATE_CODE"/>
+        <result property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
+        <result property="boardCategoryCode" column="BOARD_CATEGORY_CODE"/>
+        <result property="boardCategoryName" column="BOARD_CATEGORY_NAME"/>
+    </resultMap>
 
 <!--  공지사항 전체조회를 위한 select문  -->
     <select id="selectNoticeForAllNotice" resultType="BoardDto">
@@ -386,8 +386,8 @@
           AND TE.EMP_NO = #{empNo}
     </select>
 
-    <!--공지사항 등록-->
-    <insert id="insertNotice" parameterType="boardDto">
+    <!--게시판 등록 관리자-->
+    <insert id="insertAllBoard" parameterType="boardDto">
         INSERT INTO tbl_board
                 (
                   BOARD_TITLE
@@ -400,7 +400,7 @@
                  #{boardTitle}
                , #{boardContent}
                , #{boardCateCode}
-               , #{empNo}
+               , 1
                 )
     </insert>
 
@@ -408,17 +408,17 @@
     <insert id="insertPosting" parameterType="boardDto">
         INSERT INTO tbl_board
         (
-            BOARD_TITLE
-        , BOARD_CONTENT
+          BOARD_TITLE
         , BOARD_CATE_CODE
+        , BOARD_CONTENT
         , EMP_NO
         )
         VALUES
             (
               #{boardTitle}
-            , #{boardContent}
             , #{boardCateCode}
-            , #{empNo}
+            , #{boardContent}
+            , 2
             )
     </insert>
 
@@ -448,7 +448,7 @@
            ,TB.BOARD_CONTENT = #{boardContent}
         WHERE TB.BOARD_CATE_CODE = 2
           AND TB.BOARD_NO = #{boardNo}
-          AND TB.EMP_NO = #{empNo}
+          AND TB.EMP_NO = 14
     </update>
 
     <!--모든 게시글 삭제(관리자)-->
@@ -461,7 +461,7 @@
     <delete id="deleteBoardForEmp" parameterType="boardDto">
         DELETE FROM tbl_board
         WHERE BOARD_CATE_CODE = 2
-          AND EMP_NO = #{empNo}
+--           AND EMP_NO = 2
           AND BOARD_NO = #{boardNo}
     </delete>
 

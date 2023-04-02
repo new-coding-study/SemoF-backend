@@ -56,8 +56,8 @@ public class BoardService {
     }
 
     @Transactional
-    public Object insertNotice(BoardDto boardDto){
-        int result = boardMapper.insertNotice(boardDto);
+    public Object insertAllBoardForAdmin(BoardDto boardDto){
+        int result = boardMapper.insertAllBoard(boardDto);
         System.out.println("================"+boardDto);
         return (result > 0) ? "공지사항등록성공!!!!!!" : "공지사항등록실패ㅠㅠ";
     }

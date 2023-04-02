@@ -55,6 +55,7 @@
 		<mapper resource="ApprovalMapper.xml"/>
 
 		<mapper resource="BoardMapper.xml"/>
+		<mapper resource="ReplyMapper.xml"/>
 
 	</mappers>
 </configuration>
