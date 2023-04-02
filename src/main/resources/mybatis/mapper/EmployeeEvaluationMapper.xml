@@ -118,6 +118,15 @@
         WHERE EMP_NO = #{empNo}
     </select>
 
+    <!-- SELECT 쿼리 : 기여도 평가 내역 조회 -->
+    <select id="selectAllContributionGrade" parameterType="EmployeeEvaluationDto" resultType="EmployeeEvaluationDto">
+        SELECT
+            ce.EVAL_CONT_NO, ce.CONT_NO, c.EMP_NO
+            , e.EMP_NAME, ce.CATEGORY_NO, ce.GRADE
+        FROM tbl_contribution_evaluation ce
+                 JOIN tbl_contribution c ON ce.CONT_NO = c.CONT_NO
+                 JOIN tbl_employee e ON c.EMP_NO = e.EMP_NO;
+    </select>
 
     <!-- UPDATE 쿼리 : 사원의 근태 평가를 수정 -->
     <update id="updateAttendanceGrade" parameterType="EmployeeEvaluationDto">
@@ -147,6 +156,5 @@
         DELETE FROM tbl_contribution_evaluation
         WHERE CONT_NO = #{targetNumber}
     </delete>
-
 
 </mapper>

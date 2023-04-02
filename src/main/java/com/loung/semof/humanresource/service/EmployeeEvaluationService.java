@@ -271,4 +271,21 @@ public class EmployeeEvaluationService {
         return (result > 0) ? "삭제 성공" :  "삭제 실패";
     }
 
+   /**
+    * @작성일 : 2023-04-02
+    * @작성자 : 이현도
+    * @메소드설명 : 기여도 평가 내역 조회 비즈니스 로직을 수행하는 메소드
+    */
+    public List<EmployeeEvaluationDto> selectAllContributionGrade() {
+
+        List<EmployeeEvaluationDto> empContributionList = employeeEvaluationMapper.selectAllContributionGrade();
+
+        log.info("[EmployeeEvaluationService] empContributionList: " + empContributionList);
+
+        if (empContributionList == null) {
+            throw new NotFoundException("기여도 평가 내역이 존재하지 않습니다.");
+        }
+
+        return empContributionList;
+    }
 }
