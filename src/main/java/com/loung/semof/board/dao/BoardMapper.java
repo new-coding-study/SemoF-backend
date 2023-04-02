@@ -23,7 +23,7 @@ public interface BoardMapper {
     BoardDto selectPostingDetailForEmp(Integer boardNo);
 
 
-    int insertNotice(BoardDto boardDto);
+    int insertAllBoard(BoardDto boardDto);
 
     int insertPosting(BoardDto boardDto);
 

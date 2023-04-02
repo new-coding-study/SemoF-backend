@@ -109,9 +109,9 @@ public class BoardController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "게시글 상세조회 성공", boardService.selectPostingDetail(boardNo)));
     }
 
-    @PostMapping("/boardNotice-lists")
+    @PostMapping("/board-all-lists")
     public ResponseEntity<ResponseDto> insertNotice(@ModelAttribute BoardDto boardDto){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "공지사항등록 성공!!!", boardService.insertNotice(boardDto)));
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "공지사항등록 성공!!!", boardService.insertAllBoardForAdmin(boardDto)));
     }
 
     @PostMapping("/board-posting-lists")
