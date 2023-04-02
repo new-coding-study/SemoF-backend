@@ -12,16 +12,50 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias alias="ProductDto" type="com.uni.reactpro.product.dto.ProductDto"/>
-		<typeAlias alias="MemberDto" type="com.uni.reactpro.member.dto.MemberDto"/>
-<!--		<typeAlias alias="PurchaseDto" type="com.uni.reactpro.purchase.dto.PurchaseDto"/>-->
-<!--		<typeAlias alias="ReviewDto" type="com.uni.reactpro.review.dto.ReviewDto"/>-->
+		<typeAlias alias="LoginInfoDto" type="com.loung.semof.loginInfo.dto.LoginInfoDto"/>
+		<typeAlias alias="EmployeeDto" type="com.loung.semof.common.dto.EmployeeDto"/>
+		<typeAlias alias="DepartmentDto" type="com.loung.semof.common.dto.DepartmentDto"/>
+		<typeAlias alias="BranchDto" type="com.loung.semof.common.dto.BranchDto"/>
+
+		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
+		<typeAlias alias="ReplyDto" type="com.loung.semof.reply.dto.ReplyDto"/>
+		
+		<typeAlias alias="ApprovalDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
+		<typeAlias alias="ApprovLineDTO" type="com.loung.semof.approval.dto.ApprovLineDTO"/>
+		<typeAlias alias="ApprovOrderDTO" type="com.loung.semof.approval.dto.ApprovOrderDTO"/>
+		<typeAlias alias="ApprovFileDTO" type="com.loung.semof.approval.dto.ApprovFileDTO"/>
+		<typeAlias alias="ApprovContentDTO" type="com.loung.semof.approval.dto.ApprovContentDTO"/>
+		<typeAlias alias="ApprovStatusDTO" type="com.loung.semof.approval.dto.ApprovStatusDTO"/>
+		<typeAlias alias="ApprovOpinDTO" type="com.loung.semof.approval.dto.ApprovOpinDTO"/>
+		<typeAlias alias="ApprovCategoryDTO" type="com.loung.semof.approval.dto.ApprovCategoryDTO"/>
+
+		<typeAlias alias="HumanResourceDto" type="com.loung.semof.humanresource.dto.HumanResourceDto"/>
+		<typeAlias alias="EmployeePhotoDto" type="com.loung.semof.humanresource.dto.EmployeePhotoDto"/>
+		<typeAlias alias="EmployeeEvaluationDto" type="com.loung.semof.humanresource.dto.EmployeeEvaluationDto"/>
+		<typeAlias alias="SendEmailDto" type="com.loung.semof.email.dto.SendEmailDto"/>
+		<typeAlias alias="ReceiveEmailDto" type="com.loung.semof.email.dto.ReceiveEmailDto"/>
+		<typeAlias alias="EmailAttachDto" type="com.loung.semof.email.dto.EmailAttachDto"/>
+
+
+		<typeAlias alias="TodoDto" type="com.loung.semof.todo.dto.TodoDto"/>
 	</typeAliases>
 
 	<mappers>
-		<mapper resource="MemberMapper.xml" />
-<!--		<mapper resource="ReviewMapper.xml" />-->
-		<mapper resource="ProductMapper.xml" />
-<!--		<mapper resource="PurchaseMapper.xml" />-->
+		<mapper resource="LoginInfoMapper.xml" />
+		<mapper resource="EmployeeMapper.xml" />
+		<mapper resource="DepartmentMapper.xml" />
+		<mapper resource="BranchMapper.xml" />
+
+		<mapper resource="HumanResourceMapper.xml" />
+		<mapper resource="EmployeeEvaluationMapper.xml" />
+		<mapper resource="EmailMapper.xml" />
+
+		<mapper resource="TodoMapper.xml"/>
+
+		<mapper resource="ApprovalMapper.xml"/>
+
+		<mapper resource="BoardMapper.xml"/>
+		<mapper resource="ReplyMapper.xml"/>
+
 	</mappers>
 </configuration>

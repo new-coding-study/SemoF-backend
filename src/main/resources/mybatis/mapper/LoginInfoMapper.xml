@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.loginInfo.dao.LoginInfoMapper">
+
+    <select id="selectByMemberId" resultType="LoginInfoDto">
+        SELECT
+            MEMBER_CODE
+             ,  MEMBER_ID
+             ,  MEMBER_NAME
+             ,  MEMBER_PASSWORD
+             ,  MEMBER_ROLE
+             ,  MEMBER_EMAIL
+        FROM TBL_MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+    <select id="selectByEmpReg" resultType="LoginInfoDto">
+        SELECT
+            B.EMP_REG
+            , A.EMP_NO
+        FROM tbl_login_info A
+        JOIN tbl_employee B
+        ON A.EMP_NO = B.EMP_NO
+        WHERE B.EMP_REG= #{empReg}
+    </select>
+    <select id="selectById" resultType="string">
+        SELECT
+            LOGIN_ID
+        FROM tbl_login_info
+        WHERE LOGIN_ID= #{loginId}
+    </select>
+    <select id="selectByEmail" resultType="LoginInfoDto">
+        SELECT
+                MEMBER_CODE
+             ,  MEMBER_ID
+             ,  MEMBER_NAME
+             ,  MEMBER_PASSWORD
+             ,  MEMBER_ROLE
+             ,  MEMBER_EMAIL
+        FROM TBL_MEMBER
+        WHERE MEMBER_EMAIL = #{email}
+    </select>
+
+    <select id="findByEmail" resultType="LoginInfoDto">
+        SELECT
+                MEMBER_CODE
+             ,  MEMBER_ID
+             ,  MEMBER_NAME
+             ,  MEMBER_PASSWORD
+             ,  MEMBER_ROLE
+             ,  MEMBER_EMAIL
+        FROM TBL_MEMBER
+        WHERE MEMBER_EMAIL = #{email}
+    </select>
+
+    <select id="findByMemberId" resultType="LoginInfoDto">
+        SELECT
+                MEMBER_CODE
+             ,  MEMBER_ID
+             ,  MEMBER_NAME
+             ,  MEMBER_PASSWORD
+             ,  MEMBER_ROLE
+             ,  MEMBER_EMAIL
+        FROM TBL_MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <insert id="insertMember" parameterType="LoginInfoDto">
+        INSERT INTO tbl_login_info
+        (
+            EMP_NO
+            , LOGIN_ID
+            , LOGIN_PWD
+        )
+        VALUES
+        (
+           #{empNo}
+           , #{loginId}
+           , #{loginPwd}
+        )
+    </insert>
+
+</mapper>
