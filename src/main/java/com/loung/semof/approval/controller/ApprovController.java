@@ -1,11 +1,13 @@
 package com.loung.semof.approval.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.loung.semof.approval.dto.*;
 import com.loung.semof.approval.service.ApprovService;
 import com.loung.semof.common.ResponseDto;
 import com.loung.semof.common.paging.Pagenation;
 import com.loung.semof.common.paging.ResponseDtoWithPaging;
 import com.loung.semof.common.paging.SelectCriteria;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-
+@Slf4j
 @RestController
-@RequestMapping("/approval")
+@RequestMapping("/approvals")
 public class ApprovController {
     private final ApprovService approvService;
 
@@ -29,8 +32,16 @@ public class ApprovController {
      * @메소드설명 : 미확인 결재문서를 삭제
      */
     @PostMapping(value="/line")
-    public ResponseEntity<ResponseDto> insertApprovLine(@ModelAttribute ApprovLineDTO line, List<ApprovOrderDTO> orders){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 등록", approvService.insertApprovLine(line, orders)));
+    public ResponseEntity<ResponseDto> insertApprovLine(@RequestBody ApprovLineDTO line) {
+//        String requestWrapper;
+//        String requestBody = new String(requestWrapper.getBytes(), StandardCharsets.UTF_8);
+//        log.debug("Request Body: {}", requestBody);
+        System.out.println("line = " + line);
+//        System.out.println("orders = " + orders);
+
+        log.info("----------------------------------------------------line = " + line);
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 등록", approvService.insertApprovLine(line)));
     }
     /**
      * @작성일 : 2023.03.23
@@ -44,9 +55,9 @@ public class ApprovController {
 
 
     @PostMapping(value="/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> insertApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @RequestPart List<ApprovContentDTO> contents) {
+    public ResponseEntity<ResponseDto> insertApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file) {
 
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재상신", approvService.insertApproval(approval, file, contents)));
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재상신", approvService.insertApproval(approval, file)));
     }
     /**
      * @작성일 : 2023.03.23
@@ -163,4 +174,37 @@ public class ApprovController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재서류 삭제", approvService.deleteApproval(approvNo)));
     }
 
+    @GetMapping("/form-title")
+    public ResponseEntity<ResponseDto> selectFormTitle(){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재유형별 목록조회", approvService.selectFormTitle()));
+    }
+
+    @GetMapping("/branches")
+    public ResponseEntity<ResponseDto> selectBranch(){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "부서조회", approvService.selectBranch()));
+    }
+
+    @GetMapping("/job-name")
+    public ResponseEntity<ResponseDto> selectJobNEmpName(){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직급, 이름조회", approvService.selectJobNEmpName()));
+    }
+
+//    @PostMapping(value = "/orders")
+//    public ResponseEntity<ResponseDto> insertOrders(@RequestBody List<ApprovOrderDTO> orders){
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재순서등록", approvService.insertApprovOrders(orders)));
+//    }
+//    @PostMapping(value="/lines")
+//    public ResponseEntity<ResponseDto> insertApprovLines(@RequestBody List<ApprovLineDTO> lines){
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 등록", approvService.insertApprovLines(lines)));
+//    }
+//    @PostMapping(value = "/line")
+//    public ResponseEntity<ResponseDto> insertLine(@ModelAttribute ApprovLineDTO line){
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "라인등록", approvService.insertLine(line)));
+//    }
+
+    @GetMapping("/dept")
+    public ResponseEntity<ResponseDto> selectDept(){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "부서조회", approvService.selectDept()));
+
+    }
 }

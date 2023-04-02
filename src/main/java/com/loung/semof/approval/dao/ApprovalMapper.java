@@ -2,10 +2,12 @@ package com.loung.semof.approval.dao;
 
 
 import com.loung.semof.approval.dto.*;
+import com.loung.semof.common.dto.BranchDto;
 import com.loung.semof.common.paging.SelectCriteria;
 import org.apache.ibatis.annotations.Mapper;
 
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -67,4 +69,15 @@ public interface ApprovalMapper {
     int selectApprovLineTotal();
 
     String selectLatestStatus();
+
+    List<String> selectFormTitle();
+
+    List<BranchDto> selectBranch();
+
+    List<String> selectDepartment();
+    List<String> selectJobNEmpName();
+
+//    int insertApprovOrders(List<ApprovOrderDTO> orders);
+
+//    int insertLine(ApprovLineDTO line);
 }

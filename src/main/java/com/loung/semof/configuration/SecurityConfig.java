@@ -30,13 +30,10 @@ public class SecurityConfig  {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
 
-    public SecurityConfig(TokenProvider tokenProvider
-            , JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
-            ,JwtAccessDeniedHandler jwtAccessDeniedHandler){
+    public SecurityConfig(TokenProvider tokenProvider, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDenied, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         this.tokenProvider = tokenProvider;
-        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -59,8 +56,8 @@ public class SecurityConfig  {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-    //@Override
-   // protected void configure(HttpSecurity http) throws Exception {
+        //@Override
+        // protected void configure(HttpSecurity http) throws Exception {
 
 
          // CSRF 설정 Disable
@@ -69,10 +66,11 @@ public class SecurityConfig  {
                 .httpBasic().disable()// 매 요청마다 id, pwd를 보내는 방식으로 인증하는 httpBasic를 사용하지 않겠다는것
 
                 // 시큐리티는 기본적으로 세션을 사용하지만 API 서버에선 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
+                 
                  .exceptionHandling()
                  .authenticationEntryPoint(jwtAuthenticationEntryPoint)//인증 실패
                  .accessDeniedHandler(jwtAccessDeniedHandler)
-                 .and()
+                 .and() // 내용이 달라지는 곳
                  .sessionManagement()
                  .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
@@ -87,7 +85,10 @@ public class SecurityConfig  {
 //                .antMatchers("/api/v1/reviews/**").permitAll()// 리뷰도 누구나 접근가능
 //                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")  // 나머지 API 는 전부 인증 필요
 
-                 .and()
+                 .antMatchers("/**").permitAll() // 임시 전체 접근 허용
+
+
+                 .and() // 여기서 정의를 해줬기 때문에 corsConfigurationSource가 작동
                  .cors()
                  .and()
                  .apply(new JwtSecurityConfig(tokenProvider));

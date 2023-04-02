@@ -5,19 +5,16 @@
 <mapper namespace="com.loung.semof.humanresource.dao.HumanResourceMapper">
 
     <sql id="employeeSelectColumns">
-        EMP_NO
-		, EMP_NAME
-		, EMAIL
-		, PHONE
-		, ADDRESS
-		, SALARY
-        , ENROLL_DATE
-        , RETIRE_DATE
-        , WORK_STATUS
-        , GENDER
-        , JOB_CODE
-        , DEPT_CODE
-        , BRANCH_CODE
+        EMP_NO, EMP_NAME, EMAIL, PHONE, ADDRESS
+	  , SALARY, ENROLL_DATE, RETIRE_DATE, WORK_STATUS
+      , GENDER, JOB_CODE, DEPT_CODE, BRANCH_CODE
+    </sql>
+
+    <sql id="searchColumns">
+        E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+       ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+       ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+       ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
     </sql>
 
     <!-- ResultMap EmployeeDto -->
@@ -89,12 +86,20 @@
     </update>
 
     <!-- SELECT 쿼리 - 페이지네이션 포함 : 사원 전체 조회 -->
-    <select id="selectEmployeeListWithPaging" parameterType="map" resultMap="employeeResult">
-        SELECT
-        <include refid="employeeSelectColumns"/>
-        FROM tbl_employee
-        ORDER BY EMP_NO DESC
-        LIMIT #{startRow}, #{endRow}
+    <select id="selectEmployeeListWithPaging" parameterType="HumanResourceDto" resultMap="employeesResultExtend">
+        SELECT DISTINCT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM  (SELECT *
+               FROM tbl_employee
+               ORDER BY EMP_NO DESC
+               LIMIT #{startRow}, #{endRow}
+              ) AS E
+                  LEFT JOIN tbl_job J ON E.job_code = J.job_code
+                  LEFT JOIN tbl_department D ON E.dept_code = D.dept_code
+                  LEFT JOIN tbl_branch B ON E.branch_code = B.branch_code
     </select>
 
     <!-- SELECT 쿼리 : 사원 전체 숫자 조회 -->
@@ -105,19 +110,27 @@
     </select>
 
     <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
-    <select id="selectEmployees"  resultMap="employeeResult">
-        SELECT
-        <include refid="employeeSelectColumns"/>
-        FROM tbl_employee
+    <select id="selectEmployees"  resultMap="employeesResultExtend">
+        SELECT DISTINCT
+        E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+        E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+        E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+        E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM  (SELECT *
+               FROM tbl_employee
+        ) AS E
+        LEFT JOIN tbl_job J ON E.job_code = J.job_code
+        LEFT JOIN tbl_department D ON E.dept_code = D.dept_code
+        LEFT JOIN tbl_branch B ON E.branch_code = B.branch_code
         WHERE 1=1
         <if test="empName != null">
-            AND EMP_NAME = #{empName}
+            AND E.EMP_NAME LIKE CONCAT('%', #{empName}, '%')
         </if>
-        <if test="deptCode != null">
-            AND DEPT_CODE = #{deptCode}
+        <if test="deptName != null">
+            AND D.DEPT_NAME LIKE CONCAT('%', #{deptName}, '%')
         </if>
-        <if test="branchCode != null">
-            AND BRANCH_CODE = #{branchCode}
+        <if test="branchName != null">
+            AND B.BRANCH_NAME LIKE CONCAT('%', #{branchName}, '%')
         </if>
     </select>
 
