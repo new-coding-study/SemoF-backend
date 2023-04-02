@@ -71,6 +71,22 @@
         <result property="uploadDate" column="upload_date"/>
     </resultMap>
 
+    <resultMap id="branchOrderResultMap" type="BranchOrderDto">
+        <id property="branchOrderNo" column="BRANCH_ORDER_NO" />
+        <result property="empNo" column="EMP_NO" />
+        <result property="branchCode" column="BRANCH_CODE" />
+        <result property="orderDate" column="ORDER_DATE" />
+        <result property="newBCode" column="NEW_BRANCH_CODE" />
+    </resultMap>
+
+    <resultMap id="departmentOrderResultMap" type="DepartmentOrderDto">
+        <id property="deptOrderNo" column="DEPT_ORDER_NO" />
+        <result property="empNo" column="EMP_NO" />
+        <result property="deptCode" column="DEPT_CODE" />
+        <result property="orderDate" column="ORDER_DATE" />
+        <result property="newDeptCode" column="NEW_DEPT_CODE" />
+    </resultMap>
+
     <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
     <update id="updateEmployee" parameterType="EmployeeDto">
         UPDATE tbl_employee
@@ -112,10 +128,10 @@
     <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
     <select id="selectEmployees"  resultMap="employeesResultExtend">
         SELECT DISTINCT
-        E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
-        E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
-        E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
-        E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM  (SELECT *
                FROM tbl_employee
         ) AS E
@@ -210,4 +226,21 @@
         WHERE PHOTO_NO = #{photoNo}
     </delete>
 
+    <select id="selectBranchesOrders" resultMap="branchOrderResultMap">
+        SELECT *
+        FROM tbl_branch_order bo
+                 JOIN tbl_employee e ON bo.emp_no = e.emp_no
+                 JOIN tbl_branch b ON bo.branch_code = b.branch_code
+        WHERE e.emp_no = #{empNo}
+          AND bo.order_date BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="selectDepartmentsOrders" resultMap="departmentOrderResultMap">
+        SELECT *
+        FROM tbl_department_order do
+                 JOIN tbl_employee e ON do.emp_no = e.emp_no
+                 JOIN tbl_department d ON do.dept_code = d.dept_code
+        WHERE e.emp_no = #{empNo}
+          AND do.order_date BETWEEN #{startDate} AND #{endDate}
+    </select>
 </mapper>

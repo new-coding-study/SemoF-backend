@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.humanresource.dao.DepartmentOrderMapper">
+
+    <resultMap id="departmentOrderResultMap" type="DepartmentOrderDto">
+        <id property="deptOrderNo" column="DEPT_ORDER_NO"/>
+        <result property="empNo" column="EMP_NO"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="orderDate" column="ORDER_DATE"/>
+    </resultMap>
+
+    <select id="selectDepartmentOrderByEmpNo" resultMap="departmentOrderResultMap">
+        SELECT
+            do.DEPT_ORDER_NO,
+            do.EMP_NO,
+            do.ORDER_DATE,
+            d.DEPT_CODE,
+            d.DEPT_NAME
+        FROM tbl_department_order do
+                 JOIN tbl_department d ON do.DEPT_CODE = d.DEPT_CODE
+        WHERE do.EMP_NO = #{empNo}
+    </select>
+
+    <insert id="insertDepartmentOrder" parameterType="DepartmentOrderDto">
+        INSERT INTO tbl_department_order (EMP_NO, ORDER_DATE, DEPT_CODE)
+        VALUES (#{empNo}, #{orderDate}, #{deptCode})
+    </insert>
+
+    <update id="updateDepartmentOrder">
+        UPDATE tbl_department_order
+        SET DEPT_CODE = #{newDeptCode}
+        WHERE DEPT_ORDER_NO = #{deptOrderNo}
+    </update>
+
+</mapper>
