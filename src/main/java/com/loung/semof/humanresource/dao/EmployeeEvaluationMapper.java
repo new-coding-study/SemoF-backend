@@ -40,6 +40,5 @@ public interface EmployeeEvaluationMapper {
 
     int deleteContributionEvaluationByContNo(Long targetNumber);
 
-
-
+    List<EmployeeEvaluationDto> selectAllContributionGrade();
 }
