@@ -25,4 +25,8 @@ public interface EmployeeMapper {
     int updateEmployeeStatus(EmployeeDto employee);
 
     Optional<EmployeeDto> selectByEmpNo(Long empNo);
+
+    void updateEmployeeBranch(EmployeeDto employee);
+
+    void updateEmployeeDepartment(EmployeeDto employee);
 }
