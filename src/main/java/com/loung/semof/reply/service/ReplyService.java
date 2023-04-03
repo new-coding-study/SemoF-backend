@@ -21,16 +21,22 @@ public class ReplyService {
     }
 //
     public Object selectReplyWithPaging(SelectCriteria selectCriteria, int boardNo){
+
+        System.out.println("서비스호출 확인");
         List<ReplyDto> replyList = replyMapper.selectReplyWithPaging(selectCriteria, boardNo);
         for(int i = 0; i<replyList.size(); i++);
         return replyList;
     }
 
-    @Transactional
-    public Object insertReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode){
-        int result = replyMapper.insertReply(replyDto, empNo, boardNo, replyCode);
-        return (result > 0)? "댓글추가 성공" : "댓글추가 실패";
-    }
+//    @Transactional
+//    public Object insertReply(String replyContent, int empNo, int boardNo){
+//        System.out.println("boardNo = " + boardNo);
+//        System.out.println("replyContent = " + replyContent);
+//        System.out.println("empNo = " + empNo);
+//
+//        int result = replyMapper.insertReply(replyContent, empNo, boardNo);
+//        return (result > 0)? "댓글추가 성공" : "댓글추가 실패";
+//    }
 
 //    @Transactional
 //    public Object updateReplyForAdmin(ReplyDto replyDto){
@@ -38,21 +44,42 @@ public class ReplyService {
 //        return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
 //    }
 
-    @Transactional
-    public Object updateReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode){
-        int result = replyMapper.updateReply(replyDto, empNo, boardNo, replyCode);
+//    @Transactional
+//    public Object updateReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode){
+//        int result = replyMapper.updateReply(replyDto, empNo, boardNo, replyCode);
+//        return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
+//    }
+
+//    @Transactional
+//    public Object deleteForAdmin(ReplyDto replyDto, int replyCode, int boardNo){
+//        int result = replyMapper.deleteForAdmin(replyDto, replyCode, boardNo);
+//        return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
+//    }
+
+//    @Transactional
+//    public Object deleteForEmp(ReplyDto replyDto, int empNo, int replyCode, int boardNo){
+//        int result = replyMapper.deleteForEmp(replyDto, empNo, replyCode, boardNo);
+//        return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
+//    }
+
+    public Object insertReply(ReplyDto replyDto) {
+        System.out.println("replyDto = " + replyDto);
+        int result = replyMapper.insertReply(replyDto);
+        return (result > 0)? "댓글추가 성공" : "댓글추가 실패";
+    }
+
+    public Object deleteForAdmin(ReplyDto replyDto) {
+        int result = replyMapper.deleteForAdmin(replyDto);
+        return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
+    }
+
+    public Object deleteForEmp(ReplyDto replyDto) {
+        int result = replyMapper.deleteForEmp(replyDto);
+        return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
+    }
+
+    public Object updateReply(ReplyDto replyDto) {
+        int result = replyMapper.updateReply(replyDto);
         return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
-    }
-
-    @Transactional
-    public Object deleteForAdmin(ReplyDto replyDto, int replyCode, int boardNo){
-        int result = replyMapper.deleteForAdmin(replyDto, replyCode, boardNo);
-        return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
-    }
-
-    @Transactional
-    public Object deleteForEmp(ReplyDto replyDto, int empNo, int replyCode, int boardNo){
-        int result = replyMapper.deleteForEmp(replyDto, empNo, replyCode, boardNo);
-        return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
     }
 }
