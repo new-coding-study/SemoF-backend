@@ -21,14 +21,16 @@ public class ReplyService {
     }
 //
     public Object selectReplyWithPaging(SelectCriteria selectCriteria, int boardNo){
+
+        System.out.println("서비스호출 확인");
         List<ReplyDto> replyList = replyMapper.selectReplyWithPaging(selectCriteria, boardNo);
         for(int i = 0; i<replyList.size(); i++);
         return replyList;
     }
 
     @Transactional
-    public Object insertReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode){
-        int result = replyMapper.insertReply(replyDto, empNo, boardNo, replyCode);
+    public Object insertReply(String replyContent, int empNo, int boardNo){
+        int result = replyMapper.insertReply(replyContent, empNo, boardNo);
         return (result > 0)? "댓글추가 성공" : "댓글추가 실패";
     }
 

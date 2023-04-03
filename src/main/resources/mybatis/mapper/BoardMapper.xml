@@ -143,7 +143,7 @@
          ON (TB.EMP_NO = TE.EMP_NO)
          WHERE TC.BOARD_CATEGORY_CODE = '1'
          ORDER BY TB.WRITE_DATE DESC) P
-         LIMIT ${ startRow -1 }, #{ endRow }
+         LIMIT ${ startRow  }, #{ endRow }
     </select>
 
 <!--noticeTop3-->
@@ -176,7 +176,7 @@
              ON (TB.EMP_NO = TE.EMP_NO)
              WHERE TC.BOARD_CATEGORY_CODE = '1'
              ORDER BY TB.WRITE_DATE DESC) P
-             LIMIT ${ startRow -1 }, #{ endRow }
+             LIMIT ${ startRow }, #{ endRow }
     </select>
 
 <!--    <select id="selectNoticeListWithPagingForAdmin" resultType="BoardDTO" parameterType="int">-->
@@ -299,7 +299,7 @@
              ON (TB.EMP_NO = TE.EMP_NO)
              WHERE TC.BOARD_CATEGORY_CODE = '2') P
              ORDER BY P.rowNum DESC
-             LIMIT ${ startRow-1 }, #{ endRow }
+             LIMIT ${ startRow }, #{ endRow }
     </select>
 
     <!-- 페이징 처리를 위해 게시판 글 갯수를 조회-->
@@ -362,7 +362,7 @@
              ON (TB.EMP_NO = TE.EMP_NO)
              WHERE TC.BOARD_CATEGORY_CODE = '2'
              AND TE.EMP_NO = #{empNo}) P
-             LIMIT ${ startRow -1 }, #{ limit }
+             LIMIT ${ startRow  }, #{ limit }
     </select>
 
     <!--자신이 쓴 게시글에 대한 상세조회-->
