@@ -16,6 +16,7 @@
             att.END_TIME,
             vac.ALL_DAYS,
             vac.USED_DAYS,
+            vac.USED_HALF,
             vac.LEFT_DAYS
         FROM tbl_employee emp
         JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
@@ -39,6 +40,7 @@
             att.END_TIME,
             vac.ALL_DAYS,
             vac.USED_DAYS,
+            vac.USED_HALF,
             vac.LEFT_DAYS
         FROM tbl_employee emp
         JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
@@ -55,6 +57,7 @@
             EMP_NAME,
             ALL_DAYS,
             USED_DAYS,
+            USED_HALF,
             LEFT_DAYS
         FROM tbl_employee emp
         JOIN tbl_emp_vacation_info vac ON (vac.EMP_NO = emp.EMP_NO)
