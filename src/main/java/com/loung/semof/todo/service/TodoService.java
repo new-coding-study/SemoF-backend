@@ -160,5 +160,23 @@ public class TodoService {
         return "중요 표시 변경 성공";
     }
 
+    public String updateFinish(Long todoNo) throws SQLException {
+
+        int todoFinish = todoMapper.checkFinish(todoNo);
+        System.out.println("todoFinish" + todoFinish);
+
+        Long changeFinish = (long) (todoFinish == 0 ? 1: 0);
+        System.out.println("changeFinish" + changeFinish);
+
+        int result = todoMapper.updateFinish(todoNo, changeFinish);
+
+        if (result != 1) {
+            throw new SQLException("완료 여부 표시 변경 실패");
+
+        }
+
+        return "완료 여부 표시 변경 성공";
+    }
+
 
 }

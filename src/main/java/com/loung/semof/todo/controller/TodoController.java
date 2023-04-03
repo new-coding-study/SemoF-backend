@@ -197,4 +197,17 @@ public class TodoController {
         }
     }
 
+    @PutMapping(value="/finish/{todoNo}")
+    public ResponseEntity<ResponseDto> updateFinish(@PathVariable Long todoNo){
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "중요 표시 변경 성공", todoService.updateFinish(todoNo)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
+
 }
