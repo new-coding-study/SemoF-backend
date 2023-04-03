@@ -4,6 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.reply.dao.ReplyMapper">
 
+    <resultMap id="replyResultMap" type="ReplyDto">
+        <result column="REPLY_CODE" property="replyCode"/>
+        <result column="REPLY_CONTENT" property="replyContent"/>
+        <result column="BOARD_NO" property="boardNo"/>
+        <result column="REPLY_WRITE_DATE" property="replyWriteDate" />
+        <result column="EMP_NAME" property="empName" />
+        <result column="EMP_NO" property="empNo"/>
+    </resultMap>
+
+
     <select id="selectReply" resultType="ReplyDto">
         SELECT
             TR.REPLY_CODE
@@ -23,19 +33,21 @@
         SELECT
             count(*)
         FROM tbl_reply
-        WHERE BOARD_NO =${boardNo}
+        WHERE BOARD_NO =#{boardNo}
     </select>
 
     <select id="selectReplyWithPaging" resultType="ReplyDto">
         SELECT
-            R.BOARD_NO
+            R.rowNum
+           ,R.BOARD_NO
            ,R.EMP_NAME
            ,R.REPLY_CODE
            ,R.REPLY_CONTENT
            ,R.REPLY_WRITE_DATE
         FROM
         (SELECT
-              TR.REPLY_CODE
+             ROW_NUMBER()OVER(ORDER BY TR.REPLY_WRITE_DATE DESC) AS rowNum
+             ,TR.REPLY_CODE
              ,TR.REPLY_CONTENT
              ,TR.EMP_NO
              ,TR.BOARD_NO
@@ -46,13 +58,12 @@
                       ON (TR.BOARD_NO = TB.BOARD_NO)
                  JOIN tbl_employee TE
                       ON (TR.EMP_NO = TE.EMP_NO)
-        WHERE TR.BOARD_NO = #{boardNo}
-        ORDER BY TR.REPLY_WRITE_DATE DESC) R
-        ORDER BY R.REPLY_WRITE_DATE DESC
-        LIMIT ${startRow -1}, #{endRow}
+        WHERE TR.BOARD_NO = #{boardNo}) R
+        ORDER BY R.rowNum DESC
+        LIMIT #{selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
-    <insert id="insertReply" parameterType="ReplyDto">
+    <insert id="insertReply" parameterType="String">
         INSERT INTO tbl_reply
             (REPLY_CONTENT
             , BOARD_NO
@@ -61,7 +72,7 @@
             (
              #{replyContent}
              ,#{boardNo}
-             ,#{empNo}
+             ,35
             )
     </insert>
 

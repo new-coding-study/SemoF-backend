@@ -15,10 +15,14 @@ public class ReplyDto {
     private Integer replyCode;
     private String replyContent;
     private Integer boardNo;
-    private String empName;
     private Integer empNo;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
     private LocalDate replyWriteDate;
+    private String empName;
+
+    private Integer rowNum;
+
+
 
 
 //
