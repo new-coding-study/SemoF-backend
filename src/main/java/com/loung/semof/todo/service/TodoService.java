@@ -96,7 +96,9 @@ public class TodoService {
 
     public String insertTodo(TodoDto todoDto) throws SQLException {
 
-        if (todoDto.getTodoDate() == null) {
+        System.out.println("Service 호출");
+
+        if (todoDto.getTodoDate() == null || todoDto.getTodoDate().length() == 0) {
 
             LocalDateTime now = LocalDateTime.now();
             // 포맷 정의
@@ -105,8 +107,8 @@ public class TodoService {
             todoDto.setTodoDate((now.format(formatter)));
         }
 
-        if (todoDto.getTodoTime() == null) {
-            todoDto.setTodoTime(("18:00:00"));
+        if (todoDto.getTodoTime() == null || todoDto.getTodoTime().length() == 0) {
+            todoDto.setTodoTime(("23:00:00"));
         }
 
         int result = todoMapper.insertTodo(todoDto);

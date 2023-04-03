@@ -77,6 +77,7 @@ public class TodoController {
     }
 
     @GetMapping("/todo/search")
+    @CrossOrigin("*")
     public ResponseEntity<ResponseDto> selectSearchTodo(@RequestParam(name="s") String searchWord, @RequestParam(name="e") String empNo){
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 검색 성공", todoService.selectSearchTodo(searchWord, empNo)));
@@ -146,6 +147,8 @@ public class TodoController {
     public ResponseEntity<ResponseDto> insertTodo(@ModelAttribute TodoDto todoDto){
 
         try {
+            System.out.println("Controller 호출");
+            System.out.println("todoDto 확인 : " + todoDto);
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 추가 성공", todoService.insertTodo(todoDto)));
 
         } catch (SQLException e) {

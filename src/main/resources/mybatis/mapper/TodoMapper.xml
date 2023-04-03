@@ -123,8 +123,6 @@
             TODO_NAME
         ,TODO_DATE
         ,TODO_TIME
-        ,TODO_CONTENT
-        ,TODO_FINISH
         ,TODO_STAR
         ,CATE_NO
         )
@@ -133,8 +131,6 @@
                 #{todoName}
             ,#{todoDate}
             ,#{todoTime}
-            ,#{todoContent}
-            ,#{todoFinish}
             ,#{todoStar}
             ,#{cateNo}
             )
