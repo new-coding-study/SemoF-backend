@@ -44,7 +44,7 @@
             (#{empNo}, #{empName}, #{empReg},
              #{email}, #{phone}, #{address}, #{salary},
              DEFAULT, DEFAULT, DEFAULT, #{gender},
-             #{jobCode}, #{deptCode}, #{branchCode})
+             #{jobCode}, #{deptCode}, #{branchCode}, DEFAULT)
     </insert>
 
     <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
@@ -64,6 +64,18 @@
         UPDATE tbl_employee
         SET
             WORK_STATUS = 'N'
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+    <update id="updateEmployeeBranch" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET BRANCH_CODE = #{branchCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+    <update id="updateEmployeeDepartment" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET DEPT_CODE = #{deptCode}
         WHERE EMP_NO = #{empNo}
     </update>
 

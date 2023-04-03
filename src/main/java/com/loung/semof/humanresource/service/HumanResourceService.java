@@ -7,7 +7,11 @@ import com.loung.semof.common.dto.BranchDto;
 import com.loung.semof.common.dto.DepartmentDto;
 import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.humanresource.Exception.NotFoundException;
+import com.loung.semof.humanresource.dao.BranchOrderMapper;
+import com.loung.semof.humanresource.dao.DepartmentOrderMapper;
 import com.loung.semof.humanresource.dao.HumanResourceMapper;
+import com.loung.semof.humanresource.dto.BranchOrderDto;
+import com.loung.semof.humanresource.dto.DepartmentOrderDto;
 import com.loung.semof.humanresource.dto.EmployeePhotoDto;
 import com.loung.semof.humanresource.dto.HumanResourceDto;
 import com.loung.semof.util.FileUploadUtils;
@@ -24,6 +28,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @파일이름 : HumanResourceService.java
@@ -42,12 +47,15 @@ public class HumanResourceService {
     private final BranchMapper branchMapper;
     private final HumanResourceMapper humanResourceMapper;
 
+    private final BranchOrderMapper branchOrderMapper;
+
+    private final DepartmentOrderMapper departmentOrderMapper;
     @Value("${image.image-dir}")
     private String IMAGE_DIR;
     @Value("${image.image-url}")
     private String IMAGE_URL;
 
-    public HumanResourceService(EmployeeMapper employeeMapper, DepartmentMapper departmentMapper, BranchMapper branchMapper, HumanResourceMapper humanResourceMapper) {
+    public HumanResourceService(EmployeeMapper employeeMapper, DepartmentMapper departmentMapper, BranchMapper branchMapper, HumanResourceMapper humanResourceMapper, BranchOrderMapper branchOrderMapper, DepartmentOrderMapper departmentOrderMapper) {
         this.employeeMapper = employeeMapper;
 
         this.departmentMapper = departmentMapper;
@@ -55,6 +63,10 @@ public class HumanResourceService {
         this.branchMapper = branchMapper;
 
         this.humanResourceMapper = humanResourceMapper;
+
+        this.branchOrderMapper = branchOrderMapper;
+
+        this.departmentOrderMapper = departmentOrderMapper;
     }
 
     /**
@@ -64,26 +76,35 @@ public class HumanResourceService {
      */
     public EmployeeDto updateEmployeeDepartment(Long empNo, String deptCode) throws SQLException, NotFoundException {
 
+        log.info("[HumanResourceService] deptCode : " + deptCode);
+
         EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
 
-        DepartmentDto department = departmentMapper.selectDepartmentByDeptCode(deptCode);
+        log.info("[HumanResourceService] Dept employee : " + employee);
 
-        if(employee == null) {
+        if (employee == null) {
             throw new NotFoundException("해당 사원이 존재하지 않습니다.");
         }
 
-        if(department == null) {
+        DepartmentOrderDto deptOrder = new DepartmentOrderDto();
+        deptOrder.setEmpNo(employee.getEmpNo());
+        deptOrder.setOrderDate(LocalDateTime.now());
+        deptOrder.setDeptCode(employee.getDeptCode());
+
+        DepartmentDto department = departmentMapper.selectDepartmentByDeptCode(deptCode);
+
+        log.info("[HumanResourceService] department : " + department);
+
+        if (department == null) {
             throw new NotFoundException("해당 부서가 존재하지 않습니다.");
         }
 
+        deptOrder.setNewDeptCode(department.getDeptCode());
+        departmentOrderMapper.insertDepartmentOrder(deptOrder);
+
         employee.setDeptCode(department.getDeptCode());
+        employeeMapper.updateEmployeeDepartment(employee);
 
-        try {
-            humanResourceMapper.updateEmployee(employee);
-
-        } catch(Exception e) {
-            throw new SQLException("발령 처리 중 오류가 발생했습니다.", e);
-        }
         return employee;
     }
 
@@ -92,34 +113,41 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원의 지점 발령 비즈니스 로직을 수행하는 메소드.
      */
-    public EmployeeDto updateEmployeeBranch(Long empNo, Long branchCode) throws SQLException {
+    public EmployeeDto updateEmployeeBranch(Long empNo, Long branchCode) throws SQLException, NotFoundException {
 
-        try {
-            EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
+        log.info("[HumanResourceService] branchCode : " + branchCode);
 
-            BranchDto branch = branchMapper.selectBranchByBCode(branchCode);
+        EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
 
-            if (employee == null || branch == null) {
-                throw new SQLException("직원의 지점 코드를 수정하지 못하였습니다. 잘못된 사원 번호 혹은  지점 코드 인지 확인해주세요.");
-            }
+        log.info("[HumanResourceService] Branch employee : " + employee);
 
-            employee.setBranchCode(branch.getBranchCode());
-
-            humanResourceMapper.updateEmployeeBranch(employee);
-
-            return employee;
-
-        } catch (SQLException e) {
-            e.printStackTrace();    // SQLException 처리
-
-            throw e;
-
-        } catch (Exception e) {
-            e.printStackTrace();    // 업무 로직에서 발생하는 예외 처리
-
-            throw new RuntimeException("직원의 지점 코드를 수정하지 못했습니다.: " + e.getMessage());
+        if (employee == null) {
+            throw new NotFoundException("해당 사원이 존재하지 않습니다.");
         }
+
+        BranchOrderDto branchOrder = new BranchOrderDto();
+        branchOrder.setEmpNo(employee.getEmpNo());
+        branchOrder.setOrderDate(LocalDateTime.now());
+        branchOrder.setBranchCode(employee.getBranchCode());
+
+        BranchDto branch = branchMapper.selectBranchByBCode(branchCode);
+
+        log.info("[HumanResourceService] branch : " + branch);
+
+        if (branch == null) {
+            throw new NotFoundException("해당 지점이 존재하지 않습니다.");
+        }
+
+        branchOrder.setNewBCode(branch.getBranchCode());
+        branchOrderMapper.insertBranchOrder(branchOrder);
+
+        employee.setBranchCode(branch.getBranchCode());
+        employeeMapper.updateEmployeeBranch(employee);
+
+        return employee;
     }
+
+
 
     /**
      * @작성일 : 2023-03-21
@@ -316,9 +344,9 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 전체를 조회해오고 페이지 처리를 하는 비즈니스 로직을 수행하는 메소드
      */
-    public List<EmployeeDto> selectEmployeeListWithPaging(int startRow, int endRow) {
+    public List<HumanResourceDto> selectEmployeeListWithPaging(int startRow, int endRow) {
 
-        List<EmployeeDto> employeeList = Collections.emptyList();
+        List<HumanResourceDto> employeeList = Collections.emptyList();
 
         try {
             employeeList = humanResourceMapper.selectEmployeeListWithPaging(startRow, endRow);
@@ -334,9 +362,9 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 조회 비즈니스 로직을 수행하는 메소드
      */
-    public List<EmployeeDto> selectEmployees(String empName, String deptCode, Long branchCode) throws Exception {
+    public List<HumanResourceDto> selectEmployees(String empName, String deptName, String branchName) throws Exception {
 
-        List<EmployeeDto> employees = humanResourceMapper.selectEmployees(empName, deptCode, branchCode);
+        List<HumanResourceDto> employees = humanResourceMapper.selectEmployees(empName, deptName, branchName);
 
         if (employees.isEmpty()) {
             return null; // 조회된 사원이 없는 경우 null 반환
@@ -411,5 +439,21 @@ public class HumanResourceService {
         }
 
 
+    public List<DepartmentDto> selectDepartments() {
 
+        List<DepartmentOrderDto> deptOrders = humanResourceMapper.selectDepartmentsOrders();
+
+        List<DepartmentDto> dept = deptOrders.stream()
+                .map(DepartmentOrderDto::getDepartmentDto)
+                .collect(Collectors.toList());
+        return dept;
+    }
+
+    public List<BranchDto> selectBranches() {
+        List<BranchOrderDto> branchOrders = humanResourceMapper.selectBranchesOrders();
+        List<BranchDto> branch = branchOrders.stream()
+                .map(BranchOrderDto::getBranchDto)
+                .collect(Collectors.toList());
+        return branch;
+    }
 }

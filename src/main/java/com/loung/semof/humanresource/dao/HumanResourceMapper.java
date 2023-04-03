@@ -1,6 +1,8 @@
 package com.loung.semof.humanresource.dao;
 
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.humanresource.dto.BranchOrderDto;
+import com.loung.semof.humanresource.dto.DepartmentOrderDto;
 import com.loung.semof.humanresource.dto.EmployeePhotoDto;
 import com.loung.semof.humanresource.dto.HumanResourceDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,13 +21,12 @@ import java.util.List;
 public interface HumanResourceMapper {
     void updateEmployee(EmployeeDto employee);
 
-    void updateEmployeeBranch(EmployeeDto employee);
 
     int selectEmployeeTotal();
 
-    List<EmployeeDto> selectEmployeeListWithPaging(int startRow, int endRow);
+    List<HumanResourceDto> selectEmployeeListWithPaging(int startRow, int endRow);
 
-    List<EmployeeDto> selectEmployees(String empName, String deptCode, Long branchCode);
+    List<HumanResourceDto> selectEmployees(String empName, String deptName, String branchName);
 
     List<EmployeeDto> selectEmployeeByBirthMonth(int monthValue);
 
@@ -40,4 +41,8 @@ public interface HumanResourceMapper {
     EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo);
 
     void deleteEmployeePhoto(Long photoNo);
+
+    List<DepartmentOrderDto> selectDepartmentsOrders();
+
+    List<BranchOrderDto> selectBranchesOrders();
 }

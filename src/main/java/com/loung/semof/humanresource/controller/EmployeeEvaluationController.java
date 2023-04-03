@@ -139,6 +139,31 @@ public class EmployeeEvaluationController {
     }
 
     /**
+     * @작성일 : 2023-04-02
+     * @작성자 : 이현도
+     * @메소드설명 : 기여도 평가 전체 조회
+     */
+    @GetMapping("/evaluation/contributions")
+    public ResponseEntity<ResponseDto> selectAllContributionGrade() {
+        try {
+            List<EmployeeEvaluationDto> contributionLists = employeeEvaluationService.selectAllContributionGrade();
+
+            log.info("[EmployeeEvaluationController] contributionLists : " + contributionLists);
+
+            if (contributionLists == null || contributionLists.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ResponseDto(HttpStatus.NOT_FOUND, "기여도 평가 내역이 존재하지 않습니다.", null));
+            }
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "기여도 평가 내역 조회 성공", contributionLists));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "기여도 평가 내역 조회 중 오류가 발생했습니다.", null));
+        }
+    }
+    
+    /**
      * @작성일 : 2023-03-26
      * @작성자 : 이현도
      * @메소드설명 : 사원의 근태 평가 점수를 수정하는 메소드

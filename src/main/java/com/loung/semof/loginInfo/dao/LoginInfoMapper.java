@@ -2,14 +2,13 @@ package com.loung.semof.loginInfo.dao;
 
 
 import com.loung.semof.loginInfo.dto.LoginInfoDto;
-import com.loung.semof.loginInfo.dto.LoginInfoDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Optional;
 
 
 @Mapper
-public interface MemberMapper {
+public interface LoginInfoMapper {
 
     LoginInfoDto selectByEmail(String email);
 
@@ -19,5 +18,11 @@ public interface MemberMapper {
 
     LoginInfoDto selectByMemberId(String memberId);
 
-    LoginInfoDto selectByMemberReg(String empReg);
+    LoginInfoDto selectByEmpReg(String empReg);
+
+    int checkEmpReg(String empReg);
+
+   String selectById(String loginId);
+
+    int checkId(String loginId);
 }

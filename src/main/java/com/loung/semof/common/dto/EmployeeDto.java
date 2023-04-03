@@ -38,6 +38,5 @@ public class EmployeeDto {
     private Long branchCode; //지점
     private String memberRole;
 
-
 }
 

@@ -30,13 +30,10 @@ public class SecurityConfig  {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
 
 
-    public SecurityConfig(TokenProvider tokenProvider
-            , JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
-            ,JwtAccessDeniedHandler jwtAccessDeniedHandler){
+    public SecurityConfig(TokenProvider tokenProvider, JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint, JwtAccessDeniedHandler jwtAccessDenied, JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         this.tokenProvider = tokenProvider;
-        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
-
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -59,8 +56,8 @@ public class SecurityConfig  {
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-    //@Override
-   // protected void configure(HttpSecurity http) throws Exception {
+        //@Override
+        // protected void configure(HttpSecurity http) throws Exception {
 
 
          // CSRF 설정 Disable
@@ -69,10 +66,11 @@ public class SecurityConfig  {
                 .httpBasic().disable()// 매 요청마다 id, pwd를 보내는 방식으로 인증하는 httpBasic를 사용하지 않겠다는것
 
                 // 시큐리티는 기본적으로 세션을 사용하지만 API 서버에선 세션을 사용하지 않기 때문에 세션 설정을 Stateless 로 설정
+                 
                  .exceptionHandling()
                  .authenticationEntryPoint(jwtAuthenticationEntryPoint)//인증 실패
                  .accessDeniedHandler(jwtAccessDeniedHandler)
-                 .and()
+                 .and() // 내용이 달라지는 곳
                  .sessionManagement()
                  .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
@@ -80,14 +78,17 @@ public class SecurityConfig  {
                 .and()
                 .authorizeRequests()// http servletRequest 를 사용하는 요청들에 대한 접근제한을 설정
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                 .antMatchers("/api/v1/products-management").hasRole("ADMIN")  // 나머지 API 는 전부 인증 필요
+//                 .antMatchers("/api/v1/products-management").hasRole("ADMIN")  // 나머지 API 는 전부 인증 필요
+//
+//                 .antMatchers("/auth/**").permitAll()// 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
+//                .antMatchers("/api/v1/products/**").permitAll()// 제품 누구나 접근가능
+//                .antMatchers("/api/v1/reviews/**").permitAll()// 리뷰도 누구나 접근가능
+//                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")  // 나머지 API 는 전부 인증 필요
 
-                 .antMatchers("/auth/**").permitAll()// 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
-                .antMatchers("/api/v1/products/**").permitAll()// 제품 누구나 접근가능
-                .antMatchers("/api/v1/reviews/**").permitAll()// 리뷰도 누구나 접근가능
-                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")  // 나머지 API 는 전부 인증 필요
+                 .antMatchers("/**").permitAll() // 임시 전체 접근 허용
 
-                 .and()
+
+                 .and() // 여기서 정의를 해줬기 때문에 corsConfigurationSource가 작동
                  .cors()
                  .and()
                  .apply(new JwtSecurityConfig(tokenProvider));
@@ -102,7 +103,7 @@ public class SecurityConfig  {
 //         configuration.setAllowedOrigins(Arrays.asList("http://43.200.45.85:3000" ));// 해당 ip만 응답
 
         configuration.setAllowedMethods(Arrays.asList("GET", "PUT", "POST", "DELETE"));// 해당메소드만응답하겠다
-//        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Content-Type", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With"));// 해당 헤더의 응답만허용
+        configuration.setAllowedHeaders(Arrays.asList("Access-Control-Allow-Origin", "Content-Type", "Access-Control-Allow-Headers", "Authorization", "X-Requested-With"));// 해당 헤더의 응답만허용
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

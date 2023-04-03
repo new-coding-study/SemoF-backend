@@ -1,6 +1,8 @@
 package com.loung.semof.humanresource.controller;
 
 import com.loung.semof.common.ResponseDto;
+import com.loung.semof.common.dto.BranchDto;
+import com.loung.semof.common.dto.DepartmentDto;
 import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.common.paging.Pagenation;
 import com.loung.semof.common.paging.ResponseDtoWithPaging;
@@ -75,6 +77,7 @@ public class HumanResourceController {
     public ResponseEntity<ResponseDto> updateEmployeeBranch(@RequestBody EmployeeDto employeeDto) {
 
         try {
+
             EmployeeDto employee = humanResourceService.updateEmployeeBranch(employeeDto.getEmpNo(), employeeDto.getBranchCode());
 
             if (employee != null) {
@@ -188,7 +191,7 @@ public class HumanResourceController {
 
             SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
 
-            List<EmployeeDto> employees = humanResourceService.selectEmployeeListWithPaging(selectCriteria.getStartRow(), selectCriteria.getEndRow());
+            List<HumanResourceDto> employees = humanResourceService.selectEmployeeListWithPaging(selectCriteria.getStartRow(), selectCriteria.getEndRow());
 
             ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
 
@@ -210,13 +213,13 @@ public class HumanResourceController {
      * @작성자 : 이현도
      * @메소드설명 : 사원을 조건으로 조회하는 메소드
      */
-    @GetMapping("/present")
+    @GetMapping("/present/search")
     public ResponseEntity<ResponseDto> selectEmployee(@RequestParam(required = false) String empName,
-                                                      @RequestParam(required = false) String deptCode,
-                                                      @RequestParam(required = false) Long branchCode) throws Exception {
+                                                      @RequestParam(required = false) String deptName,
+                                                      @RequestParam(required = false) String branchName) throws Exception {
 
         try {
-            List<EmployeeDto> employees = humanResourceService.selectEmployees(empName, deptCode, branchCode);
+            List<HumanResourceDto> employees = humanResourceService.selectEmployees(empName, deptName, branchName);
 
             log.info(" [HumanResourceController] Employees: " + employees);
 
@@ -310,5 +313,27 @@ public class HumanResourceController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto(HttpStatus.NOT_FOUND, "조회 실패", null));
         }
+    }
+
+    /**
+     * @작성일 : 2023-04-01
+     * @작성자 : 이현도
+     * @메소드설명 : 발령 부서를 조회하는 메소드
+     */
+    @GetMapping("/departments")
+    public ResponseEntity<List<DepartmentDto>> selectDepartments() {
+        List<DepartmentDto> departments = humanResourceService.selectDepartments();
+        return ResponseEntity.ok(departments);
+    }
+
+    /**
+     * @작성일 : 2023-04-01
+     * @작성자 : 이현도
+     * @메소드설명 : 발령 지점을 조회하는 메소드
+     */
+    @GetMapping("/branches")
+    public ResponseEntity<List<BranchDto>> selectBranches() {
+        List<BranchDto> branches = humanResourceService.selectBranches();
+        return ResponseEntity.ok(branches);
     }
 }
