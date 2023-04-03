@@ -22,11 +22,10 @@ public class ReplyController {
 
     @GetMapping("/all-reply-lists/{boardNo}")
     public ResponseEntity<ResponseDto> selectReplyListWithPaging(
-            @RequestParam(name = "offset", defaultValue = "1") String offset,
-            @PathVariable int boardNo
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int boardNo
     ) {
         int totalCount = replyService.selectReplyTotal();
-        int limit = 15;
+        int limit = 10;
         int buttonAmount = 3;
 
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
@@ -44,9 +43,12 @@ public class ReplyController {
     }
 
 
-    @PostMapping("/replies")
-    public ResponseEntity<ResponseDto> insertReply(@ModelAttribute String replyContent, @PathVariable int empNo, @PathVariable int boardNo){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED,"댓글 등록", replyService.insertReply(replyContent, empNo, boardNo)));
+    @PostMapping("/all-reply-lists")
+    public ResponseEntity<ResponseDto> insertReply(@RequestBody ReplyDto replyDto){
+        System.out.println("replyDto = " + replyDto);
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED,"댓글 등록", replyService.insertReply(replyDto.getReplyContent(), empNo, boardNo)));
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED,"댓글 등록", replyService.insertReply(replyDto)));
+
     }
 
 //    @PutMapping("/reply-lists-management/{replyCode}")
@@ -55,17 +57,17 @@ public class ReplyController {
 //    }
 
     @PutMapping("/replies/{replyCode}")
-    public ResponseEntity<ResponseDto> updateReply(@ModelAttribute ReplyDto replyDto, @PathVariable int empNo, @PathVariable int boardNo, @PathVariable int replyCode){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 수정", replyService.updateReply(replyDto, empNo, boardNo, replyCode)));
+    public ResponseEntity<ResponseDto> updateReply(@ModelAttribute ReplyDto replyDto, @PathVariable int replyCode){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 수정", replyService.updateReply(replyDto)));
     }
     @DeleteMapping("/replies-delete-admin/{replyCode}")
-    public ResponseEntity<ResponseDto> deleteReplyForAdmin(@ModelAttribute ReplyDto replyDto, @PathVariable int boardNo, @PathVariable int replyCode){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 삭제", replyService.deleteForAdmin(replyDto, boardNo, replyCode)));
+    public ResponseEntity<ResponseDto> deleteReplyForAdmin(@ModelAttribute ReplyDto replyDto, @PathVariable int replyCode){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 삭제", replyService.deleteForAdmin(replyDto)));
     }
 
-    @DeleteMapping("/replies-delete-emp/{replyCode}")
-    public ResponseEntity<ResponseDto> deleteReply(@ModelAttribute ReplyDto replyDto, @PathVariable int empNo, @PathVariable int replyCode, @PathVariable int boardNo){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 삭제", replyService.deleteForEmp(replyDto, empNo, replyCode, boardNo)));
+    @DeleteMapping("/replies-delete-emp/{empNo}/{replyCode}")
+    public ResponseEntity<ResponseDto> deleteReply(@ModelAttribute ReplyDto replyDto, @PathVariable int empNo, @PathVariable int replyCode){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"댓글 삭제", replyService.deleteForEmp(replyDto)));
     }
 
 }
