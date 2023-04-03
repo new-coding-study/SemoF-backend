@@ -18,35 +18,35 @@
         <result property="empNo" column="EMP_NO"/>
     </resultMap>
 
-<!--    <resultMap type="com.loung.semof.approval.dto.ApprovalDTO" id="approveResultMap">-->
-<!--        <id property="approvNo" column="APPROV_NO"/>-->
-<!--        <result property="approvTitle" column="APPROV_TITLE"/>-->
-<!--        <result property="approvDate" column="APPROV_DATE"/>-->
-<!--        <result property="empNo" column="EMP_NO"/>-->
-<!--        <result property="lineNo" column="LINE_NO"/>-->
-<!--        <collection property="ApprovFileDTOList" resultMap="fileResultMap"/>-->
-<!--        <collection property="ApprovContentDTOList" resultMap="contentResultMap"/>-->
-<!--        <collection property="ApprovStatusDTOList" resultMap="statusResultMap"/>-->
-<!--    </resultMap>-->
-<!--    <resultMap id="fileResultMap" type="com.loung.semof.approval.dto.ApprovFileDTOList">-->
-<!--        <id property="fileNo" column="FILE_NO"/>-->
-<!--        <result property="originName" column="ORIGIN_NAME"/>-->
-<!--        <result property="newName" column="NEW_NAME"/>-->
-<!--        <result property="filePath" column="FILE_PATH"/>-->
-<!--        <result property="approvNo" column="APPROV_NO"/>-->
-<!--    </resultMap>-->
-<!--    <resultMap id="contentResultMap" type="com.loung.semof.approval.dto.ApprovContentDTOList">-->
-<!--        <id property="contentNo" column="CONTENT_NO"/>-->
-<!--        <result property="content" column="CONTENT"/>-->
-<!--        <result property="formCode" column="FORM_CODE"/>-->
-<!--        <result property="approvNo" column="APPROV_NO"/>-->
-<!--        <result property="formTitle" column="FORM_TITLE"/>-->
-<!--    </resultMap>-->
-<!--    <resultMap id="statusResultMap" type="com.loung.semof.approval.dto.ApprovStatusDTOList">-->
-<!--        <id property="statusNo" column="STATUS_NO"/>-->
-<!--        <result property="status" column="STATUS"/>-->
-<!--        <result property="approvNo" column="APPROV_NO"/>-->
-<!--    </resultMap>-->
+    <resultMap type="com.loung.semof.approval.dto.ApprovalDTO" id="approveResultMap">
+        <id property="approvNo" column="APPROV_NO"/>
+        <result property="approvTitle" column="APPROV_TITLE"/>
+        <result property="approvDate" column="APPROV_DATE"/>
+        <result property="empNo" column="EMP_NO"/>
+        <result property="lineNo" column="LINE_NO"/>
+        <collection property="ApprovFileDTOList" resultMap="fileResultMap"/>
+        <collection property="ApprovContentDTOList" resultMap="contentResultMap"/>
+        <collection property="ApprovStatusDTOList" resultMap="statusResultMap"/>
+    </resultMap>
+    <resultMap id="fileResultMap" type="com.loung.semof.approval.dto.ApprovFileDTO">
+        <id property="fileNo" column="FILE_NO"/>
+        <result property="originName" column="ORIGIN_NAME"/>
+        <result property="newName" column="NEW_NAME"/>
+        <result property="filePath" column="FILE_PATH"/>
+        <result property="approvNo" column="APPROV_NO"/>
+    </resultMap>
+    <resultMap id="contentResultMap" type="com.loung.semof.approval.dto.ApprovContentDTO">
+        <id property="contentNo" column="CONTENT_NO"/>
+        <result property="content" column="CONTENT"/>
+        <result property="formCode" column="FORM_CODE"/>
+        <result property="approvNo" column="APPROV_NO"/>
+        <result property="formTitle" column="FORM_TITLE"/>
+    </resultMap>
+    <resultMap id="statusResultMap" type="com.loung.semof.approval.dto.ApprovStatusDTO">
+        <id property="statusNo" column="STATUS_NO"/>
+        <result property="status" column="STATUS"/>
+        <result property="approvNo" column="APPROV_NO"/>
+    </resultMap>
 
     <!--    결재라인-->
     <!--    결재라인 추가-->
@@ -80,10 +80,14 @@
     <!--결재라인 조회-->
     <select id="selectApprovLineListWithPaging" resultType="ApprovLineDTO">
         SELECT
-            A.*, B.*
+            A.*, B.*, te.*, tb.*
         FROM TBL_APPROV_LINE A
         JOIN TBL_APPROV_ORDER B
         ON A.LINE_NO = B.LINE_NO
+        JOIN tbl_employee te
+            on A.EMP_NO = te.EMP_NO
+        JOIN tbl_branch tb
+            on tb.BRANCH_CODE = A.BRANCH_CODE
         ORDER BY A.LINE_NO
     </select>
 
@@ -181,7 +185,7 @@
                    , A.APPROV_TITLE
                    , C.STATUS
                    , A.APPROV_DATE
-                   ,E.ORDER_NO
+
                    ,F.EMP_NO
 
 
@@ -192,10 +196,12 @@
                             ON (A.APPROV_NO = C.APPROV_NO)
                        JOIN tbl_approv_category D
                             ON (B.FORM_CODE = D.FORM_CODE)
-                       JOIN tbl_approv_order E
-                            ON (E.ORDER_NO = C.ORDER_NO)
-                       JOIN tbl_employee F
-                            ON (F.EMP_NO = A.EMP_NO)
+                        JOIN tbl_approv_line E
+                            ON (A.LINE_NO = E.LINE_NO)
+                       JOIN tbl_approv_order F
+                            ON (F.LINE_NO = E.LINE_NO)
+                       JOIN tbl_employee G
+                            ON (G.EMP_NO = A.EMP_NO)
 
              ) P
         WHERE P.EMP_NO = 37

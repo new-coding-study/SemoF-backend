@@ -27,6 +27,8 @@ public class ApprovLineDTO {
     private String branchName;
     private Integer branchCode;
     private List<ApprovOrderDTO> approvOrderDTOList;
+
+//    private
 }
 
 
