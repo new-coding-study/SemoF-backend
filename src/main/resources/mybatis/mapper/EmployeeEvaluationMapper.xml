@@ -54,19 +54,20 @@
     </select>
 
     <!-- SELECT 쿼리 : 사원번호로 사원의 기여도 평가 조회-->
-    <select id="selectContributionEvaluationByEmpNo" resultType="EmployeeEvaluationDto">
+    <select id="selectContributionEvaluationByEmpNo"  parameterType="EmployeeEvaluationDto" resultType="EmployeeEvaluationDto">
         SELECT
-            EVAL_CONT_NO AS evalContNo,
-            CONT_NO AS contNo,
-            CATEGORY_NO AS categoryNo,
-            GRADE
-        FROM tbl_contribution_evaluation
-        WHERE CONT_NO IN (
-            SELECT CONT_NO
-            FROM tbl_contribution
-            WHERE EMP_NO = #{empNo}
-        )
-        ORDER BY EVAL_CONT_NO DESC
+            e.EMP_NO, e.EMP_NAME, ce.EVAL_CONT_NO AS evalContNo
+                ,ce.CONT_NO AS contNo, ce.CATEGORY_NO AS categoryNo,
+            ce.GRADE
+        FROM tbl_contribution_evaluation ce
+            INNER JOIN tbl_contribution c ON ce.CONT_NO = c.CONT_NO
+            INNER JOIN tbl_employee e ON c.EMP_NO = e.EMP_NO
+        WHERE ce.CONT_NO IN (
+            SELECT c.CONT_NO
+            FROM tbl_contribution c
+            WHERE c.EMP_NO = #{empNo}
+            )
+        ORDER BY ce.EVAL_CONT_NO DESC
     </select>
 
     <!-- INSERT 쿼리 : 근태 평가 점수 삽입-->
