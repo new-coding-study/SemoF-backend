@@ -11,12 +11,20 @@ public interface ReplyMapper {
     int selectReplyTotal();
     List<ReplyDto> selectReplyWithPaging(SelectCriteria selectCriteria, int boardNo);
 
-    int insertReply(String replyContent,int boardNo, int empNo);
+//    int insertReply(String replyContent,int boardNo, int empNo);
 //    int updateReplyForAdmin(ReplyDto replyDto);
-    int updateReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode);
-    int deleteForAdmin(ReplyDto replyDto, int replyCode, int boardNo);
-    int deleteForEmp(ReplyDto replyDto, int empNo, int boardNo, int replyCode);
+//    int updateReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode);
+//    int deleteForAdmin(ReplyDto replyDto, int replyCode, int boardNo);
+//    int deleteForEmp(ReplyDto replyDto, int empNo, int boardNo, int replyCode);
 
     ReplyDto selectReply(int boardNo);
+
+    int insertReply(ReplyDto replyDto);
+
+    int deleteForAdmin(ReplyDto replyDto);
+
+    int deleteForEmp(ReplyDto replyDto);
+
+    int updateReply(ReplyDto replyDto);
 //
 }

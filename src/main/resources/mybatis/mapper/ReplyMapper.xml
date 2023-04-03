@@ -26,7 +26,7 @@
         JOIN tbl_employee TE
         ON (TR.EMP_NO = TE.EMP_NO)
         WHERE TR.BOARD_NO = #{boardNo}
-        ORDER BY TR.REPLY_WRITE_DATE DESC
+        ORDER BY TR.REPLY_WRITE_DATE ASC
     </select>
 
     <select id="selectReplyTotal" resultType="int">
@@ -44,35 +44,37 @@
            ,R.REPLY_CODE
            ,R.REPLY_CONTENT
            ,R.REPLY_WRITE_DATE
-        FROM
-        (SELECT
-             ROW_NUMBER()OVER(ORDER BY TR.REPLY_WRITE_DATE DESC) AS rowNum
-             ,TR.REPLY_CODE
-             ,TR.REPLY_CONTENT
-             ,TR.EMP_NO
-             ,TR.BOARD_NO
-             ,TE.EMP_NAME
-             ,TR.REPLY_WRITE_DATE
-        FROM tbl_reply TR
-                 JOIN tbl_board TB
-                      ON (TR.BOARD_NO = TB.BOARD_NO)
-                 JOIN tbl_employee TE
-                      ON (TR.EMP_NO = TE.EMP_NO)
-        WHERE TR.BOARD_NO = #{boardNo}) R
-        ORDER BY R.rowNum DESC
+           ,R.EMP_NO
+        FROM (SELECT
+                     ROW_NUMBER()OVER(ORDER BY TR.REPLY_WRITE_DATE DESC) AS rowNum
+                  ,TR.REPLY_CODE
+                  ,TR.REPLY_CONTENT
+                  ,TR.EMP_NO
+                  ,TR.BOARD_NO
+                  ,TE.EMP_NAME
+                  ,TR.REPLY_WRITE_DATE
+             FROM tbl_reply TR
+            JOIN tbl_board TB
+             ON TR.BOARD_NO = TB.BOARD_NO
+            JOIN tbl_employee TE
+             ON TR.EMP_NO = TE.EMP_NO
+             WHERE TR.BOARD_NO = #{boardNo}) R
+        ORDER BY R.rowNum ASC
         LIMIT #{selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
-    <insert id="insertReply" parameterType="String">
+    <insert id="insertReply" parameterType="ReplyDto">
         INSERT INTO tbl_reply
-            (REPLY_CONTENT
-            , BOARD_NO
-            , EMP_NO)
+            (
+            BOARD_NO
+            , REPLY_CONTENT
+            , EMP_NO
+            )
         VALUES
             (
-             #{replyContent}
-             ,#{boardNo}
-             ,35
+            (SELECT BOARD_NO FROM tbl_board WHERE tbl_board.BOARD_NO = #{boardNo})
+             ,#{replyContent}
+             ,(SELECT EMP_NO FROM tbl_employee WHERE tbl_employee.EMP_NO= #{empNo})
             )
     </insert>
 
@@ -87,13 +89,12 @@
 
     <delete id="deleteForAdmin" parameterType="boardDto">
         DELETE FROM tbl_reply
-        WHERE BOARD_NO = #{boardNo}
+        WHERE REPLY_CODE = #{replyCode}
     </delete>
 
     <delete id="deleteForEmp" parameterType="boardDto">
         DELETE FROM tbl_reply
-        WHERE BOARD_NO = #{boardNo}
-          AND EMP_NO = #{empNo}
+        WHERE EMP_NO = #{empNo}
     </delete>
 
 </mapper>
