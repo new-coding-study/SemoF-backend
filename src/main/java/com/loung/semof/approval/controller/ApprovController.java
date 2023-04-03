@@ -64,20 +64,20 @@ public class ApprovController {
      * @작성자 : 박유리
      * @메소드설명 : 결재 문서 목록을 조회
      */
-    @GetMapping("/approv-list")
-    public ResponseEntity<ResponseDto> selectApprovalInWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
-        int totalCount = approvService.selectApprovalTotal();
-        int limit = 10;
-        int buttonAmount = 10;
-
-        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
-
-        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
-        responseDtoWithPaging.setPageInfo(selectCriteria);
-        responseDtoWithPaging.setData(approvService.selectApprovalInWithPaging(selectCriteria));
-//        responseDtoWithPaging.setData(approvService.selectLatestStatus());
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
-    }
+//    @GetMapping("/approv-list")
+//    public ResponseEntity<ResponseDto> selectApprovalInWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
+//        int totalCount = approvService.selectApprovalTotal();
+//        int limit = 10;
+//        int buttonAmount = 10;
+//
+//        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+//
+//        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+//        responseDtoWithPaging.setPageInfo(selectCriteria);
+//        responseDtoWithPaging.setData(approvService.selectApprovalInWithPaging(selectCriteria));
+////        responseDtoWithPaging.setData(approvService.selectLatestStatus());
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
+//    }
 //    @GetMapping("/approv-in-box")
 //    public ResponseEntity<ResponseDto> selectApprovalInWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
 //        int totalCount = approvService.selectApprovalTotal();
@@ -132,11 +132,11 @@ public class ApprovController {
     }
 
 
-    @PutMapping(value = "/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> updateApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @RequestPart List<ApprovContentDTO> contents){
-
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재서류 업데이트", approvService.updateApproval(approval, file, contents)));
-    }
+//    @PutMapping(value = "/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public ResponseEntity<ResponseDto> updateApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @RequestPart List<ApprovContentDTO> contents){
+//
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재서류 업데이트", approvService.updateApproval(approval, file, contents)));
+//    }
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리

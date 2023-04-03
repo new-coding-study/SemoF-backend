@@ -136,12 +136,16 @@
         INSERT INTO TBL_APPROVAL
         (
          APPROV_TITLE
+         , APPROV_DATE
          , LINE_NO
+         , EMP_NO
         )
         VALUES
             (
            #{ approvTitle }
-            ,#{ lineNo }
+           , DEFAULT
+            ,1
+            , 2
             )
     </insert>
     <insert id="insertApprovFile" parameterType="ApprovFileDTO">
@@ -157,17 +161,23 @@
             #{ originName }
             ,#{ newName }
             ,#{ filePath }
-            ,#{ approvNo }
+            ,(SELECT APPROV_NO FROM TBL_APPROVal ORDER BY APPROV_NO DESC LIMIT 1)
             )
     </insert>
     <insert id="insertApprovContent" parameterType="ApprovContentDTO">
         INSERT INTO TBL_APPROV_CONTENT
         (
-            APPROV_CONTENT
+            CONTENT
+            , FORM_CODE
+            , APPROV_NO
+            , FORM_TITLE
         )
         VALUES
             (
-            #{approvContent}
+            #{content}
+            , #{formCode}
+            , (SELECT APPROV_NO FROM TBL_APPROVal ORDER BY APPROV_NO DESC LIMIT 1)
+            , #{formTitle}
             )
     </insert>
 
@@ -431,7 +441,7 @@
     <select id="selectLatestStatus" resultType="String">
         SELECT
             C.STATUS
-        FROM TBL_APPROV_ORDER C
+        FROM tbl_approv_status C
         WHERE ORDER_NO =
               (
                   SELECT
