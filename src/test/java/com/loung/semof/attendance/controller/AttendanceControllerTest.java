@@ -61,7 +61,7 @@ class AttendanceControllerTest {
     public void 사원_근태_정보_조회_성공() throws Exception {
         // given
         // when, then
-        mockMvc.perform(get("/attendance/status/{empNo}", 1))
+        mockMvc.perform(get("/attendance/status/{empNo}", 2))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andDo(print());
@@ -103,7 +103,7 @@ class AttendanceControllerTest {
     @DisplayName("updateAttendance_success")
     public void 사원_근태_상태_변경_성공() throws Exception {
         // given
-        int empNo = 1;
+        int empNo = 3;
 
         // when, then
         mockMvc.perform(put("/attendance/status/{empNo}", empNo))

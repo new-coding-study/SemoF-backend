@@ -68,7 +68,7 @@ public class AttendanceService {
         LocalDate currentDate = LocalDate.now();
 
         // 사원 마지막 근무 날짜와 현재 날짜가 같지 않을때만 근무기록행 추가 (날짜 같다면 당일 근무 기록이 이미 있음을 뜻함)
-        if (lastDate == null || !Objects.equals(currentDate.toString(), lastDate.getAtdDate().substring(0, 10))){
+        if (lastDate.getAtdDate() == null || !Objects.equals(currentDate.toString(), lastDate.getAtdDate().substring(0, 10))){
             log.info("-------------날짜 비교 if문 진입-------------");
             attendanceMapper.insertAttendance(empNo);
         }
