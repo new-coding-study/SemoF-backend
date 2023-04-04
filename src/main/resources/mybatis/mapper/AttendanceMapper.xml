@@ -19,12 +19,12 @@
             vac.USED_HALF,
             vac.LEFT_DAYS
         FROM tbl_employee emp
-        JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
-        JOIN tbl_attendance_status_info ats ON (att.ATD_NO = ats.ATD_NO)
-        JOIN tbl_attendance_status sts ON (ats.STATUS_CODE = sts.STATUS_CODE)
-        JOIN tbl_emp_vacation_info vac ON (emp.EMP_NO = vac.EMP_NO)
+        LEFT JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
+        LEFT JOIN tbl_attendance_status_info ats ON (att.ATD_NO = ats.ATD_NO)
+        LEFT JOIN tbl_attendance_status sts ON (ats.STATUS_CODE = sts.STATUS_CODE)
+        LEFT JOIN tbl_emp_vacation_info vac ON (emp.EMP_NO = vac.EMP_NO)
         WHERE emp.EMP_NO = #{ empNo }
-        ORDER BY sts.STATUS_NAME, att.ATD_DATE DESC LIMIT 1;
+        ORDER BY att.ATD_DATE DESC, sts.STATUS_NAME DESC LIMIT 1;
     </select>
     <!-- AND att.ATD_DATE = (SELECT MAX(ATD_DATE) FROM tbl_attendance WHERE EMP_NO = #{ empNo } ORDER BY ATD_DATE DESC LIMIT 1) -->
 
