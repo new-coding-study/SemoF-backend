@@ -182,6 +182,14 @@ public class EmailController {
         }
     }
 
+    /**
+     * @파일이름 : EmailController.java
+     * @프로젝트 : SemoF
+     * @버전관리 : 1.0.0
+     * @작성일 : 2023-04-04
+     * @작성자 : 이현도
+     * @클래스설명 : 발신 이메일 전체를 조회해오는 메소드
+     */
     @GetMapping("/send/list")
     public ResponseEntity<ResponseDto> selectSendEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
 
@@ -201,6 +209,49 @@ public class EmailController {
             responseDtoWithPaging.setPageInfo(selectCriteria);
 
             responseDtoWithPaging.setData(sendEmails);
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 발신 이메일을 번호에 따라 조회해오는 메소드
+     */
+    @GetMapping("/send/{mailNo}")
+    public ResponseEntity<ResponseDto> selectSendEmail(@PathVariable("mailNo") Long mailNo) {
+
+        return ResponseEntity.ok()
+                .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectSendEmail(mailNo)));
+    }
+
+    @GetMapping("/lists")
+    public ResponseEntity<ResponseDto> selectEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
+
+        try {
+            int totalCount = emailService.selectReceiveEmailTotal();
+
+            log.info("[EmailContorller] totalCount = " + totalCount);
+
+            int limit = 10;
+
+            int buttonAmount = 5;
+
+            SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
+
+            List<ReceiveEmailDto> receiveEmails = emailService.selectEmailListWithPaging(selectCriteria.getStartRow(), selectCriteria.getEndRow());
+
+            ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+
+            responseDtoWithPaging.setPageInfo(selectCriteria);
+
+            responseDtoWithPaging.setData(receiveEmails);
 
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
 
