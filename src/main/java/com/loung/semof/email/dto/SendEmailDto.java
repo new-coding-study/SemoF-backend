@@ -1,5 +1,6 @@
 package com.loung.semof.email.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.loung.semof.common.dto.EmployeeDto;
 import lombok.*;
 
@@ -43,6 +44,7 @@ public class SendEmailDto extends EmailAttachDto {
     private String senderAddr; // 발신자 이메일주소
     private String title;   //이메일제목
     private String content; //이메일내용
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     private LocalDateTime sendDate; //이메일발송날짜
     private String tempStatus;  //임시저장여부
     private List<EmailAttachDto> emailAttachDtoList; // 첨부파일 리스트

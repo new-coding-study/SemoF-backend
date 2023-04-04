@@ -177,6 +177,11 @@ public class EmailService {
         }
     }
 
+    /**
+     * @작성일 : 2023-04-04
+     * @작성자 : 이현도
+     * @메소드설명 : DB에 저장된 발신 이메일 갯수를 조회하는 메소드
+     */
     public int selectEmailListTotal() throws SQLException {
         int totalCount = 0;
 
@@ -189,16 +194,57 @@ public class EmailService {
         return totalCount;
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : DB에서 페이지 처리가 된 발신 메일을 조회하는 메소드
+     */
     public List<SendEmailDto> selectSendEmailListWithPaging(int startRow, int endRow) throws SQLException {
 
-        List<SendEmailDto> employeeList = Collections.emptyList();
+        List<SendEmailDto> sendList = Collections.emptyList();
 
         try {
-            employeeList = emailMapper.selectSendEmailListWithPaging(startRow, endRow);
+            sendList = emailMapper.selectSendEmailListWithPaging(startRow, endRow);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return employeeList;
+        return sendList;
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 메일 번호를 이용하여 발신 이메일을 읽어오는 메소드
+     */
+    public SendEmailDto selectSendEmail(Long mailNo) {
+
+        return emailMapper.selectSendEmail(mailNo);
+    }
+
+    public int selectReceiveEmailTotal() throws SQLException {
+        int totalCount = 0;
+
+        try {
+            totalCount = emailMapper.selectReceiveEmailTotal();
+
+            System.out.println("totalCount = " + totalCount);
+
+        } catch (Exception e) {
+            throw new SQLException("수신 이메일을 조회하지 못했습니다.", e);
+        }
+        return totalCount;
+    }
+
+    public List<ReceiveEmailDto> selectEmailListWithPaging(int startRow, int endRow) {
+        List<ReceiveEmailDto> receiveList = Collections.emptyList();
+
+        try {
+            receiveList = emailMapper.selectEmailListWithPaging(startRow, endRow);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return receiveList;
     }
 }

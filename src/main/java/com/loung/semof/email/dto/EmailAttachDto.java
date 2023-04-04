@@ -1,5 +1,6 @@
 package com.loung.semof.email.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,6 +24,7 @@ public class EmailAttachDto {
     private String originName; //이메일파일원본명
     private String changeName;  //이메일파일수정명
     private String filePath; //이메일파일경로
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     private LocalDateTime uploadDate;   //이메일파일업로드일
 //    private byte[] fileData; // 첨부파일 데이터
 

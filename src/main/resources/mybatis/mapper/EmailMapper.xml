@@ -121,4 +121,28 @@
     LIMIT #{startRow}, #{endRow}
     </select>
 
+    <select id="selectSendEmail" resultType="SendEmailDto">
+        SELECT
+            *
+        FROM tbl_send_email
+        WHERE MAIL_NO = #{mailNo}
+        AND STATUS = 'N'
+    </select>
+
+    <select id="selectReceiveEmailTotal" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_receive_email
+        WHERE STATUS = 'N'
+    </select>
+
+    <select id="selectEmailListWithPaging" resultType="ReceiveEmailDto">
+        SELECT
+         *
+        FROM tbl_receive_email
+        WHERE STATUS = 'N'
+        ORDER BY RECEIVE_NO DESC
+        LIMIT #{startRow}, #{endRow}
+    </select>
+
 </mapper>

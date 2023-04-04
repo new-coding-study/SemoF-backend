@@ -37,4 +37,10 @@ public interface EmailMapper {
     int selectEmailListTotal();
 
     List<SendEmailDto> selectSendEmailListWithPaging(int startRow, int endRow);
+
+    SendEmailDto selectSendEmail(Long mailNo);
+
+    int selectReceiveEmailTotal();
+
+    List<ReceiveEmailDto> selectEmailListWithPaging(int startRow, int endRow);
 }
