@@ -1,10 +1,7 @@
 package com.loung.semof.email.dto;
 
 import com.loung.semof.common.dto.EmployeeDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,6 +14,7 @@ import java.util.List;
  * @작성자 : 이현도
  * @클래스설명 : 모델(Model)과 뷰(View) 사이에서 데이터 전송을 담당하는 클래스
  */
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -49,6 +47,7 @@ public class SendEmailDto extends EmailAttachDto {
     private String tempStatus;  //임시저장여부
     private List<EmailAttachDto> emailAttachDtoList; // 첨부파일 리스트
     private String status;  //삭제 여부
+    private String category; //이메일카테고리
 
     // emailAttachDtoList 필드의 getter, setter
     public List<EmailAttachDto> getEmailAttachDtoList() {

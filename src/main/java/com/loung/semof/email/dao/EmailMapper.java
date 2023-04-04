@@ -31,4 +31,10 @@ public interface EmailMapper {
     Optional<SendEmailDto> selectByEmailNo(Long mailNo);
 
     List<SendEmailDto> selectByTempStatus(String y);
+
+    void updateEmailStatus(Long mailNo);
+
+    int selectEmailListTotal();
+
+    List<SendEmailDto> selectSendEmailListWithPaging(int startRow, int endRow);
 }
