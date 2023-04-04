@@ -13,6 +13,7 @@ import java.util.List;
  * @작성자 : 이현도
  * @클래스설명 : 모델(Model)과 뷰(View) 사이에서 데이터 전송을 담당하는 클래스
  */
+@ToString
 @Getter
 @Setter
 @AllArgsConstructor
@@ -36,4 +37,6 @@ public class ReceiveEmailDto extends EmailAttachDto {
         private LocalDateTime sendDate;  //이메일 전송 일시
         private List<EmailAttachDto> attachList;  //첨부 파일 목록
         private String status;  //삭제 여부
+        private String isRead;  //읽음 여부
+        private String category; //이메일카테고리
 }

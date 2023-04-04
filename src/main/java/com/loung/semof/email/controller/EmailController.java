@@ -1,6 +1,10 @@
 package com.loung.semof.email.controller;
 
+import com.loung.semof.common.ResponseDto;
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.common.paging.Pagenation;
+import com.loung.semof.common.paging.ResponseDtoWithPaging;
+import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.email.config.EmailConfig;
 import com.loung.semof.email.dao.EmailMapper;
 import com.loung.semof.email.dto.EmailAttachDto;
@@ -16,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.*;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -51,40 +56,29 @@ public class EmailController {
      */
     @PostMapping("/send")
     public ResponseEntity<String> sendMail(@RequestParam("empNo") Long empNo,
-            @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments,
-                                           @ModelAttribute SendEmailDto emailDto /*,
-                                           HttpServletRequest request */) throws MessagingException {
-
-        // 현재 로그인한 사용자의 사원번호 가져오기 - 로그인 기능 구현 후 사용하기
-//        Long empNo = (Long) request.getSession().getAttribute("empNo");
-
-//        if (empNo == null) {
-//            throw new IllegalArgumentException("Employee number must not be null");
-//        }
+                                           @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments,
+                                           @ModelAttribute SendEmailDto emailDto) throws MessagingException {
 
         // 사원 정보 조회
         EmployeeDto sender = emailService.getEmployee(empNo);
-
         if (sender == null || sender.getEmail() == null) {
             throw new RuntimeException("발신자의 이메일 주소를 찾을 수 없습니다.");
         }
 
         // 발신자 이메일 주소 설정
         String senderAddr = sender.getEmail();
-
         if (senderAddr == null || senderAddr.trim().isEmpty()) {
             throw new IllegalArgumentException("발신자의 이메일 주소는 비어 있을 수 없습니다.");
         }
 
         // 수신자 이메일 주소 설정
         String receiverAddr = emailDto.getReceiverAddr();
-
         if (receiverAddr == null || receiverAddr.trim().isEmpty()) {
             throw new IllegalArgumentException("수신자의 이메일 주소는 비어 있을 수 없습니다.");
         }
 
+        // 첨부 파일 저장
         List<EmailAttachDto> emailAttachDtoList = new ArrayList<>();
-
         if (attachments != null && !attachments.isEmpty()) {
             for (MultipartFile attachment : attachments) {
                 EmailAttachDto emailAttachDto = EmailAttachDto.builder()
@@ -97,36 +91,32 @@ public class EmailController {
                 emailAttachDtoList.add(emailAttachDto);
 
                 String filePath = emailAttachDto.getFilePath();
-
                 String fileName = emailAttachDto.getChangeName();
-
                 try {
                     attachment.transferTo(new File(filePath + fileName));
-
                 } catch (IOException e) {
                     throw new RuntimeException("파일 업로드 중 예외가 발생했습니다.");
                 }
             }
         }
 
+        // 이메일 정보 설정
         emailDto.setEmailAttachDtoList(emailAttachDtoList);
-
-        // 발신자 정보 설정
         emailDto.setSenderName(sender.getEmpName());
-
         emailDto.setSenderAddr(senderAddr);
+        emailDto.setTempStatus("N");
 
+        // 이메일 발송 및 저장
         try {
             emailService.insertSendEmail(emailDto);
-
         } catch (Exception e) {
-            log.error("이메일을 보내는 중 예외가 발생했습니다.", e);
-
-            throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.");
+            throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.", e);
         }
 
         return ResponseEntity.ok().build();
     }
+
+
 
     /**
      * @작성일 : 2023-03-24
@@ -189,6 +179,35 @@ public class EmailController {
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/send/list")
+    public ResponseEntity<ResponseDto> selectSendEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
+
+        try {
+            int totalCount = emailService.selectEmailListTotal();
+
+            int limit = 10;
+
+            int buttonAmount = 5;
+
+            SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
+
+            List<SendEmailDto> sendEmails = emailService.selectSendEmailListWithPaging(selectCriteria.getStartRow(), selectCriteria.getEndRow());
+
+            ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+
+            responseDtoWithPaging.setPageInfo(selectCriteria);
+
+            responseDtoWithPaging.setData(sendEmails);
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
         }
     }
 }

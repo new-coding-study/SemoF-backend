@@ -16,6 +16,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,88 +80,60 @@ public class EmailService {
      * @작성자 : 이현도
      * @메소드설명 : EmailDto 객체에 저장된 정보를 사용하여 이메일을 발송하는 메소드
      */
-    public void insertSendEmail(SendEmailDto emailDto) throws MessagingException {
+    public void insertSendEmail(SendEmailDto emailDto) throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
-        try {
-            helper.setSubject(emailDto.getTitle());
+        helper.setSubject(emailDto.getTitle());
 
-            helper.setText(emailDto.getContent(), true);
+        helper.setText(emailDto.getContent(), true);
 
-            helper.setFrom(emailDto.getSenderAddr(), emailDto.getSenderName());
+        helper.setFrom(emailDto.getSenderAddr(), emailDto.getSenderName());
 
-            helper.setTo(emailDto.getReceiverAddr());
+        helper.setTo(emailDto.getReceiverAddr());
 
-            List<EmailAttachDto> emailAttachDtoList = emailDto.getEmailAttachDtoList();
+        List<EmailAttachDto> emailAttachDtoList = emailDto.getEmailAttachDtoList();
 
-            if (emailAttachDtoList != null && !emailAttachDtoList.isEmpty()) {
-                for (EmailAttachDto emailAttachDto : emailAttachDtoList) {
-                    File attachment = new File(emailAttachDto.getFilePath() + emailAttachDto.getChangeName());
+        if (emailAttachDtoList != null && !emailAttachDtoList.isEmpty()) {
 
-                    FileSystemResource file = new FileSystemResource(attachment);
+            for (EmailAttachDto emailAttachDto : emailAttachDtoList) {
 
-                    helper.addAttachment(emailAttachDto.getOriginName(), file);
+                File attachment = new File(emailAttachDto.getFilePath() + emailAttachDto.getChangeName());
 
-                    emailMapper.insertEmailAttach(emailAttachDto.getEmailFileNo(),
-                            emailAttachDto.getOriginName(),
-                            emailAttachDto.getChangeName(),
-                            emailAttachDto.getFilePath(),
-                            emailAttachDto.getUploadDate());
-                }
+                FileSystemResource file = new FileSystemResource(attachment);
+
+                helper.addAttachment(emailAttachDto.getOriginName(), file);
             }
-
-            // 발송 전 Temp_Status 컬럼에 상태값을 업데이트
-            updateTempStatus(emailDto.getTempStatus());
-
-            javaMailSender.send(mimeMessage);
-
-            // 발송 후 Temp_Status 컬럼에 상태값을 업데이트
-            updateTempStatus("N");
-
-        } catch (MessagingException e) {
-            log.error("이메일을 보내는 중 예외가 발생했습니다.", e);
-
-            throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.");
-
-        } catch (UnsupportedEncodingException e) {
-            log.error("인코딩 예외가 발생했습니다.", e);
-
-            throw new RuntimeException("인코딩 예외가 발생했습니다.");
         }
+
+        javaMailSender.send(mimeMessage);
+
+        emailMapper.insertSendEmail(emailDto);
     }
 
     /**
      * @작성일 : 2023-03-24
      * @작성자 : 이현도
-     * @메소드설명 : SendEmailDto 객체의 임시저장 상태값(tempStatus) 필드 값을 이메일 정보의 Temp_status 컬럼값으로 업데이트 하는 메소드
+     * @메소드설명 : 임시 저장 여부의 갱신 기능을 구현하는 메소드
      */
-    private void updateTempStatus(SendEmailDto emailDto) {
-        updateTempStatus(emailDto.getTempStatus(), emailDto.getMailNo());
-    }
-
-    /**
-     * @작성일 : 2023-03-24
-     * @작성자 : 이현도
-     * @메소드설명 : updateTempStatus를 오버로딩 하기 위한 메소드
-     */
-    private void updateTempStatus(String tempStatus) {}
-
-    /**
-     * @작성일 : 2023-03-24
-     * @작성자 : 이현도
-     * @메소드설명 : 오버로딩을 받아서 임시 저장 여부의 갱신 기능을 구현하는 메소드
-     */
-    private void updateTempStatus(String tempStatus, Long mailNo) {
-        Optional<SendEmailDto> optionalEmail = emailMapper.selectByEmailNo(mailNo);
-        if (optionalEmail.isPresent()) {
-            SendEmailDto email = optionalEmail.get();
-            email.setTempStatus(tempStatus != null ? tempStatus : "N");
-            emailMapper.insertSendEmail(email);
-        }
-    }
+//    private void updateTempStatus(String tempStatus, Long mailNo) {
+//        Optional<SendEmailDto> optionalEmail = emailMapper.selectByEmailNo(mailNo);
+//
+//        log.info("[EmailService] optionalEmail" + optionalEmail);
+//
+//        if (optionalEmail.isPresent()) {
+//            SendEmailDto email = optionalEmail.get();
+//
+//            log.info("[EmailService] email : " + email);
+//
+//            email.setTempStatus(tempStatus != null ? tempStatus : "N");
+//
+//            log.info("[EmailService] email : " + email);
+//            emailMapper.insertSendEmail(email);
+//        }
+//    }
 
     /**
      * @작성일 : 2023-03-24
@@ -201,5 +175,30 @@ public class EmailService {
 
             throw new RuntimeException("이메일 목록을 조회하는 중 예외가 발생했습니다.");
         }
+    }
+
+    public int selectEmailListTotal() throws SQLException {
+        int totalCount = 0;
+
+        try {
+            totalCount = emailMapper.selectEmailListTotal();
+
+        } catch (Exception e) {
+            throw new SQLException("발송 이메일을 조회하지 못했습니다.", e);
+        }
+        return totalCount;
+    }
+
+    public List<SendEmailDto> selectSendEmailListWithPaging(int startRow, int endRow) throws SQLException {
+
+        List<SendEmailDto> employeeList = Collections.emptyList();
+
+        try {
+            employeeList = emailMapper.selectSendEmailListWithPaging(startRow, endRow);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return employeeList;
     }
 }
