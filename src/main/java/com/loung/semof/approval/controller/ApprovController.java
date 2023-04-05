@@ -35,7 +35,7 @@ public class ApprovController {
     public ResponseEntity<ResponseDto> insertApprovLine(@RequestBody ApprovLineDTO line) {
 //        String requestWrapper;
 //        String requestBody = new String(requestWrapper.getBytes(), StandardCharsets.UTF_8);
-//        log.debug("Request Body: {}", requestBody);
+////        log.debug("Request Body: {}", requestBody);
         System.out.println("line = " + line);
 //        System.out.println("orders = " + orders);
 
@@ -54,10 +54,10 @@ public class ApprovController {
     }
 
 
-    @PostMapping(value="/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> insertApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file) {
-
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재상신", approvService.insertApproval(approval, file)));
+    @PostMapping(value="/approval", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> insertApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> fileList) {
+        log.info("결재등록 컨트롤러 호출" +fileList);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재상신", approvService.insertApproval(approval, fileList)));
     }
     /**
      * @작성일 : 2023.03.23
@@ -112,6 +112,11 @@ public class ApprovController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
     }
+    @GetMapping("/lines")
+    public ResponseEntity<ResponseDto> selectLineList(){
+        List<ApprovLineDTO> lineList = approvService.selectLineList();
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", lineList));
+    }
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
@@ -131,12 +136,17 @@ public class ApprovController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 업데이트", approvService.updateApprovLine(line, orders)));
     }
 
+    @GetMapping("/line/{lineNo}")
+    public ResponseEntity<ResponseDto> selectLineDetail(@PathVariable Integer lineNo){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "라인 상세조회", approvService.selectLineDetail(lineNo)));
 
-    @PutMapping(value = "/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<ResponseDto> updateApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @RequestPart List<ApprovContentDTO> contents){
-
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재서류 업데이트", approvService.updateApproval(approval, file, contents)));
     }
+
+//    @PutMapping(value = "/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public ResponseEntity<ResponseDto> updateApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @RequestPart List<ApprovContentDTO> contents){
+//
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재서류 업데이트", approvService.updateApproval(approval, file, contents)));
+//    }
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
@@ -156,7 +166,7 @@ public class ApprovController {
 //        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재라인 삭제", approvService.deleteApprovLine(line)));
 //    }
     @DeleteMapping(value = "/line/{lineNo}")
-    public ResponseEntity<ResponseDto> deleteApprovLine(Integer lineNo){
+    public ResponseEntity<ResponseDto> deleteApprovLine(@PathVariable Integer lineNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재라인 삭제", approvService.deleteApprovLine(lineNo)));
     }
 /**

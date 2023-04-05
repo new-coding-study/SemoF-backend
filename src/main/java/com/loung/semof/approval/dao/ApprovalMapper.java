@@ -77,6 +77,10 @@ public interface ApprovalMapper {
     List<String> selectDepartment();
     List<String> selectJobNEmpName();
 
+    List<ApprovLineDTO> selectLineList();
+
+    ApprovLineDTO selectLineDetail(Integer lineNo);
+
 //    int insertApprovOrders(List<ApprovOrderDTO> orders);
 
 //    int insertLine(ApprovLineDTO line);
