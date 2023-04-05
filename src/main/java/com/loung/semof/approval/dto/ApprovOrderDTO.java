@@ -20,5 +20,7 @@ public class ApprovOrderDTO {
   private Integer orderNo;
   private Integer lineNo;
   private Integer empNo;
-  private ApprovStatusDTO approvStatusDTO;
+
+  private String empName;
+//  private ApprovStatusDTO approvStatusDTO;
 }
