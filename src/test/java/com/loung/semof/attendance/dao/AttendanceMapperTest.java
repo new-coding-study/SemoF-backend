@@ -35,7 +35,12 @@ class AttendanceMapperTest {
         //given
 
         //when
-        AttendanceDto attendanceDto = attendanceMapper.selectAttendanceDetail(3);
+        AttendanceDto attendanceDto = attendanceMapper.selectAttendanceDetail(1);
+        LocalDate currentDate = LocalDate.now();
+        if (attendanceDto.getAtdDate() == null || !Objects.equals(currentDate.toString(), attendanceDto.getAtdDate().substring(0, 10))){
+            System.out.println("-------------날짜 비교 if문 진입-------------");
+            attendanceDto.setStatusName(null);
+        }
 
         //then
         System.out.println(attendanceDto);

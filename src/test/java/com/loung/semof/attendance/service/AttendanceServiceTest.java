@@ -5,7 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,10 +33,15 @@ class AttendanceServiceTest {
     @Test
     void 근태정보_조회_성공() throws Exception {
         //given
-        int empNo = 1;
+        int empNo = 3;
 
         //when
         AttendanceDto attendanceDto = attendanceService.selectAttendanceDetail(empNo);
+        LocalDate currentDate = LocalDate.now();
+        if (attendanceDto.getAtdDate() == null || !Objects.equals(currentDate.toString(), attendanceDto.getAtdDate().substring(0, 10))){
+            System.out.println("-------------날짜 비교 if문 진입-------------");
+            attendanceDto.setStatusName(null);
+        }
 
         //then
         System.out.println(attendanceDto);  //로그포제이 안 쓰고 그냥 출력문으로 확인

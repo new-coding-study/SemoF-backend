@@ -32,6 +32,11 @@ public class AttendanceService {
     public AttendanceDto selectAttendanceDetail(int empNo) throws Exception{
         log.info("[AttendanceService] selectAttendanceDetail Start ===================================");
         AttendanceDto attendanceDto = attendanceMapper.selectAttendanceDetail(empNo);
+        LocalDate currentDate = LocalDate.now();
+        if (attendanceDto.getAtdDate() == null || !Objects.equals(currentDate.toString(), attendanceDto.getAtdDate().substring(0, 10))){
+            System.out.println("-------------날짜 비교 if문 진입-------------");
+            attendanceDto.setStatusName(null);
+        }
         log.info("[AttendanceService] selectAttendanceDetail End ===================================");
         if (attendanceDto == null) {
             throw new Exception("근태 정보 조회 실패");
