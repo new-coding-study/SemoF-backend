@@ -42,6 +42,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.1'
 
+    //의존성 이름 : Jsoup 역할 : 이메일 파싱을 담당한다.
+    implementation 'org.jsoup:jsoup:1.14.3'
+
 }
 
 tasks.named('test') {

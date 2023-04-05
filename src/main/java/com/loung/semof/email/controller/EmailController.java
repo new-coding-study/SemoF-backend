@@ -17,13 +17,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.*;
+import javax.mail.MessagingException;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @파일이름 : EmailController.java
@@ -116,8 +118,6 @@ public class EmailController {
         return ResponseEntity.ok().build();
     }
 
-
-
     /**
      * @작성일 : 2023-03-24
      * @작성자 : 이현도
@@ -127,59 +127,6 @@ public class EmailController {
     public ResponseEntity<List<SendEmailDto>> getTempEmails() {
         List<SendEmailDto> emails = emailMapper.selectByTempStatus("Y");
         return ResponseEntity.ok(emails);
-    }
-
-
-    /**
-     * @작성일 : 2023-03-24
-     * @작성자 : 이현도
-     * @메소드설명 : 이메일 수신함과 관련된 기능을 수행하는 메소드
-     */
-    @GetMapping("/list")
-    public ResponseEntity<List<ReceiveEmailDto>> getMailList() {
-        String host = emailConfig.getHost();
-        String username = emailConfig.getUsername();
-        String password = emailConfig.getPassword();
-
-        Properties props = new Properties();
-        props.setProperty("mail.store.protocol", "imaps");
-        props.setProperty("mail.imaps.host", host);
-        props.setProperty("mail.imaps.port", "993");
-
-        List<ReceiveEmailDto> mailList = new ArrayList<>();
-
-        try {
-            Session session = Session.getDefaultInstance(props, null);
-            Store store = session.getStore("imaps");
-            store.connect(host, username, password);
-
-            Folder inbox = store.getFolder("INBOX");
-            inbox.open(Folder.READ_ONLY);
-
-            Message[] messages = inbox.getMessages();
-
-            for (Message message : messages) {
-                ReceiveEmailDto receiveEmailDto = new ReceiveEmailDto();
-                receiveEmailDto.setReceiverAddr(Arrays.toString(message.getRecipients(Message.RecipientType.TO)));
-                receiveEmailDto.setSenderName(message.getFrom()[0].toString());
-                receiveEmailDto.setTitle(message.getSubject());
-                receiveEmailDto.setContent(message.getContent().toString());
-                receiveEmailDto.setSendDate(LocalDateTime.ofInstant(message.getSentDate().toInstant(), ZoneId.systemDefault()));
-                mailList.add(receiveEmailDto);
-            }
-
-            inbox.close(false);
-            store.close();
-
-            emailService.insertEmailList(mailList); // 받은 이메일 목록을 데이터베이스에 저장
-
-            List<ReceiveEmailDto> emailList = emailService.selectEmailList(); // 데이터베이스에서 이메일 목록을 조회
-            return new ResponseEntity<>(emailList, HttpStatus.OK);
-
-        } catch (MessagingException | IOException e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 
     /**
@@ -231,8 +178,17 @@ public class EmailController {
                 .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectSendEmail(mailNo)));
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신메일함을 조회하는 메소드
+     */
     @GetMapping("/lists")
     public ResponseEntity<ResponseDto> selectEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
+
+        emailService.fetchEmailsFromGmailAndStore();
+
+        List<ReceiveEmailDto> receiveList = Collections.emptyList();
 
         try {
             int totalCount = emailService.selectReceiveEmailTotal();
@@ -260,5 +216,17 @@ public class EmailController {
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
         }
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신 이메일을 번호에 따라 조회해오는 메소드
+     */
+    @GetMapping("/receive/{receiveNo}")
+    public ResponseEntity<ResponseDto> selectReceiveEmail(@PathVariable("receiveNo") Long receiveNo) {
+
+        return ResponseEntity.ok()
+                .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectReceiveEmail(receiveNo)));
     }
 }

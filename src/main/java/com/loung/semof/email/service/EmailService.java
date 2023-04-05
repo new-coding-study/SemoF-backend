@@ -2,24 +2,32 @@ package com.loung.semof.email.service;
 
 import com.loung.semof.common.dao.EmployeeMapper;
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.email.config.EmailConfig;
 import com.loung.semof.email.dao.EmailMapper;
 import com.loung.semof.email.dto.EmailAttachDto;
 import com.loung.semof.email.dto.ReceiveEmailDto;
 import com.loung.semof.email.dto.SendEmailDto;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
+import javax.mail.*;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.ReceivedDateTerm;
+import javax.mail.search.SearchTerm;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 /**
  * @파일이름 : EmailService.java
@@ -36,11 +44,13 @@ public class EmailService {
     private final EmailMapper emailMapper;
     private final JavaMailSender javaMailSender;
     private final EmployeeMapper employeeMapper;
+    private final EmailConfig emailConfig;
 
-    public EmailService(EmailMapper emailMapper, JavaMailSender javaMailSender, EmployeeMapper employeeMapper) {
+    public EmailService(EmailMapper emailMapper, JavaMailSender javaMailSender, EmployeeMapper employeeMapper, EmailConfig emailConfig) {
         this.emailMapper = emailMapper;
         this.javaMailSender = javaMailSender;
         this.employeeMapper = employeeMapper;
+        this.emailConfig = emailConfig;
     }
 
     /**
@@ -90,7 +100,8 @@ public class EmailService {
 
         helper.setText(emailDto.getContent(), true);
 
-        helper.setFrom(emailDto.getSenderAddr(), emailDto.getSenderName());
+//        helper.setFrom(emailDto.getSenderAddr(), emailDto.getSenderName());
+        helper.setFrom(emailDto.getSenderName()); // 발신자 이름만 표기되도록
 
         helper.setTo(emailDto.getReceiverAddr());
 
@@ -134,6 +145,129 @@ public class EmailService {
 //            emailMapper.insertSendEmail(email);
 //        }
 //    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 이메일 수신함과 관련된 기능을 수행하는 메소드
+     */
+    public void fetchEmailsFromGmailAndStore() {
+        String host = emailConfig.getHost();
+        String username = emailConfig.getUsername();
+        String password = emailConfig.getPassword();
+
+        Properties props = new Properties();
+        props.setProperty("mail.store.protocol", "imaps");
+        props.setProperty("mail.imaps.host", host);
+        props.setProperty("mail.imaps.port", "993");
+
+        List<ReceiveEmailDto> mailList = new ArrayList<>();
+
+        try {
+            Session session = Session.getDefaultInstance(props, null);
+            Store store = session.getStore("imaps");
+            store.connect(host, username, password);
+
+
+            Folder inbox = store.getFolder("INBOX");
+            inbox.open(Folder.READ_ONLY);
+
+            // Get the last email's send date from the database
+            ReceiveEmailDto lastEmail = emailMapper.selectLastEmail();
+            LocalDateTime lastEmailSendDate = lastEmail != null ? lastEmail.getSendDate() : null;
+
+            // Fetch only new emails
+            SearchTerm searchTerm = lastEmailSendDate != null ? searchForNewEmails(lastEmailSendDate) : null;
+            Message[] messages = searchTerm != null ? inbox.search(searchTerm) : inbox.getMessages();
+//            Message[] messages = inbox.getMessages();
+            System.out.println("Fetched messages count: " + messages.length);
+
+            for (Message message : messages) {
+                ReceiveEmailDto receiveEmailDto = new ReceiveEmailDto();
+                receiveEmailDto.setReceiverAddr(Arrays.toString(message.getRecipients(Message.RecipientType.TO)));
+                receiveEmailDto.setSenderName(message.getFrom()[0].toString());
+                receiveEmailDto.setTitle(message.getSubject());
+
+                Object content = message.getContent();
+                if (content instanceof MimeMultipart) {
+                    MimeMultipart mimeMultipart = (MimeMultipart) content;
+                    receiveEmailDto.setContent(getTextFromMimeMultipart(mimeMultipart));
+                } else {
+                    receiveEmailDto.setContent(content.toString());
+                }
+
+                receiveEmailDto.setSendDate(LocalDateTime.ofInstant(message.getSentDate().toInstant(), ZoneId.systemDefault()));
+                mailList.add(receiveEmailDto);
+            }
+
+            inbox.close(false);
+            store.close();
+
+            insertEmailList(mailList);
+            List<ReceiveEmailDto> emailList = selectEmailList();
+            System.out.println("Email list from database: " + emailList);
+
+        } catch (MessagingException | IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신 이메일 변환 수행하는 메소드
+     */
+    private String getTextFromMimeMultipart(MimeMultipart mimeMultipart) throws MessagingException, IOException {
+        StringBuilder result = new StringBuilder();
+        int count = mimeMultipart.getCount();
+        for (int i = 0; i < count; i++) {
+            BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+            if (bodyPart.isMimeType("text/plain")) {
+                result.append("\n").append(bodyPart.getContent());
+                break; // without break, it can concatenate text/plain and text/html content
+            } else if (bodyPart.isMimeType("text/html")) {
+                String html = (String) bodyPart.getContent();
+                result.append("\n").append(Jsoup.parse(html).text());
+            } else if (bodyPart.getContent() instanceof MimeMultipart) {
+                result.append(getTextFromMimeMultipart((MimeMultipart) bodyPart.getContent()));
+            }
+        }
+        return result.toString();
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 이메일을 수신 성능을 위해 최신 이메일을 가져오는 기능을 수행하는 메소드
+     */
+    public LocalDateTime getLastFetchedTimestamp() {
+        try {
+            ReceiveEmailDto lastEmail = emailMapper.selectLastEmail();
+            return lastEmail == null ? null : lastEmail.getSendDate();
+        } catch (Exception e) {
+            log.error("Error getting last fetched email timestamp.", e);
+            throw new RuntimeException("Error getting last fetched email timestamp.");
+        }
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 조회 기간을 설정하는 메소드
+     */
+    public SearchTerm searchForNewEmails(LocalDateTime lastEmailSendDate) {
+        Instant lastEmailInstant = lastEmailSendDate.atZone(ZoneId.systemDefault()).toInstant();
+        Date lastEmailDate = Date.from(lastEmailInstant);
+
+        // Create a search term for all emails received after the lastEmailDate
+        SearchTerm newerThan = new ReceivedDateTerm(ComparisonTerm.GT, lastEmailDate);
+
+        return newerThan;
+    }
+
+
+
 
     /**
      * @작성일 : 2023-03-24
@@ -246,5 +380,9 @@ public class EmailService {
             e.printStackTrace();
         }
         return receiveList;
+    }
+
+    public ReceiveEmailDto selectReceiveEmail(Long receiveNo) {
+        return emailMapper.selectReceiveEmail(receiveNo);
     }
 }

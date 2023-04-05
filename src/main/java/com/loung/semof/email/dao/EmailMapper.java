@@ -43,4 +43,8 @@ public interface EmailMapper {
     int selectReceiveEmailTotal();
 
     List<ReceiveEmailDto> selectEmailListWithPaging(int startRow, int endRow);
+
+    ReceiveEmailDto selectLastEmail();
+
+    ReceiveEmailDto selectReceiveEmail(Long receiveNo);
 }

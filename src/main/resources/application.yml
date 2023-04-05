@@ -12,10 +12,10 @@ spring:
           auth: true
           starttls:
             enable: true
-    #      username: ${GMAIL_USERNAME}
-    #      password: ${GMAIL_PASSWORD}
-    username: your-email@gmail.com
-    password: your-email-password
+    username: ${GMAIL_USERNAME}
+    password: ${GMAIL_PASSWORD}
+#    username: your-email@gmail.com
+#    password: your-email-password
 
 
   datasource:
