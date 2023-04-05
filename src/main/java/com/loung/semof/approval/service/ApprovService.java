@@ -1,7 +1,9 @@
 package com.loung.semof.approval.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
+//import com.google.gson.Gson;
+//import com.google.gson.Gson;
 import com.loung.semof.approval.dao.ApprovalMapper;
 import com.loung.semof.approval.dto.*;
 import com.loung.semof.common.dto.BranchDto;
@@ -48,9 +50,9 @@ public class ApprovService {
             System.out.println(line.getApprovOrderDTOList().get(i));
 
         }
-        Gson gson = new Gson();
-        String jsonString = gson.toJson(line);
-        System.out.println("jsonString = " + jsonString);
+//        Gson gson = new Gson();
+//        String jsonString = gson.toJson(line);
+//        System.out.println("jsonString = " + jsonString);
         int result = 0;
         int lineResult = approvMapper.insertApprovLine(line);
         int orderResult = 0;
