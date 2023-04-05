@@ -145,4 +145,19 @@
         LIMIT #{startRow}, #{endRow}
     </select>
 
+    <select id="selectLastEmail" resultType="ReceiveEmailDto">
+        SELECT *
+        FROM tbl_receive_email
+        ORDER BY SEND_DATE DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectReceiveEmail" resultType="ReceiveEmailDto">
+        SELECT
+            *
+        FROM tbl_receive_email
+        WHERE RECEIVE_NO = #{receiveNo}
+          AND STATUS = 'N'
+    </select>
+
 </mapper>
