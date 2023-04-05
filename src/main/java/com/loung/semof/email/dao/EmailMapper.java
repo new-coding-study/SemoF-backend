@@ -1,6 +1,7 @@
 package com.loung.semof.email.dao;
 
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.email.dto.EmailAttachDto;
 import com.loung.semof.email.dto.ReceiveEmailDto;
 import com.loung.semof.email.dto.SendEmailDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -47,4 +48,6 @@ public interface EmailMapper {
     ReceiveEmailDto selectLastEmail();
 
     ReceiveEmailDto selectReceiveEmail(Long receiveNo);
+
+    void insertEmailAttach(EmailAttachDto emailAttachDto);
 }

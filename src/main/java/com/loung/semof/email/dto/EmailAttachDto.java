@@ -26,6 +26,6 @@ public class EmailAttachDto {
     private String filePath; //이메일파일경로
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     private LocalDateTime uploadDate;   //이메일파일업로드일
-//    private byte[] fileData; // 첨부파일 데이터
+    private byte[] fileData; // 첨부파일 데이터
 
 }

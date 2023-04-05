@@ -18,11 +18,11 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class SendEmailDto extends EmailAttachDto {
-    public SendEmailDto(Long emailFileNo, String originName, String changeName, String filePath, LocalDateTime uploadDate, Long mailNo, Long empNo, Long emailFileNo1, String receiverAddr, String senderName, String senderAddr, String title, String content, LocalDateTime sendDate, String tempStatus, List<EmailAttachDto> emailAttachDtoList) {
-        super(emailFileNo, originName, changeName, filePath, uploadDate);
+
+    public SendEmailDto(Long emailFileNo, String originName, String changeName, String filePath, LocalDateTime uploadDate, byte[] fileData, Long mailNo, Long empNo, Long emailFileNo1, String receiverAddr, String senderName, String senderAddr, String title, String content, LocalDateTime sendDate, String tempStatus, List<EmailAttachDto> emailAttachDtoList, String status, String category) {
+        super(emailFileNo, originName, changeName, filePath, uploadDate, fileData);
         this.mailNo = mailNo;
         this.empNo = empNo;
         this.emailFileNo = emailFileNo1;
@@ -34,6 +34,24 @@ public class SendEmailDto extends EmailAttachDto {
         this.sendDate = sendDate;
         this.tempStatus = tempStatus;
         this.emailAttachDtoList = emailAttachDtoList;
+        this.status = status;
+        this.category = category;
+    }
+
+    public SendEmailDto(Long mailNo, Long empNo, Long emailFileNo, String receiverAddr, String senderName, String senderAddr, String title, String content, LocalDateTime sendDate, String tempStatus, List<EmailAttachDto> emailAttachDtoList, String status, String category) {
+        this.mailNo = mailNo;
+        this.empNo = empNo;
+        this.emailFileNo = emailFileNo;
+        this.receiverAddr = receiverAddr;
+        this.senderName = senderName;
+        this.senderAddr = senderAddr;
+        this.title = title;
+        this.content = content;
+        this.sendDate = sendDate;
+        this.tempStatus = tempStatus;
+        this.emailAttachDtoList = emailAttachDtoList;
+        this.status = status;
+        this.category = category;
     }
 
     private Long mailNo;    //이메일번호
