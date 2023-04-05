@@ -7,12 +7,14 @@ import com.loung.semof.email.dao.EmailMapper;
 import com.loung.semof.email.dto.EmailAttachDto;
 import com.loung.semof.email.dto.ReceiveEmailDto;
 import com.loung.semof.email.dto.SendEmailDto;
+import com.loung.semof.email.utils.ByteArrayResource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.jsoup.Jsoup;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
@@ -20,9 +22,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.ComparisonTerm;
 import javax.mail.search.ReceivedDateTerm;
 import javax.mail.search.SearchTerm;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -86,11 +86,11 @@ public class EmailService {
     }
 
     /**
-     * @작성일 : 2023-03-23
+     * @작성일 : 2023-04-05
      * @작성자 : 이현도
-     * @메소드설명 : EmailDto 객체에 저장된 정보를 사용하여 이메일을 발송하는 메소드
+     * @메소드설명 : EmailDto 객체에 저장된 정보를 사용하여 이메일을 발송하는 메소드 수정
      */
-    public void insertSendEmail(SendEmailDto emailDto) throws MessagingException, UnsupportedEncodingException {
+    public void insertSendEmail(SendEmailDto emailDto, MultipartFile file) throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
@@ -100,8 +100,7 @@ public class EmailService {
 
         helper.setText(emailDto.getContent(), true);
 
-//        helper.setFrom(emailDto.getSenderAddr(), emailDto.getSenderName());
-        helper.setFrom(emailDto.getSenderName()); // 발신자 이름만 표기되도록
+        helper.setFrom(emailDto.getSenderAddr(), emailDto.getSenderName());
 
         helper.setTo(emailDto.getReceiverAddr());
 
@@ -111,11 +110,12 @@ public class EmailService {
 
             for (EmailAttachDto emailAttachDto : emailAttachDtoList) {
 
-                File attachment = new File(emailAttachDto.getFilePath() + emailAttachDto.getChangeName());
+                // Save attachment data to the database
+                emailMapper.insertEmailAttach(emailAttachDto);
 
-                FileSystemResource file = new FileSystemResource(attachment);
-
-                helper.addAttachment(emailAttachDto.getOriginName(), file);
+                // Attach the file to the email using the custom ByteArrayResource
+                ByteArrayResource byteArrayResource = new ByteArrayResource(emailAttachDto.getFileData());
+                helper.addAttachment(emailAttachDto.getOriginName(), byteArrayResource);
             }
         }
 
@@ -124,6 +124,23 @@ public class EmailService {
         emailMapper.insertSendEmail(emailDto);
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 파일을 저장하기 위한 메소드
+     */
+    private File saveUploadedFile(MultipartFile file) throws IOException {
+        if (!file.isEmpty()) {
+            File tempFile = File.createTempFile("email_attach_", "_" + file.getOriginalFilename());
+            try (InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(tempFile)) {
+                IOUtils.copy(in, out);
+            }
+            return tempFile;
+        }
+        return null;
+    }
+    
+    
     /**
      * @작성일 : 2023-03-24
      * @작성자 : 이현도

@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.MessagingException;
-import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -26,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
 
 /**
  * @파일이름 : EmailController.java
@@ -57,12 +56,11 @@ public class EmailController {
      * @메소드설명 : 이메일 발송과 관련된 기능을 수행하는 메소드
      */
     @PostMapping("/send")
-    public ResponseEntity<String> sendMail(@RequestParam("empNo") Long empNo,
-                                           @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments,
-                                           @ModelAttribute SendEmailDto emailDto) throws MessagingException {
+    public ResponseEntity<?> sendEmail(@ModelAttribute SendEmailDto emailDto,
+                                       @RequestParam("file") MultipartFile file) {
 
         // 사원 정보 조회
-        EmployeeDto sender = emailService.getEmployee(empNo);
+        EmployeeDto sender = emailService.getEmployee(emailDto.getEmpNo());
         if (sender == null || sender.getEmail() == null) {
             throw new RuntimeException("발신자의 이메일 주소를 찾을 수 없습니다.");
         }
@@ -81,25 +79,22 @@ public class EmailController {
 
         // 첨부 파일 저장
         List<EmailAttachDto> emailAttachDtoList = new ArrayList<>();
-        if (attachments != null && !attachments.isEmpty()) {
-            for (MultipartFile attachment : attachments) {
-                EmailAttachDto emailAttachDto = EmailAttachDto.builder()
-                        .originName(attachment.getOriginalFilename())
-                        .changeName(UUID.randomUUID().toString())
-                        .filePath("/attachments/")
-                        .uploadDate(LocalDateTime.now())
-                        .build();
+        if (file != null && !file.isEmpty()) {
+            EmailAttachDto emailAttachDto = EmailAttachDto.builder()
+                    .originName(file.getOriginalFilename())
+                    .changeName(UUID.randomUUID().toString())
+                    .uploadDate(LocalDateTime.now())
+                    .build();
 
-                emailAttachDtoList.add(emailAttachDto);
-
-                String filePath = emailAttachDto.getFilePath();
-                String fileName = emailAttachDto.getChangeName();
-                try {
-                    attachment.transferTo(new File(filePath + fileName));
-                } catch (IOException e) {
-                    throw new RuntimeException("파일 업로드 중 예외가 발생했습니다.");
-                }
+            byte[] fileContent;
+            try {
+                fileContent = file.getBytes();
+            } catch (IOException e) {
+                throw new RuntimeException("첨부 파일을 읽는 중 예외가 발생했습니다.", e);
             }
+            emailAttachDto.setFileData(fileContent);
+
+            emailAttachDtoList.add(emailAttachDto);
         }
 
         // 이메일 정보 설정
@@ -110,7 +105,7 @@ public class EmailController {
 
         // 이메일 발송 및 저장
         try {
-            emailService.insertSendEmail(emailDto);
+            emailService.insertSendEmail(emailDto, file); // Pass the MultipartFile to the service class
         } catch (Exception e) {
             throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.", e);
         }

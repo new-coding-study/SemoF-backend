@@ -58,6 +58,11 @@
         VALUES (#{mailNo}, #{empNo}, #{emailFileNo}, #{receiverAddr}, #{senderName}, #{senderAddr}, #{title}, #{content}, default, default, default, default)
     </insert>
 
+    <insert id="insertEmailAttach" parameterType="EmailAttachDto">
+        INSERT INTO tbl_email_attach (ORIGIN_NAME, CHANGE_NAME, FILE_PATH, UPLOAD_DATE, FILE_DATA)
+        VALUES (#{originName}, #{changeName}, #{filePath}, #{uploadDate}, #{fileData})
+    </insert>
+
     <update id="updateEmailStatus">
         UPDATE tbl_send_email
         SET TEMP_STATUS = 'N'
@@ -71,11 +76,6 @@
         FROM tbl_send_email
         WHERE TEMP_STATUS = #{tempStatus}
     </select>
-
-    <insert id="insertEmailAttach">
-        INSERT INTO tbl_email_attach (EMAIL_FILE_NO, ORIGIN_NAME, CHANGE_NAME, FILE_PATH, UPLOAD_DATE)
-        VALUES (#{emailFileNo}, #{originName}, #{changeName}, #{filePath}, #{uploadDate})
-    </insert>
 
     <insert id="insertEmail" parameterType="ReceiveEmailDto">
         INSERT INTO tbl_receive_email

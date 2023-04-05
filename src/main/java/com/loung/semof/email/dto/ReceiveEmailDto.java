@@ -20,8 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReceiveEmailDto extends EmailAttachDto {
-        public ReceiveEmailDto(Long emailFileNo, String originName, String changeName, String filePath, LocalDateTime uploadDate, byte[] fileData, Long receiveNo, String receiverAddr, String senderName, String title, String content, LocalDateTime sendDate, List<EmailAttachDto> attachList) {
-                super(emailFileNo, originName, changeName, filePath, uploadDate);
+        public ReceiveEmailDto(Long emailFileNo, String originName, String changeName, String filePath, LocalDateTime uploadDate, byte[] fileData, Long receiveNo, String receiverAddr, String senderName, String title, String content, LocalDateTime sendDate, List<EmailAttachDto> attachList, String status, String isRead, String category) {
+                super(emailFileNo, originName, changeName, filePath, uploadDate, fileData);
                 this.receiveNo = receiveNo;
                 this.receiverAddr = receiverAddr;
                 this.senderName = senderName;
@@ -29,7 +29,11 @@ public class ReceiveEmailDto extends EmailAttachDto {
                 this.content = content;
                 this.sendDate = sendDate;
                 this.attachList = attachList;
+                this.status = status;
+                this.isRead = isRead;
+                this.category = category;
         }
+
         private Long receiveNo; //수신이메일번호
         private String receiverAddr;  //수신자 이메일 주소
         private String senderName;    //발신자 이름
