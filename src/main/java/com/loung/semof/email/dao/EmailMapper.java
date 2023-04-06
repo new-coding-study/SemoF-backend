@@ -50,4 +50,8 @@ public interface EmailMapper {
     ReceiveEmailDto selectReceiveEmail(Long receiveNo);
 
     void insertEmailAttach(EmailAttachDto emailAttachDto);
+
+    void updateSendTrash(Long mailNo);
+
+    void updateReceiveTrash(Long mailNo);
 }
