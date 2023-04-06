@@ -23,10 +23,13 @@ public class AuthController {
 
     @PostMapping("/find-reg")
     public ResponseEntity<ResponseDto> checkEmpReg(@RequestBody String empReg){
+        System.out.println("empReg = " + empReg);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "주민번호 검증", authService.checkEmpReg(empReg)));
     }
     @PostMapping("/compare-id")
     public ResponseEntity<ResponseDto> checkId(@RequestBody String loginId){
+
+
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "아이디 확인", authService.checkId(loginId)));
     }
     @PostMapping("/signup")

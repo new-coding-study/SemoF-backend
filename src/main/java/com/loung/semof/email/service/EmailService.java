@@ -373,6 +373,11 @@ public class EmailService {
         return emailMapper.selectSendEmail(mailNo);
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신함 전체 갯수를 카운트하는 메소드
+     */
     public int selectReceiveEmailTotal() throws SQLException {
         int totalCount = 0;
 
@@ -387,6 +392,11 @@ public class EmailService {
         return totalCount;
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신 메일을 조회하여 페이지네이션 처리를 하는 메소드
+     */
     public List<ReceiveEmailDto> selectEmailListWithPaging(int startRow, int endRow) {
         List<ReceiveEmailDto> receiveList = Collections.emptyList();
 
@@ -399,7 +409,31 @@ public class EmailService {
         return receiveList;
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 메일 번호에 따라 수신 메일을 조회하는 메소드
+     */
     public ReceiveEmailDto selectReceiveEmail(Long receiveNo) {
         return emailMapper.selectReceiveEmail(receiveNo);
+    }
+
+    /**
+     * @작성일 : 2023-04-06
+     * @작성자 : 이현도
+     * @메소드설명 : 메일함 카테고리와, 메일 번호를 활용하여 메일의 상태값을 변경하는 메소드
+     */
+    public String updateToTrash(Long mailNo, String category) {
+        if ("send".equals(category)) {
+            emailMapper.updateSendTrash(mailNo);
+
+        } else if ("receive".equals(category)) {
+            emailMapper.updateReceiveTrash(mailNo);
+
+        } else {
+            throw new IllegalArgumentException("부정확한 카테고리 입니다.");
+        }
+
+        return "삭제 성공";
     }
 }
