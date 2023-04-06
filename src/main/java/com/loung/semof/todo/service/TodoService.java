@@ -46,6 +46,11 @@ public class TodoService {
 
     public List<TodoDto> selectSearchTodo(String searchWord, String empNo) {
 
+        System.out.println(searchWord);
+        System.out.println(empNo);
+
+        System.out.println(todoMapper.selectSearchTodo(searchWord, empNo));
+
         return todoMapper.selectSearchTodo(searchWord, empNo);
 
     }

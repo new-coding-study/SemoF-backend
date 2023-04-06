@@ -76,9 +76,10 @@
                 FROM tbl_todo A
                          JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
                          JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
-                WHERE A.TODO_NAME LIKE CONCAT('%',#{searchWord},'%')
+                WHERE A.TODO_NAME LIKE CONCAT('%', #{searchWord}, '%')
                   AND B.EMP_NO = #{empNo}
             ) AS A
+        ORDER BY A.TODO_DATE, A.TODO_TIME, A.TODO_STAR DESC
     </select>
 
     <select id="selectCategoryList" parameterType="java.lang.Long" resultType="TodoDto">

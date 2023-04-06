@@ -80,6 +80,8 @@ public class TodoController {
     @CrossOrigin("*")
     public ResponseEntity<ResponseDto> selectSearchTodo(@RequestParam(name="s") String searchWord, @RequestParam(name="e") String empNo){
 
+        System.out.println(searchWord);
+
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 검색 성공", todoService.selectSearchTodo(searchWord, empNo)));
 //        try {
 //
