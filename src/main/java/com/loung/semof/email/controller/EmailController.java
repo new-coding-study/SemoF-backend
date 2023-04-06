@@ -13,6 +13,7 @@ import com.loung.semof.email.dto.SendEmailDto;
 import com.loung.semof.email.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,7 +58,7 @@ public class EmailController {
      */
     @PostMapping("/send")
     public ResponseEntity<?> sendEmail(@ModelAttribute SendEmailDto emailDto,
-                                       @RequestParam("file") MultipartFile file) {
+                                       @RequestParam(value = "file", required = false) MultipartFile file) {
 
         // 사원 정보 조회
         EmployeeDto sender = emailService.getEmployee(emailDto.getEmpNo());
@@ -110,7 +111,8 @@ public class EmailController {
             throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.", e);
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"success\": 발신 성공}");
+
     }
 
     /**
@@ -223,5 +225,20 @@ public class EmailController {
 
         return ResponseEntity.ok()
                 .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectReceiveEmail(receiveNo)));
+    }
+
+    @PutMapping("/{mailNo}/{category}")
+    public ResponseEntity<ResponseDto> updateToTrash(@PathVariable Long mailNo, @PathVariable String category) {
+
+        String result = emailService.updateToTrash(mailNo, category);
+
+        if (result.equals("삭제 성공")) {
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "성공적으로 삭제되었습니다.",  result));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "삭제 실패", null));
+        }
+
     }
 }

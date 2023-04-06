@@ -96,6 +96,7 @@
         FROM tbl_receive_email
         WHERE TITLE = #{title}
         AND SENDER_NAME = #{senderName}
+        AND STATUS = 'N'
     </select>
 
     <select id="selectByEmailNo" resultType="SendEmailDto">
@@ -103,6 +104,7 @@
             *
         FROM tbl_send_email
         WHERE MAIL_NO = #{mailNo}
+        AND STATUS = 'N'
     </select>
 
     <select id="selectEmailListTotal" resultType="int">
@@ -157,7 +159,19 @@
             *
         FROM tbl_receive_email
         WHERE RECEIVE_NO = #{receiveNo}
-          AND STATUS = 'N'
+        AND STATUS = 'N'
     </select>
+
+    <update id="updateReceiveTrash">
+        UPDATE tbl_receive_email
+        SET STATUS = 'Y'
+        WHERE RECEIVE_NO = #{mailNo}
+    </update>
+
+    <update id="updateSendTrash">
+        UPDATE tbl_send_email
+        SET STATUS = 'Y'
+        WHERE MAIL_NO = #{mailNo}
+    </update>
 
 </mapper>
