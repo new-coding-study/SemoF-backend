@@ -147,8 +147,8 @@ public class TodoController {
     public ResponseEntity<ResponseDto> insertTodo(@ModelAttribute TodoDto todoDto){
 
         try {
-            System.out.println("Controller 호출");
-            System.out.println("todoDto 확인 : " + todoDto);
+//            System.out.println("Controller 호출");
+//            System.out.println("todoDto 확인 : " + todoDto);
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 추가 성공", todoService.insertTodo(todoDto)));
 
         } catch (SQLException e) {
@@ -162,6 +162,7 @@ public class TodoController {
     public ResponseEntity<ResponseDto> updateTodo(@ModelAttribute TodoDto todoDto){
 
         try {
+            System.out.println("todoDto확인 : " + todoDto);
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "할 일 수정 성공", todoService.updateTodo(todoDto)));
 
         } catch (SQLException e) {
@@ -185,10 +186,10 @@ public class TodoController {
     }
 
     @PutMapping(value="/star/{todoNo}")
-    public ResponseEntity<ResponseDto> updateStar(@PathVariable Long todoNo){
+    public ResponseEntity<ResponseDto> updateStar(@PathVariable Long todoNo, @RequestBody Long changeStar){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "중요 표시 변경 성공", todoService.updateStar(todoNo)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "중요 표시 변경 성공", todoService.updateStar(todoNo, changeStar)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -198,10 +199,10 @@ public class TodoController {
     }
 
     @PutMapping(value="/finish/{todoNo}")
-    public ResponseEntity<ResponseDto> updateFinish(@PathVariable Long todoNo){
+    public ResponseEntity<ResponseDto> updateFinish(@PathVariable Long todoNo, @RequestBody Long changeFinish){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "중요 표시 변경 성공", todoService.updateFinish(todoNo)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "중요 표시 변경 성공", todoService.updateFinish(todoNo, changeFinish)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

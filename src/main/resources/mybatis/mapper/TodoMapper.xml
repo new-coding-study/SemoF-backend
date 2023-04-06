@@ -141,9 +141,8 @@
           ,TODO_DATE = #{todoDate}
           ,TODO_TIME = #{todoTime}
           ,TODO_CONTENT = #{todoContent}
-          ,TODO_FINISH = #{todoFinish}
           ,TODO_STAR = #{todoStar}
-          ,CATE_NO = #{todoName}
+          ,CATE_NO = #{cateNo}
         WHERE TODO_NO = #{todoNo}
     </update>
 

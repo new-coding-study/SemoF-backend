@@ -142,13 +142,13 @@ public class TodoService {
         return "할 일 삭제 성공";
     }
 
-    public String updateStar(Long todoNo) throws SQLException {
+    public String updateStar(Long todoNo, Long changeStar) throws SQLException {
 
-        int todoStar = todoMapper.checkStar(todoNo);
-        System.out.println("todoStar" + todoStar);
-
-        Long changeStar = (long) (todoStar == 0 ? 1: 0);
-        System.out.println("changeStar" + changeStar);
+//        int todoStar = todoMapper.checkStar(todoNo);
+//        System.out.println("todoStar" + todoStar);
+//
+//        Long changeStar = (long) (todoStar == 0 ? 1: 0);
+//        System.out.println("changeStar" + changeStar);
 
         int result = todoMapper.updateStar(todoNo, changeStar);
 
@@ -160,13 +160,13 @@ public class TodoService {
         return "중요 표시 변경 성공";
     }
 
-    public String updateFinish(Long todoNo) throws SQLException {
+    public String updateFinish(Long todoNo, Long changeFinish) throws SQLException {
 
-        int todoFinish = todoMapper.checkFinish(todoNo);
-        System.out.println("todoFinish" + todoFinish);
-
-        Long changeFinish = (long) (todoFinish == 0 ? 1: 0);
-        System.out.println("changeFinish" + changeFinish);
+//        int todoFinish = todoMapper.checkFinish(todoNo);
+//        System.out.println("todoFinish" + todoFinish);
+//
+//        Long changeFinish = (long) (todoFinish == 0 ? 1: 0);
+//        System.out.println("changeFinish" + changeFinish);
 
         int result = todoMapper.updateFinish(todoNo, changeFinish);
 
