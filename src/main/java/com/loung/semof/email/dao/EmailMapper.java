@@ -1,6 +1,7 @@
 package com.loung.semof.email.dao;
 
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.email.dto.EmailAttachDto;
 import com.loung.semof.email.dto.ReceiveEmailDto;
 import com.loung.semof.email.dto.SendEmailDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -31,4 +32,22 @@ public interface EmailMapper {
     Optional<SendEmailDto> selectByEmailNo(Long mailNo);
 
     List<SendEmailDto> selectByTempStatus(String y);
+
+    void updateEmailStatus(Long mailNo);
+
+    int selectEmailListTotal();
+
+    List<SendEmailDto> selectSendEmailListWithPaging(int startRow, int endRow);
+
+    SendEmailDto selectSendEmail(Long mailNo);
+
+    int selectReceiveEmailTotal();
+
+    List<ReceiveEmailDto> selectEmailListWithPaging(int startRow, int endRow);
+
+    ReceiveEmailDto selectLastEmail();
+
+    ReceiveEmailDto selectReceiveEmail(Long receiveNo);
+
+    void insertEmailAttach(EmailAttachDto emailAttachDto);
 }

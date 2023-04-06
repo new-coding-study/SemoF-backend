@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,7 +35,7 @@ class AttendanceMapperTest {
         //given
 
         //when
-        AttendanceDto attendanceDto = attendanceMapper.selectAttendanceDetail(1);
+        AttendanceDto attendanceDto = attendanceMapper.selectAttendanceDetail(3);
 
         //then
         System.out.println(attendanceDto);
@@ -71,12 +70,13 @@ class AttendanceMapperTest {
     @Test
     void 사원_근태_상태_변경_성공() throws Exception {
         //given
-        int empNo = 4;
+        int empNo = 3;
 
         //when
         AttendanceDto lastDate = attendanceMapper.selectAttendanceDetail(empNo);
         LocalDate currentDate = LocalDate.now();
-        if (lastDate == null || !Objects.equals(currentDate.toString(), lastDate.getAtdDate().toString())){
+        if (lastDate.getAtdDate() == null || !Objects.equals(currentDate.toString(), lastDate.getAtdDate().substring(0, 10))){
+            //lastDate == null 이였는데(행 자체가 null), 쿼리를 사원정보는 나오게 바꿔놔서 null비교문도 행 자체가 아닌 호출한 날짜로 비교)
             System.out.println("-------------날짜 비교 if문 진입-------------");
             attendanceMapper.insertAttendance(empNo);
         }
@@ -116,14 +116,15 @@ class AttendanceMapperTest {
     @Test
     void 만능_테스트_에오() throws Exception {
         //given
+        int empNo = 2;
 
         //when
-        Date today = attendanceMapper.selectAttendanceDetail(2).getAtdDate();
+        AttendanceDto lastDate = attendanceMapper.selectAttendanceDetail(empNo);
         LocalDate currentDate = LocalDate.now();
-        boolean tot = !Objects.equals(today.toString(), currentDate.toString());
+        boolean tot = !Objects.equals(currentDate.toString(), lastDate.getAtdDate().substring(0, 10));
 
         //then
-        System.out.println(today);  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        System.out.println(lastDate.getAtdDate().substring(0, 10));  //로그포제이 안 쓰고 그냥 출력문으로 확인
         System.out.println(currentDate);
         assertTrue(tot);
     }

@@ -1,6 +1,10 @@
 package com.loung.semof.email.controller;
 
+import com.loung.semof.common.ResponseDto;
 import com.loung.semof.common.dto.EmployeeDto;
+import com.loung.semof.common.paging.Pagenation;
+import com.loung.semof.common.paging.ResponseDtoWithPaging;
+import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.email.config.EmailConfig;
 import com.loung.semof.email.dao.EmailMapper;
 import com.loung.semof.email.dto.EmailAttachDto;
@@ -13,12 +17,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.*;
-import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
 
 /**
  * @파일이름 : EmailController.java
@@ -50,79 +56,58 @@ public class EmailController {
      * @메소드설명 : 이메일 발송과 관련된 기능을 수행하는 메소드
      */
     @PostMapping("/send")
-    public ResponseEntity<String> sendMail(@RequestParam("empNo") Long empNo,
-            @RequestParam(value = "attachments", required = false) List<MultipartFile> attachments,
-                                           @ModelAttribute SendEmailDto emailDto /*,
-                                           HttpServletRequest request */) throws MessagingException {
-
-        // 현재 로그인한 사용자의 사원번호 가져오기 - 로그인 기능 구현 후 사용하기
-//        Long empNo = (Long) request.getSession().getAttribute("empNo");
-
-//        if (empNo == null) {
-//            throw new IllegalArgumentException("Employee number must not be null");
-//        }
+    public ResponseEntity<?> sendEmail(@ModelAttribute SendEmailDto emailDto,
+                                       @RequestParam("file") MultipartFile file) {
 
         // 사원 정보 조회
-        EmployeeDto sender = emailService.getEmployee(empNo);
-
+        EmployeeDto sender = emailService.getEmployee(emailDto.getEmpNo());
         if (sender == null || sender.getEmail() == null) {
             throw new RuntimeException("발신자의 이메일 주소를 찾을 수 없습니다.");
         }
 
         // 발신자 이메일 주소 설정
         String senderAddr = sender.getEmail();
-
         if (senderAddr == null || senderAddr.trim().isEmpty()) {
             throw new IllegalArgumentException("발신자의 이메일 주소는 비어 있을 수 없습니다.");
         }
 
         // 수신자 이메일 주소 설정
         String receiverAddr = emailDto.getReceiverAddr();
-
         if (receiverAddr == null || receiverAddr.trim().isEmpty()) {
             throw new IllegalArgumentException("수신자의 이메일 주소는 비어 있을 수 없습니다.");
         }
 
+        // 첨부 파일 저장
         List<EmailAttachDto> emailAttachDtoList = new ArrayList<>();
+        if (file != null && !file.isEmpty()) {
+            EmailAttachDto emailAttachDto = EmailAttachDto.builder()
+                    .originName(file.getOriginalFilename())
+                    .changeName(UUID.randomUUID().toString())
+                    .uploadDate(LocalDateTime.now())
+                    .build();
 
-        if (attachments != null && !attachments.isEmpty()) {
-            for (MultipartFile attachment : attachments) {
-                EmailAttachDto emailAttachDto = EmailAttachDto.builder()
-                        .originName(attachment.getOriginalFilename())
-                        .changeName(UUID.randomUUID().toString())
-                        .filePath("/attachments/")
-                        .uploadDate(LocalDateTime.now())
-                        .build();
-
-                emailAttachDtoList.add(emailAttachDto);
-
-                String filePath = emailAttachDto.getFilePath();
-
-                String fileName = emailAttachDto.getChangeName();
-
-                try {
-                    attachment.transferTo(new File(filePath + fileName));
-
-                } catch (IOException e) {
-                    throw new RuntimeException("파일 업로드 중 예외가 발생했습니다.");
-                }
+            byte[] fileContent;
+            try {
+                fileContent = file.getBytes();
+            } catch (IOException e) {
+                throw new RuntimeException("첨부 파일을 읽는 중 예외가 발생했습니다.", e);
             }
+            emailAttachDto.setFileData(fileContent);
+
+            emailAttachDtoList.add(emailAttachDto);
         }
 
+        // 이메일 정보 설정
         emailDto.setEmailAttachDtoList(emailAttachDtoList);
-
-        // 발신자 정보 설정
         emailDto.setSenderName(sender.getEmpName());
-
         emailDto.setSenderAddr(senderAddr);
+        emailDto.setTempStatus("N");
 
+        // 이메일 발송 및 저장
         try {
-            emailService.insertSendEmail(emailDto);
-
+            emailService.insertSendEmail(emailDto, file); // Pass the MultipartFile to the service class
         } catch (Exception e) {
-            log.error("이메일을 보내는 중 예외가 발생했습니다.", e);
-
-            throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.");
+            throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.", e);
         }
 
         return ResponseEntity.ok().build();
@@ -139,56 +124,104 @@ public class EmailController {
         return ResponseEntity.ok(emails);
     }
 
-
     /**
-     * @작성일 : 2023-03-24
+     * @파일이름 : EmailController.java
+     * @프로젝트 : SemoF
+     * @버전관리 : 1.0.0
+     * @작성일 : 2023-04-04
      * @작성자 : 이현도
-     * @메소드설명 : 이메일 수신함과 관련된 기능을 수행하는 메소드
+     * @클래스설명 : 발신 이메일 전체를 조회해오는 메소드
      */
-    @GetMapping("/list")
-    public ResponseEntity<List<ReceiveEmailDto>> getMailList() {
-        String host = emailConfig.getHost();
-        String username = emailConfig.getUsername();
-        String password = emailConfig.getPassword();
-
-        Properties props = new Properties();
-        props.setProperty("mail.store.protocol", "imaps");
-        props.setProperty("mail.imaps.host", host);
-        props.setProperty("mail.imaps.port", "993");
-
-        List<ReceiveEmailDto> mailList = new ArrayList<>();
+    @GetMapping("/send/list")
+    public ResponseEntity<ResponseDto> selectSendEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
 
         try {
-            Session session = Session.getDefaultInstance(props, null);
-            Store store = session.getStore("imaps");
-            store.connect(host, username, password);
+            int totalCount = emailService.selectEmailListTotal();
 
-            Folder inbox = store.getFolder("INBOX");
-            inbox.open(Folder.READ_ONLY);
+            int limit = 10;
 
-            Message[] messages = inbox.getMessages();
+            int buttonAmount = 5;
 
-            for (Message message : messages) {
-                ReceiveEmailDto receiveEmailDto = new ReceiveEmailDto();
-                receiveEmailDto.setReceiverAddr(Arrays.toString(message.getRecipients(Message.RecipientType.TO)));
-                receiveEmailDto.setSenderName(message.getFrom()[0].toString());
-                receiveEmailDto.setTitle(message.getSubject());
-                receiveEmailDto.setContent(message.getContent().toString());
-                receiveEmailDto.setSendDate(LocalDateTime.ofInstant(message.getSentDate().toInstant(), ZoneId.systemDefault()));
-                mailList.add(receiveEmailDto);
-            }
+            SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
 
-            inbox.close(false);
-            store.close();
+            List<SendEmailDto> sendEmails = emailService.selectSendEmailListWithPaging(selectCriteria.getStartRow(), selectCriteria.getEndRow());
 
-            emailService.insertEmailList(mailList); // 받은 이메일 목록을 데이터베이스에 저장
+            ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
 
-            List<ReceiveEmailDto> emailList = emailService.selectEmailList(); // 데이터베이스에서 이메일 목록을 조회
-            return new ResponseEntity<>(emailList, HttpStatus.OK);
+            responseDtoWithPaging.setPageInfo(selectCriteria);
 
-        } catch (MessagingException | IOException e) {
+            responseDtoWithPaging.setData(sendEmails);
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
+
+        } catch (SQLException e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
         }
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 발신 이메일을 번호에 따라 조회해오는 메소드
+     */
+    @GetMapping("/send/{mailNo}")
+    public ResponseEntity<ResponseDto> selectSendEmail(@PathVariable("mailNo") Long mailNo) {
+
+        return ResponseEntity.ok()
+                .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectSendEmail(mailNo)));
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신메일함을 조회하는 메소드
+     */
+    @GetMapping("/lists")
+    public ResponseEntity<ResponseDto> selectEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
+
+        emailService.fetchEmailsFromGmailAndStore();
+
+        List<ReceiveEmailDto> receiveList = Collections.emptyList();
+
+        try {
+            int totalCount = emailService.selectReceiveEmailTotal();
+
+            log.info("[EmailContorller] totalCount = " + totalCount);
+
+            int limit = 10;
+
+            int buttonAmount = 5;
+
+            SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
+
+            List<ReceiveEmailDto> receiveEmails = emailService.selectEmailListWithPaging(selectCriteria.getStartRow(), selectCriteria.getEndRow());
+
+            ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+
+            responseDtoWithPaging.setPageInfo(selectCriteria);
+
+            responseDtoWithPaging.setData(receiveEmails);
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신 이메일을 번호에 따라 조회해오는 메소드
+     */
+    @GetMapping("/receive/{receiveNo}")
+    public ResponseEntity<ResponseDto> selectReceiveEmail(@PathVariable("receiveNo") Long receiveNo) {
+
+        return ResponseEntity.ok()
+                .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectReceiveEmail(receiveNo)));
     }
 }

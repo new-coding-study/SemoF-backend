@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 /**
  * @파일이름 : ApprovLineDTO.java
@@ -27,7 +28,14 @@ public class ApprovLineDTO {
     private String branchName;
     private Integer branchCode;
     private List<ApprovOrderDTO> approvOrderDTOList;
-
+//    private List<ApprovOrderDTO> approvOrderDTOList = new ArrayList<>();
+//    public List<ApprovOrderDTO> getApprovOrderDTOList() {
+//        return approvOrderDTOList;
+//    }
+//
+//    public void setApprovOrderDTOList(List<ApprovOrderDTO> approvOrderDTOList) {
+//        this.approvOrderDTOList = approvOrderDTOList;
+//    }
 //    private
 }
 
