@@ -1,5 +1,6 @@
 package com.loung.semof.loginInfo.service;
 
+import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.exception.DuplicatedUsernameException;
 import com.loung.semof.exception.LoginFailedException;
 import com.loung.semof.jwt.TokenProvider;
@@ -12,6 +13,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @Slf4j
 public class AuthService {
@@ -23,7 +26,7 @@ public class AuthService {
     private final TokenProvider tokenProvider;
 
 //    private final EmployeeDto employeeDto;
-    public String newEmpNo;
+    public Integer newEmpNo;
     public AuthService(LoginInfoMapper loginInfoMapper, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
         this.loginInfoMapper = loginInfoMapper;
         this.passwordEncoder = passwordEncoder;
@@ -38,7 +41,7 @@ public class AuthService {
 //            log.info("[AuthService] 아이디가 중복됩니다.");
 //            throw new DuplicatedUsernameException("아이디가 중복됩니다.");
 //        }
-//
+
 //        if (loginInfoMapper.selectByEmpReg(memberDto.getEmpReg()) != null) {
 //            log.info("[AuthService] 주민번호가 중복됩니다.");
 //            throw new DuplicatedUsernameException("주민번호가 중복됩니다.");
@@ -46,7 +49,7 @@ public class AuthService {
         log.info("[AuthService] Member Signup Start ==============================");
         loginInfoDto.setLoginPwd(passwordEncoder.encode(loginInfoDto.getLoginPwd()));
         log.info("[AuthService] Member {}", loginInfoDto);
-//        loginInfoDto.setEmpNo(newEmpNo);
+        loginInfoDto.setEmpNo(newEmpNo);
 
         int result = loginInfoMapper.insertMember(loginInfoDto);
         log.info("[AuthService] Member Insert Result {}", result > 0 ? "회원 가입 성공" : "회원 가입 실패");
@@ -89,20 +92,39 @@ public class AuthService {
 //    }
 
     public Object checkEmpReg(String empReg) {
-//        if (loginInfoMapper.selectByEmpReg(empReg).getEmpReg() != null) {
+////        if (loginInfoMapper.selectByEmpReg(empReg).getEmpReg() != null) {
 //            log.info("[AuthService] 주민번호가 확인되었습니다.");
+        System.out.println("empReg = " + empReg);
 //        }
-
+        EmployeeDto employeeDto = loginInfoMapper.selectByEmpReg(empReg);
+        System.out.println("매퍼의 값 : " +loginInfoMapper.selectByEmpReg(empReg));
+        System.out.println("employeeDto = " + employeeDto);
 //        매퍼에서 empREg empoNo를 들고 온다,.
 //        loginInfoMapper.selectByEmpReg(empReg) dto 형식으로 되어있음
 //        empNo로는 setting을 하고 setEmpNo(여기서 가져온거)
 //        empReg는 주민번호 검증에 사용
-//        newEmpNo = loginInfoMapper.selectByEmpReg(empReg).getEmpNo();
+//        newEmpNo = Math.toIntExact(loginInfoMapper.selectByEmpReg(empReg).get().getEmpNo());
+        newEmpNo = Math.toIntExact(loginInfoMapper.selectByEmpReg(empReg).getEmpNo());
+//        newEmpNo = Math.toIntExact(loginInfoMapper.selectByEmpReg(empReg));
+//        if(loginInfoMapper.selectByEmpReg(empReg).get().getEmpReg().equals(empReg)){
+            if(loginInfoMapper.selectByEmpReg(empReg).getEmpReg().equals(empReg)){
+            return "주민번호 체크 성공";
+        }else{
+            return "체크 실패";
+        }
 
-        System.out.println(loginInfoMapper.selectByEmpReg(empReg));
-        int result = loginInfoMapper.checkEmpReg(empReg);
 
-        return (result>0) ? "주민번호 체크 성공": "체크 실패";
+//        Optional<LoginInfoDto> loginInfoDtoOptional = loginInfoService.findByUsername("example");
+//
+//        if (loginInfoDtoOptional.isPresent()) {
+//            String username = loginInfoDtoOptional.get().getUsername();
+//            // username 필드를 이용하여 로직 수행
+//        } else {
+//            // 로직 수행 불가능
+//        }
+//        int result = loginInfoMapper.checkEmpReg(empReg);
+
+//        return (result>0) ? "주민번호 체크 성공": "체크 실패";
 //        return 1;
     }
 //    public Object checkEmpReg(String empReg) {
@@ -128,9 +150,13 @@ public class AuthService {
         if (loginInfoMapper.selectById(loginId) != null) {
             log.info("[AuthService] 아이디가 중복됩니다.");
             throw new DuplicatedUsernameException("아이디가 중복됩니다.");
+//            return "아이디 중복체크 성공";
+        }else{
+            return  "가입이 가능한 아이디입니다";
         }
-        int result = loginInfoMapper.checkId(loginId);
-        return (result>0) ? "아이디 중복체크 성공": "중복체크 실패";
+
+//        int result = loginInfoMapper.checkId(loginId);
+//        return (result>0) ? "아이디 중복체크 성공": "중복체크 실패";
     }
 }
 
