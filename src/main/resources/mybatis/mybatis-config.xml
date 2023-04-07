@@ -41,8 +41,8 @@
 		<typeAlias alias="ReceiveEmailDto" type="com.loung.semof.email.dto.ReceiveEmailDto"/>
 		<typeAlias alias="EmailAttachDto" type="com.loung.semof.email.dto.EmailAttachDto"/>
 
-
 		<typeAlias alias="TodoDto" type="com.loung.semof.todo.dto.TodoDto"/>
+		<typeAlias alias="CalendarDto" type="com.loung.semof.calendar.dto.CalendarDto"/>
 	</typeAliases>
 
 	<mappers>
