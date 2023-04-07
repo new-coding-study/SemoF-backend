@@ -20,8 +20,6 @@ import java.util.List;
 @Mapper
 public interface HumanResourceMapper {
     void updateEmployee(EmployeeDto employee);
-
-
     int selectEmployeeTotal();
 
     List<HumanResourceDto> selectEmployeeListWithPaging(int startRow, int endRow);
@@ -38,11 +36,12 @@ public interface HumanResourceMapper {
 
     void insertEmployeePhoto(EmployeePhotoDto employeePhotoDto);
 
-    EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo);
+     EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo);
 
     void deleteEmployeePhoto(Long photoNo);
 
     List<DepartmentOrderDto> selectDepartmentsOrders();
 
     List<BranchOrderDto> selectBranchesOrders();
+
 }
