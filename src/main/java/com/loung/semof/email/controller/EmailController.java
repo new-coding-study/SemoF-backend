@@ -100,18 +100,21 @@ public class EmailController {
 
         // 이메일 정보 설정
         emailDto.setEmailAttachDtoList(emailAttachDtoList);
+
         emailDto.setSenderName(sender.getEmpName());
+
         emailDto.setSenderAddr(senderAddr);
+
         emailDto.setTempStatus("N");
 
         // 이메일 발송 및 저장
         try {
-            emailService.insertSendEmail(emailDto, file); // Pass the MultipartFile to the service class
+            emailService.insertSendEmail(emailDto, file);
         } catch (Exception e) {
             throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.", e);
         }
 
-        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"success\": 발신 성공}");
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"success\":true}");
 
     }
 
@@ -123,6 +126,7 @@ public class EmailController {
     @GetMapping("/temp")
     public ResponseEntity<List<SendEmailDto>> getTempEmails() {
         List<SendEmailDto> emails = emailMapper.selectByTempStatus("Y");
+
         return ResponseEntity.ok(emails);
     }
 
@@ -171,8 +175,16 @@ public class EmailController {
     @GetMapping("/send/{mailNo}")
     public ResponseEntity<ResponseDto> selectSendEmail(@PathVariable("mailNo") Long mailNo) {
 
-        return ResponseEntity.ok()
-                .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectSendEmail(mailNo)));
+        try {
+            SendEmailDto email = emailService.selectSendEmail(mailNo);
+
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "정상 확인", email));
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 조회에 실패했습니다.", null));
+        }
     }
 
     /**
@@ -223,8 +235,16 @@ public class EmailController {
     @GetMapping("/receive/{receiveNo}")
     public ResponseEntity<ResponseDto> selectReceiveEmail(@PathVariable("receiveNo") Long receiveNo) {
 
-        return ResponseEntity.ok()
-                .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectReceiveEmail(receiveNo)));
+        try {
+            ReceiveEmailDto email = emailService.selectReceiveEmail(receiveNo);
+
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "정상 확인", email));
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 조회에 실패했습니다.", null));
+        }
     }
 
     @PutMapping("/{mailNo}/{category}")
@@ -239,6 +259,5 @@ public class EmailController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "삭제 실패", null));
         }
-
     }
 }
