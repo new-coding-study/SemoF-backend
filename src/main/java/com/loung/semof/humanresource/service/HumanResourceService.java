@@ -392,13 +392,13 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 번호와 일치하는 사원을 조회하는 비즈니스 로직
      */
-    public EmployeeDto selectEmployeeByEmpNo(Long empNo) {
+    public HumanResourceDto selectEmployeeByEmpNo(Long empNo) {
 
             if (empNo == null) {
                 throw new IllegalArgumentException("사원 번호를 입력해주세요.");
             }
 
-            List<EmployeeDto> result = humanResourceMapper.selectEmployeeByEmpNo(empNo);
+            List<HumanResourceDto> result = humanResourceMapper.selectEmployeeByEmpNo(empNo);
 
             if (result == null || result.isEmpty()) {
                 return null; // 조회된 사원이 없는 경우 null 반환

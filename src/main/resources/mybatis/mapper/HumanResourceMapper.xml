@@ -194,10 +194,16 @@
     </select>
 
     <!-- SELECT 쿼리 : 사원 번호로 사원 조회  -->
-    <select id="selectEmployeeByEmpNo"  resultType="EmployeeDto">
+    <select id="selectEmployeeByEmpNo"  resultType="HumanResourceDto">
         SELECT
-        *
-        FROM tbl_employee
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE, E.EMP_REG,
+            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
+            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
+            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                 JOIN tbl_job J ON E.job_code = J.job_code
+                 JOIN tbl_department D ON E.dept_code = D.dept_code
+                 JOIN tbl_branch B ON E.branch_code = B.branch_code
         WHERE EMP_NO = #{empNo}
         AND WORK_STATUS = 'Y'
     </select>

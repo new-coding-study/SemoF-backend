@@ -305,7 +305,7 @@ public class HumanResourceController {
     @GetMapping("/present/{empNo}")
     public ResponseEntity<ResponseDto> selectEmployeeByEmpNo(@PathVariable("empNo") Long empNo) {
 
-        EmployeeDto employee = humanResourceService.selectEmployeeByEmpNo(empNo);
+        HumanResourceDto employee = humanResourceService.selectEmployeeByEmpNo(empNo);
 
         if (employee != null) {
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", employee));
