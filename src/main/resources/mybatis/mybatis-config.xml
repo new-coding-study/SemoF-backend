@@ -19,7 +19,12 @@
 
 		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
 		<typeAlias alias="ReplyDto" type="com.loung.semof.reply.dto.ReplyDto"/>
-		
+		<typeAlias alias="TripReportDto" type="com.loung.semof.report.dto.TripDto"/>
+		<typeAlias alias="SalesReportDto" type="com.loung.semof.report.dto.SalesDto"/>
+		<typeAlias alias="MeetingReportDto" type="com.loung.semof.report.dto.MeetingDto"/>
+		<typeAlias alias="WorksDto" type="com.loung.semof.report.dto.WorksDto"/>
+
+
 		<typeAlias alias="ApprovalDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
 		<typeAlias alias="ApprovLineDTO" type="com.loung.semof.approval.dto.ApprovLineDTO"/>
 		<typeAlias alias="ApprovOrderDTO" type="com.loung.semof.approval.dto.ApprovOrderDTO"/>
@@ -60,6 +65,9 @@
 
 		<mapper resource="BoardMapper.xml"/>
 		<mapper resource="ReplyMapper.xml"/>
-
+		<mapper resource="TripReportMapper.xml"/>
+		<mapper resource="SalesReportMapper.xml"/>
+		<mapper resource="MeetingReportMapper.xml"/>
+		<mapper resource="WorksReportMapper.xml"/>
 	</mappers>
 </configuration>

@@ -8,78 +8,84 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * @파일이름 : ReplyService.java
+ * @프로젝트 : Semof
+ * @버전관리 : 1.0.0
+ * @작성일 : 2023-04-05
+ * @작성자 : 이지형
+ * @클래스설명 : 댓글 crud를 위한 service.
+ */
 @Service
 public class ReplyService {
     private final ReplyMapper replyMapper;
-
     public ReplyService(ReplyMapper replyMapper) {
         this.replyMapper = replyMapper;
     }
-    public int selectReplyTotal(){
-        int result = replyMapper.selectReplyTotal();
+
+    /**
+     * @작성일 : 2023.04.05
+     * @작성자 : 이지형
+     * @메소드설명 : 댓글 전체의 갯수를 조회.
+     */
+    public int selectReplyTotal(int boardNo){
+        int result = replyMapper.selectReplyTotal(boardNo);
         return result;
     }
-//
-    public Object selectReplyWithPaging(SelectCriteria selectCriteria, int boardNo){
 
-        System.out.println("서비스호출 확인");
+    /**
+     * @작성일 : 2023.04.05
+     * @작성자 : 이지형
+     * @메소드설명 : 댓글 조회 및 페이징.
+     */
+    public Object selectReplyWithPaging(SelectCriteria selectCriteria, int boardNo){
         List<ReplyDto> replyList = replyMapper.selectReplyWithPaging(selectCriteria, boardNo);
-        for(int i = 0; i<replyList.size(); i++);
         return replyList;
     }
 
-//    @Transactional
-//    public Object insertReply(String replyContent, int empNo, int boardNo){
-//        System.out.println("boardNo = " + boardNo);
-//        System.out.println("replyContent = " + replyContent);
-//        System.out.println("empNo = " + empNo);
-//
-//        int result = replyMapper.insertReply(replyContent, empNo, boardNo);
-//        return (result > 0)? "댓글추가 성공" : "댓글추가 실패";
-//    }
-
-//    @Transactional
-//    public Object updateReplyForAdmin(ReplyDto replyDto){
-//        int result = replyMapper.updateReplyForAdmin(replyDto);
-//        return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
-//    }
-
-//    @Transactional
-//    public Object updateReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode){
-//        int result = replyMapper.updateReply(replyDto, empNo, boardNo, replyCode);
-//        return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
-//    }
-
-//    @Transactional
-//    public Object deleteForAdmin(ReplyDto replyDto, int replyCode, int boardNo){
-//        int result = replyMapper.deleteForAdmin(replyDto, replyCode, boardNo);
-//        return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
-//    }
-
-//    @Transactional
-//    public Object deleteForEmp(ReplyDto replyDto, int empNo, int replyCode, int boardNo){
-//        int result = replyMapper.deleteForEmp(replyDto, empNo, replyCode, boardNo);
-//        return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
-//    }
-
+    /**
+     * @작성일 : 2023.04.05
+     * @작성자 : 이지형
+     * @메소드설명 : 댓글 등록.
+     */
+    @Transactional
     public Object insertReply(ReplyDto replyDto) {
         System.out.println("replyDto = " + replyDto);
         int result = replyMapper.insertReply(replyDto);
         return (result > 0)? "댓글추가 성공" : "댓글추가 실패";
     }
 
-    public Object deleteForAdmin(ReplyDto replyDto) {
-        int result = replyMapper.deleteForAdmin(replyDto);
+    /**
+     * @작성일 : 2023.04.05
+     * @작성자 : 이지형
+     * @메소드설명 : 댓글 삭제(관리자).
+     */
+    @Transactional
+    public Object deleteForAdmin(int boardNo, int replyCode) {
+        int result = replyMapper.deleteForAdmin(boardNo, replyCode);
         return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
     }
 
-    public Object deleteForEmp(ReplyDto replyDto) {
-        int result = replyMapper.deleteForEmp(replyDto);
+    /**
+     * @작성일 : 2023.04.05
+     * @작성자 : 이지형
+     * @메소드설명 : 댓글 삭제(회원).
+     */
+    @Transactional
+    public Object deleteForEmp(int empNo, int replyCode) {
+        int result = replyMapper.deleteForEmp(empNo,replyCode);
         return (result > 0)? "댓글 삭제 완료" : "댓글 삭제 완료";
     }
 
-    public Object updateReply(ReplyDto replyDto) {
-        int result = replyMapper.updateReply(replyDto);
-        return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
-    }
+
+    /**
+     * @작성일 : 2023.04.05
+     * @작성자 : 이지형
+     * @메소드설명 : 댓글 수정(일단 보류).
+     */
+//    public Object updateReply(ReplyDto replyDto) {
+//        int result = replyMapper.updateReply(replyDto);
+//        return (result > 0)? "댓글 수정완료":"댓글 수정 실패";
+//    }
+
 }

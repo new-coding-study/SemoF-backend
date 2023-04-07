@@ -13,7 +13,7 @@
         <result column="EMP_NO" property="empNo"/>
     </resultMap>
 
-
+    <!--댓글 전체조회-->
     <select id="selectReply" resultType="ReplyDto">
         SELECT
             TR.REPLY_CODE
@@ -29,6 +29,7 @@
         ORDER BY TR.REPLY_WRITE_DATE ASC
     </select>
 
+    <!--댓글 전체 갯수 조회-->
     <select id="selectReplyTotal" resultType="int">
         SELECT
             count(*)
@@ -36,6 +37,7 @@
         WHERE BOARD_NO =#{boardNo}
     </select>
 
+    <!--댓글 페이징 처리-->
     <select id="selectReplyWithPaging" resultType="ReplyDto">
         SELECT
             R.rowNum
@@ -63,6 +65,7 @@
         LIMIT #{selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--댓글 등록-->
     <insert id="insertReply" parameterType="ReplyDto">
         INSERT INTO tbl_reply
             (
@@ -78,23 +81,27 @@
             )
     </insert>
 
-    <update id="updateReply" parameterType="ReplyDto">
-        UPDATE tbl_reply
-        SET
-            REPLY_CONTENT = #{replyContent}
-        WHERE BOARD_NO = #{boardNo}
-          AND EMP_NO = #{empNo}
-          AND REPLY_CODE = #{replyCode}
-    </update>
-
+    <!--관리자용 댓글 삭제-->
     <delete id="deleteForAdmin" parameterType="boardDto">
         DELETE FROM tbl_reply
-        WHERE REPLY_CODE = #{replyCode}
+         WHERE REPLY_CODE = #{replyCode}
     </delete>
 
+    <!--직원용 댓글 삭제-->
     <delete id="deleteForEmp" parameterType="boardDto">
         DELETE FROM tbl_reply
         WHERE EMP_NO = #{empNo}
+          AND REPLY_CODE = #{replyCode}
     </delete>
+
+    <!--댓글 수정-->
+    <!--    <update id="updateReply" parameterType="ReplyDto">-->
+    <!--        UPDATE tbl_reply-->
+    <!--        SET-->
+    <!--            REPLY_CONTENT = #{replyContent}-->
+    <!--        WHERE BOARD_NO = #{boardNo}-->
+    <!--          AND EMP_NO = #{empNo}-->
+    <!--          AND REPLY_CODE = #{replyCode}-->
+    <!--    </update>-->
 
 </mapper>
