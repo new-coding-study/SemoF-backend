@@ -29,7 +29,7 @@ public class ApprovController {
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
-     * @메소드설명 : 미확인 결재문서를 삭제
+     * @메소드설명 : 결재 라인 등록(ROLE_ADMIN)
      */
     @PostMapping(value="/line")
     public ResponseEntity<ResponseDto> insertApprovLine(@RequestBody ApprovLineDTO line) {
@@ -46,14 +46,18 @@ public class ApprovController {
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
-     * @메소드설명 : 결재 의견 등록()
+     * @메소드설명 : 결재 의견 등록(ROLE_ADMIN)
      */
     @PostMapping(value = "/opinion")
     public ResponseEntity<ResponseDto> insertOpinion(@ModelAttribute ApprovOpinDTO opinion){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "의견등록", approvService.insertOpinion(opinion)));
     }
 
-
+/**
+ * @작성일 : 2023-04-07
+ * @작성자 : 박유리
+ * @메소드설명 : 결재등록(ROLE_USER)
+ */
     @PostMapping(value="/approval", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<ResponseDto> insertApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> fileList) {
         log.info("결재등록 컨트롤러 호출" +fileList);
@@ -62,9 +66,9 @@ public class ApprovController {
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
-     * @메소드설명 : 결재 문서 목록을 조회
+     * @메소드설명 : 결재 문서 목록을 조회(상신, 수신, 완료 나누기)
      */
-    @GetMapping("/approv-list")
+    @GetMapping("/approv-in")
     public ResponseEntity<ResponseDto> selectApprovalInWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         int totalCount = approvService.selectApprovalTotal();
         int limit = 10;
@@ -96,7 +100,7 @@ public class ApprovController {
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
-     * @메소드설명 : 설정된 결재라인 조회
+     * @메소드설명 : 설정된 결재라인 조회(ROLE_USER)
      */
     @GetMapping("/line-list")
     public ResponseEntity<ResponseDto> selectApprovLineListWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
@@ -112,6 +116,26 @@ public class ApprovController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
     }
+    @GetMapping("/approv-out")
+    public ResponseEntity<ResponseDto> selectApprovalOutWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
+        int totalCount = approvService.selectApprovOutTotal();
+        int limit = 10;
+        int buttonAmount = 10;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(approvService.selectApprovalOutWithPaging(selectCriteria));
+//        responseDtoWithPaging.setData(approvService.selectLatestStatus());
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
+    }
+
+    /**
+     * @작성일 : 2023-04-07
+     * @작성자 : 박유리
+     * @메소드설명 : 페이징처리 없는 결재목록조회, 결재 등록 시 사용된다.(ROLE_USER)
+     */
     @GetMapping("/lines")
     public ResponseEntity<ResponseDto> selectLineList(){
         List<ApprovLineDTO> lineList = approvService.selectLineList();
@@ -120,22 +144,36 @@ public class ApprovController {
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
-     * @메소드설명 : 결재 문서 상세조회
+     * @메소드설명 : 결재 문서 상세조회 (ROLE_USER)
      */
     @GetMapping("/approval/{approvNo}")
     public ResponseEntity<ResponseDto> selectApproval(@PathVariable Integer approvNo){
+        System.out.println("결재 상세 페이지 컨트롤러");
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재상세조회", approvService.selectApproval(approvNo)));
     }
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
-     * @메소드설명 : 결재라인 수정
+     * @메소드설명 : 결재라인 수정(ROLE_ADMIN)
      */
-    @PutMapping(value = "/line")
-    public ResponseEntity<ResponseDto> updateApprovLine(@ModelAttribute ApprovLineDTO line, List<ApprovOrderDTO> orders){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 업데이트", approvService.updateApprovLine(line, orders)));
+//    @PutMapping(value = "/line")
+//    public ResponseEntity<ResponseDto> updateApprovLine(@ModelAttribute ApprovLineDTO line){
+//        log.info("컨트롤러의 lineNo : "+ line.getLineNo());
+//        log.info("컨트롤러의 line : "+ line);
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 업데이트", approvService.updateApprovLine(line)));
+//    }
+    @PutMapping(value = "/line/{lineNo}")
+    public ResponseEntity<ResponseDto> updateApprovLine(@RequestBody ApprovLineDTO line, @PathVariable Integer lineNo){
+        log.info("컨트롤러의 lineNo : "+ lineNo);
+        line.setLineNo(lineNo);
+        log.info("컨트롤러의 line : "+ line);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 업데이트", approvService.updateApprovLine(line)));
     }
-
+    /**
+     * @작성일 : 2023-04-07
+     * @작성자 : 박유리
+     * @메소드설명 : 결재라인 상세조회 라인 수정시 이용되는 메소드(ROLE_ADMIN)
+     */
     @GetMapping("/line/{lineNo}")
     public ResponseEntity<ResponseDto> selectLineDetail(@PathVariable Integer lineNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "라인 상세조회", approvService.selectLineDetail(lineNo)));
@@ -150,7 +188,7 @@ public class ApprovController {
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
-     * @메소드설명 : 결재처리(결재 상태를 업데이트)
+     * @메소드설명 : 결재처리(결재 상태를 업데이트)ROLE_ADMIN
      */
     @PutMapping(value="/status")
     public ResponseEntity<ResponseDto> updateStatus(@ModelAttribute ApprovStatusDTO status){
@@ -159,7 +197,7 @@ public class ApprovController {
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
-     * @메소드설명 : 결재라인을 삭제
+     * @메소드설명 : 결재라인을 삭제(ROLE_ADMIN)
      */
 //    @DeleteMapping(value = "/line")
 //    public ResponseEntity<ResponseDto> deleteApprovLine(ApprovLineDTO line){

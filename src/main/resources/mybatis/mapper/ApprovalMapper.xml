@@ -7,10 +7,10 @@
     <resultMap type="com.loung.semof.approval.dto.ApprovLineDTO" id="lineResultMap">
         <id property="lineNo" column="LINE_NO"/>
         <result property="lineName" column="LINE_NAME"/>
-        <result property="empName" column="EMP_NAME"/>
-        <result property="empNo" column="EMP_NO"/>
         <result property="branchName" column="BRANCH_NAME"/>
         <result property="branchCode" column="BRANCH_CODE"/>
+        <result property="deptName" column="DEPT_NAME"/>
+        <result property="activity" column="ACTIVITY"/>
         <collection property="approvOrderDTOList" resultMap="orderResultMap"/>
     </resultMap>
     <resultMap id="orderResultMap" type="com.loung.semof.approval.dto.ApprovOrderDTO">
@@ -18,6 +18,7 @@
         <result property="lineNo" column="LINE_NO"/>
         <result property="empNo" column="EMP_NO"/>
         <result property="empName" column="EMP_NAME"/>
+        <result property="jobName" column="JOB_NAME"/>
     </resultMap>
 
     <resultMap type="com.loung.semof.approval.dto.ApprovalDTO" id="approveResultMap">
@@ -25,10 +26,10 @@
         <result property="approvTitle" column="APPROV_TITLE"/>
         <result property="approvDate" column="APPROV_DATE"/>
         <result property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
         <result property="lineNo" column="LINE_NO"/>
 <!--        <collection property="ApprovFileDTOList" resultMap="fileResultMap"/>-->
-        <collection property="ApprovContentDTOList" resultMap="contentResultMap"/>
-<!--        <collection property="ApprovStatusDTOList" resultMap="statusResultMap"/>-->
+        <collection property="approvContentDTOList" resultMap="contentResultMap"/>
     </resultMap>
 <!--    <resultMap id="fileResultMap" type="com.loung.semof.approval.dto.ApprovFileDTO">-->
 <!--        <id property="fileNo" column="FILE_NO"/>-->
@@ -40,15 +41,13 @@
     <resultMap id="contentResultMap" type="com.loung.semof.approval.dto.ApprovContentDTO">
         <id property="contentNo" column="CONTENT_NO"/>
         <result property="content" column="CONTENT"/>
-        <result property="formCode" column="FORM_CODE"/>
         <result property="approvNo" column="APPROV_NO"/>
+        <result property="formCode" column="FORM_CODE"/>
+        <result property="appCategory" column="APP_CATEGORY"/>
         <result property="formTitle" column="FORM_TITLE"/>
+
     </resultMap>
-<!--    <resultMap id="statusResultMap" type="com.loung.semof.approval.dto.ApprovStatusDTO">-->
-<!--        <id property="statusNo" column="STATUS_NO"/>-->
-<!--        <result property="status" column="STATUS"/>-->
-<!--        <result property="approvNo" column="APPROV_NO"/>-->
-<!--    </resultMap>-->
+
 
     <!--    결재라인-->
     <!--    결재라인 추가-->
@@ -57,13 +56,11 @@
         (
          LINE_NAME
          ,BRANCH_CODE
-        , EMP_NO
         )
         VALUES
             (
              #{ lineName }
             , #{ branchCode }
-            , 3
             )
     </insert>
     <!--    결재라인 순서 등록-->
@@ -79,7 +76,7 @@
                 )
     </insert>
 
-    <!--결재라인 조회-->
+
 <!--    <select id="selectApprovLineListWithPaging" resultType="ApprovLineDTO">-->
 <!--        SELECT-->
 <!--            A.*, B.*, te.*, tb.*-->
@@ -98,6 +95,8 @@
 <!--    , A.BRANCH_CODE-->
 <!--    , B.ORDER_NO-->
 <!--    , B.EMP_NO d-->
+
+    <!--결재라인 조회-->
 <select id="selectApprovLineListWithPaging" resultMap="lineResultMap">
     SELECT P.*
     FROM (SELECT
@@ -105,18 +104,18 @@
                , A.LINE_NAME
                , A.BRANCH_CODE
                , B.ORDER_NO
-               , B.EMP_NO
                 ,tb.BRANCH_NAME
-          , tee.EMP_NAME
+                , tee.EMP_NAME
+                , tj.JOB_NAME
     FROM TBL_APPROV_LINE A
     JOIN TBL_APPROV_ORDER B
     ON A.LINE_NO = B.LINE_NO
-    JOIN tbl_employee te
-    on A.EMP_NO = te.EMP_NO
     JOIN tbl_branch tb
     on tb.BRANCH_CODE = A.BRANCH_CODE
     JOIN tbl_employee tee
          on B.EMP_NO = tee.EMP_NO
+    JOIN tbl_job tj on tee.JOB_CODE = tj.JOB_CODE
+    WHERE A.ACTIVITY='y'
     ORDER BY A.LINE_NO
 
     ) P
@@ -128,15 +127,21 @@
 <!--결재라인 수정 페이지를 위한 라인 상세조회-->
     <select id="selectLineDetail" resultMap="lineResultMap">
         SELECT
-            A.*, B.*, te.*
+            A.*
+             , B.*
+             , tee.*
+             , tb.*, td.*
         FROM TBL_APPROV_LINE A
                  JOIN TBL_APPROV_ORDER B
                       ON A.LINE_NO = B.LINE_NO
-                 JOIN tbl_employee te
-                      on A.EMP_NO = te.EMP_NO
                  JOIN tbl_employee tee
                       on B.EMP_NO = tee.EMP_NO
+                JOIN tbl_branch tb
+                    on tb.BRANCH_CODE = A.BRANCH_CODE
+                JOIN tbl_department td
+                    on td.DEPT_CODE = tee.DEPT_CODE
         WHERE A.LINE_NO = #{lineNo}
+        AND A.ACTIVITY='y'
         ORDER BY A.LINE_NO
     </select>
 <!--   A.LINE_NO
@@ -152,11 +157,11 @@
         FROM TBL_APPROV_LINE A
                  JOIN TBL_APPROV_ORDER B
                       ON A.LINE_NO = B.LINE_NO
-                 JOIN tbl_employee te
-                      on A.EMP_NO = te.EMP_NO
                 JOIN tbl_employee tee
                     on B.EMP_NO = tee.EMP_NO
+        WHERE A.ACTIVITY='y'
         ORDER BY A.LINE_NO
+
     </select>
 
     <!--  등록된 결재라인 수 -->
@@ -164,16 +169,15 @@
         SELECT
             count(*)
         FROM tbl_approv_line
-
+        WHERE ACTIVITY='y'
     </select>
 
     <!--    결재라인수정-->
     <update id="updateApprovLine" parameterType="ApprovLineDTO">
         UPDATE TBL_APPROV_LINE
         SET
-            LINE_NANE = #{lineName}
+            LINE_NAME  = #{lineName}
           , BRANCH_CODE = #{branchCode}
-          , EMP_NO = #{empNo}
         WHERE LINE_NO=#{lineNo}
     </update>
     <!--    결재순서수정-->
@@ -186,11 +190,12 @@
     </update>
 
     <!--    결재라인 삭제-->
-    <delete id="deleteApprovLine" parameterType="ApprovLineDTO">
-        DELETE
-        FROM TBL_APPROV_LINE
+    <update id="deleteApprovLine" parameterType="ApprovLineDTO">
+        UPDATE TBL_APPROV_LINE
+        SET
+            ACTIVITY = 'n'
         WHERE LINE_NO=#{lineNo}
-    </delete>
+    </update>
 
     <!--    결재문서-->
     <!--    결재상신-->
@@ -243,45 +248,84 @@
 
 
     <!--    결재상신함-->
-    <select id="selectApprovalInWithPaging" resultMap="approveResultMap">
-        SELECT P.APP_CATEGORY
-             , P.APPROV_TITLE
-             , LAST_VALUE(P.STATUS) OVER (
-        RANGE BETWEEN
-            	UNBOUNDED PRECEDING AND
-            	UNBOUNDED FOLLOWING
-	) STATUS
-             , P.APPROV_DATE
-        FROM (SELECT D.APP_CATEGORY
-                   , A.APPROV_TITLE
-                   , C.STATUS
-                   , A.APPROV_DATE
+<!--    <select id="selectApprovalInWithPaging" resultMap="approveResultMap">-->
+<!--        SELECT P.*-->
+<!--        FROM (SELECT D.APP_CATEGORY-->
+<!--                   , A.APPROV_TITLE-->
 
-                   ,F.EMP_NO
+<!--                   , A.APPROV_DATE-->
+
+<!--                   ,A.EMP_NO-->
 
 
-              FROM tbl_APPROVAL A
-                       JOIN tbl_approv_content B
-                            ON (A.APPROV_NO = B.APPROV_NO)
-                       JOIN tbl_APPROV_STATUS C
-                            ON (A.APPROV_NO = C.APPROV_NO)
-                       JOIN tbl_approv_category D
-                            ON (B.FORM_CODE = D.FORM_CODE)
-                        JOIN tbl_approv_line E
-                            ON (A.LINE_NO = E.LINE_NO)
-                       JOIN tbl_approv_order F
-                            ON (F.LINE_NO = E.LINE_NO)
-                       JOIN tbl_employee G
-                            ON (G.EMP_NO = A.EMP_NO)
+<!--              FROM tbl_APPROVAL A-->
+<!--                       JOIN tbl_approv_content B-->
+<!--                            ON (A.APPROV_NO = B.APPROV_NO)-->
 
-             ) P
-        WHERE P.EMP_NO = 2
+<!--                       JOIN tbl_approv_category D-->
+<!--                            ON (B.FORM_CODE = D.FORM_CODE)-->
+<!--                        JOIN tbl_approv_line E-->
+<!--                            ON (A.LINE_NO = E.LINE_NO)-->
+<!--                       JOIN tbl_approv_order F-->
+<!--                            ON (F.LINE_NO = E.LINE_NO)-->
+<!--                       JOIN tbl_employee G-->
+<!--                            ON (G.EMP_NO = A.EMP_NO)-->
+<!--                        WHERE A.EMP_NO =2-->
+<!--             ) P-->
+
+
+<!--            LIMIT #{ startRow }-->
+<!--            , #{limit}-->
+<!--    </select>-->
+    <select id="selectApprovalInWithPaging" resultType="ApprovalDTO">
+        SELECT P.*
+        FROM (SELECT
+                    *
+              FROM tbl_APPROVAL
+              WHERE EMP_NO = 2
+        ) P
 
             LIMIT #{ startRow }
-            , #{limit}
+           , #{endRow}
     </select>
-
-
+<!--    <if test="status = '승인'">-->
+<!--        WHERE-->
+<!--    </if>-->
+    <select id ="selectApprovalOutWithPaging" resultMap="approveResultMap">
+        SELECT P.*
+        FROM (SELECT
+                  APPROV_NO
+                   , APPROV_TITLE
+                   , APPROV_DATE
+                    , te.EMP_NAME
+              FROM tbl_APPROVAL
+              JOIN tbl_approv_line tal
+                  on tal.LINE_NO = tbl_approval.LINE_NO
+            JOIN tbl_employee te on te.EMP_NO = tbl_approval.EMP_NO
+              JOIN tbl_approv_order tao
+                  on tal.LINE_NO = tao.LINE_NO
+              WHERE tao.EMP_NO = 17
+        ) P
+            LIMIT #{ startRow }
+           , #{endRow}
+    </select>
+<!--    <select id="selectFinApprovalInWithPaging" resultType="approvalDTO">-->
+<!--        SELECT P.*-->
+<!--        FROM (SELECT-->
+<!--        APPROV_NO-->
+<!--        , APPROV_TITLE-->
+<!--        , APPROV_DATE-->
+<!--        FROM tbl_APPROVAL-->
+<!--        JOIN-->
+<!--        WHERE EMP_NO = #{empNo}-->
+<!--        ) P-->
+<!--        LIMIT #{ startRow }-->
+<!--        , #{endRow}-->
+<!--    </select>-->
+<!--    , C.STATUS-->
+<!--    JOIN tbl_APPROV_STATUS C-->
+<!--    ON (A.APPROV_NO = C.APPROV_NO)-->
+<!--    &#45;&#45;         WHERE P.EMP_NO = 2-->
 <!--    완료된 결재상신-->
 <!--    <select id="selectFinApprovalInWithPaging" resultType="ApprovalDTO">-->
 <!--        SELECT P.APP_CATEGORY-->
@@ -389,20 +433,25 @@
         SELECT
             count(*)
         FROM tbl_approval
+        WHERE EMP_NO=2
     </select>
-
+    <select id="selectApprovOutTotal" resultType="int">
+        SELECT
+            count(*)
+        FROM tbl_approval
+        JOIN tbl_approv_line tal on tal.LINE_NO = tbl_approval.LINE_NO
+        JOIN tbl_approv_order tao on tal.LINE_NO = tao.LINE_NO
+        WHERE tao.EMP_NO=17
+    </select>
     <!--    상신은 empNo로 수신은 수신도? 보여지는게 다르니까 나누자-->
     <!--    결재상세조회 -->
-    <select id="selectApproval" resultType="ApprovalDTO">
+    <select id="selectApproval" resultMap="approveResultMap">
         SELECT
-            A.*, B.*, C.*, D.*
+            A.*, B.*, tac.*
         FROM TBL_APPROVal A
                  JOIN TBL_APPROV_CONTENT B
                       ON A.APPROV_NO = B.APPROV_NO
-                 JOIN TBL_APPROV_FILE C
-                      ON A.APPROV_NO = C.APPROV_NO
-                 JOIN TBL_APPROV_CATEGORY D
-                      ON B.FORM_CODE = D.FORM_CODE
+                JOIN tbl_approv_category tac on tac.FORM_CODE = B.FORM_CODE
         WHERE A.APPROV_NO = #{approvNo}
     </select>
 
@@ -476,12 +525,22 @@
     <!--    결재처리-->
     <update id="updateStatus" parameterType="ApprovStatusDTO">
         UPDATE TBL_APPROV_STATUS
-        SET
-            STATUS_CODE = #{statusCode}
-          , STATUS_NAME = #{statusName}
-        WHERE ORDER_NO = #{orderNo}
-          AND APPROV_NO = #{approvNo}
+        SET STATUS = #{status}
+        WHERE APPROV_NO = #{approvNo}
+          AND STATUS_NO = (
+            SELECT MAX(s.STATUS_NO)
+            FROM TBL_APPROVAL AS a
+                     INNER JOIN TBL_approv_LINE AS l ON l.LINE_NO = a.LINE_NO
+                     INNER JOIN TBL_approv_ORDER AS o ON o.LINE_NO = l.LINE_NO
+                     INNER JOIN TBL_APPROV_STATUS AS s ON s.APPROV_NO = a.APPROV_NO
+            WHERE a.APPROV_NO = #{approvNo}
+            ORDER BY s.STATUS_NO DESC
+            LIMIT 1
+            );
+
     </update>
+<!--    처리한것도 상태가 하나만나오면 안되는거 아님??-->
+<!--    아니 의견 조회는 되야하는거 아님? ㅋㅋㅋ-->
     <!--    결재의견작성-->
     <insert id="insertOpinion" parameterType="ApprovOpinDTO">
         INSERT INTO TBL_APPROV_opinion
@@ -501,24 +560,39 @@
 <!--    최종 상태값을 받아오는 쿼리-->
     <select id="selectLatestStatus" resultType="String">
         SELECT
-            C.STATUS
-        FROM tbl_approv_status C
-        WHERE ORDER_NO =
-              (
-                  SELECT
-                      MAX(A.ORDER_NO)
-                  FROM TBL_APPROV_ORDER A
-                           JOIN TBL_APPROV_LINE B
-                            ON A.LINE_NO = B.LINE_NO
-                  WHERE A.LINE_NO = #{lineNo}
-              )
+            STATUS
+        FROM TBL_APPROV_STATUS
+        WHERE STATUS_NO = (SELECT MAX(A.STATUS_NO)
+                           FROM TBL_APPROV_STATUS A
+                               JOIN tbl_approval B
+                               ON A.APPROV_NO = B.APPROV_NO
+                           WHERE B.APPROV_NO =#{approvNo}
+                           )
     </select>
+    <select id="selectStatus" resultType="ApprovStatusDTO">
+        SELECT
+            STATUS
+        FROM TBL_APPROV_STATUS A
+            JOIN tbl_approval B
+                ON A.APPROV_NO = B.APPROV_NO
+        WHERE B.APPROV_NO =#{approvNo}
 
+    </select>
 <!--    form title을 받아오는 쿼리 이게 이렇게 해도 되나...-->
     <select id="selectFormTitle" resultType="ApprovCategoryDTO">
         SELECT
             *
         FROM tbl_approv_category
+    </select>
+<!--    이거 컬럼 몇개 출려되는지 궁금하다-->
+    <select id="selectCategory" resultType="String">
+        SELECT
+            A.APP_CATEGORY
+        FROM tbl_approv_category A
+        JOIN tbl_approv_content tac on A.FORM_CODE = tac.FORM_CODE
+        JOIN tbl_approval ta on ta.APPROV_NO = tac.APPROV_NO
+        WHERE ta.APPROV_NO = #{approvNo}
+limit 1
     </select>
 <!--    이번엔 부서명을 받아오는 메소드를 짤것-->
     <select id="selectBranch" resultType="BranchDto">
@@ -564,9 +638,9 @@
 <!--        VALUES (?, ?, ?), (?, ?, ?), (?, ?, ?)-->
 <!--    </insert>-->
 
-    <insert id="insertLine" parameterType="ApprovLineDTO">
-        INSERT INTO tbl_approv_line (LINE_NAME, EMP_NO, BRANCH_CODE)
-        VALUES
-            (#{lineName},3,#{branchCode})
-    </insert>
+<!--    <insert id="insertLine" parameterType="ApprovLineDTO">-->
+<!--        INSERT INTO tbl_approv_line (LINE_NAME, EMP_NO, BRANCH_CODE)-->
+<!--        VALUES-->
+<!--            (#{lineName},3,#{branchCode})-->
+<!--    </insert>-->
 </mapper>
