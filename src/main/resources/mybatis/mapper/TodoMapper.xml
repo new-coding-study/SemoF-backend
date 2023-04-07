@@ -28,7 +28,6 @@
 
     <select id="selectTodayTodoList" resultType="TodoDto">
         <![CDATA[
-
             SELECT
                 A.*
                 ,B.*
@@ -37,7 +36,7 @@
                 JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
             WHERE B.EMP_NO = #{empNo}
             AND TODO_DATE = DATE(NOW())
-            ORDER BY TODO_DATE, TODO_TIME
+            ORDER BY TODO_FINISH, TODO_DATE, TODO_TIME, TODO_STAR DESC
         ]]>
     </select>
 
@@ -51,7 +50,7 @@
                  JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
         WHERE B.EMP_NO = #{empNo}
           AND TODO_DATE > DATE(NOW())
-        ORDER BY TODO_DATE, TODO_TIME
+        ORDER BY TODO_FINISH, TODO_DATE, TODO_TIME, TODO_STAR DESC
         ]]>
     </select>
 
@@ -77,9 +76,10 @@
                 FROM tbl_todo A
                          JOIN tbl_todo_category B ON A.CATE_NO = B.CATE_NO
                          JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
-                WHERE A.TODO_NAME LIKE CONCAT('%',#{searchWord},'%')
+                WHERE A.TODO_NAME LIKE CONCAT('%', #{searchWord}, '%')
                   AND B.EMP_NO = #{empNo}
             ) AS A
+        ORDER BY A.TODO_DATE, A.TODO_TIME, A.TODO_STAR DESC
     </select>
 
     <select id="selectCategoryList" parameterType="java.lang.Long" resultType="TodoDto">
@@ -123,8 +123,6 @@
             TODO_NAME
         ,TODO_DATE
         ,TODO_TIME
-        ,TODO_CONTENT
-        ,TODO_FINISH
         ,TODO_STAR
         ,CATE_NO
         )
@@ -133,8 +131,6 @@
                 #{todoName}
             ,#{todoDate}
             ,#{todoTime}
-            ,#{todoContent}
-            ,#{todoFinish}
             ,#{todoStar}
             ,#{cateNo}
             )
@@ -146,9 +142,9 @@
           ,TODO_DATE = #{todoDate}
           ,TODO_TIME = #{todoTime}
           ,TODO_CONTENT = #{todoContent}
-          ,TODO_FINISH = #{todoFinish}
           ,TODO_STAR = #{todoStar}
-          ,CATE_NO = #{todoName}
+          ,TODO_FINISH = #{todoFinish}
+          ,CATE_NO = #{cateNo}
         WHERE TODO_NO = #{todoNo}
     </update>
 
@@ -169,6 +165,18 @@
     <update id="updateStar" parameterType="java.lang.Long">
         UPDATE tbl_todo
         SET TODO_STAR = #{changeStar}
+        WHERE TODO_NO = #{todoNo}
+    </update>
+
+    <select id="checkFinish" resultType="_int">
+        SELECT TODO_FINISH
+        FROM tbl_todo
+        WHERE TODO_NO = #{todoNo}
+    </select>
+
+    <update id="updateFinish" parameterType="java.lang.Long">
+        UPDATE tbl_todo
+        SET TODO_FINISH = #{changeFinish}
         WHERE TODO_NO = #{todoNo}
     </update>
 

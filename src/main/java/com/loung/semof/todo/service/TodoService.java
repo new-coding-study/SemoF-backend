@@ -46,6 +46,11 @@ public class TodoService {
 
     public List<TodoDto> selectSearchTodo(String searchWord, String empNo) {
 
+        System.out.println(searchWord);
+        System.out.println(empNo);
+
+        System.out.println(todoMapper.selectSearchTodo(searchWord, empNo));
+
         return todoMapper.selectSearchTodo(searchWord, empNo);
 
     }
@@ -96,7 +101,9 @@ public class TodoService {
 
     public String insertTodo(TodoDto todoDto) throws SQLException {
 
-        if (todoDto.getTodoDate() == null) {
+        System.out.println("Service 호출");
+
+        if (todoDto.getTodoDate() == null || todoDto.getTodoDate().length() == 0) {
 
             LocalDateTime now = LocalDateTime.now();
             // 포맷 정의
@@ -105,8 +112,8 @@ public class TodoService {
             todoDto.setTodoDate((now.format(formatter)));
         }
 
-        if (todoDto.getTodoTime() == null) {
-            todoDto.setTodoTime(("18:00:00"));
+        if (todoDto.getTodoTime() == null || todoDto.getTodoTime().length() == 0) {
+            todoDto.setTodoTime(("23:00:00"));
         }
 
         int result = todoMapper.insertTodo(todoDto);
@@ -140,13 +147,13 @@ public class TodoService {
         return "할 일 삭제 성공";
     }
 
-    public String updateStar(Long todoNo) throws SQLException {
+    public String updateStar(Long todoNo, Long changeStar) throws SQLException {
 
-        int todoStar = todoMapper.checkStar(todoNo);
-        System.out.println("todoStar" + todoStar);
-
-        Long changeStar = (long) (todoStar == 0 ? 1: 0);
-        System.out.println("changeStar" + changeStar);
+//        int todoStar = todoMapper.checkStar(todoNo);
+//        System.out.println("todoStar" + todoStar);
+//
+//        Long changeStar = (long) (todoStar == 0 ? 1: 0);
+//        System.out.println("changeStar" + changeStar);
 
         int result = todoMapper.updateStar(todoNo, changeStar);
 
@@ -156,6 +163,24 @@ public class TodoService {
         }
 
         return "중요 표시 변경 성공";
+    }
+
+    public String updateFinish(Long todoNo, Long changeFinish) throws SQLException {
+
+//        int todoFinish = todoMapper.checkFinish(todoNo);
+//        System.out.println("todoFinish" + todoFinish);
+//
+//        Long changeFinish = (long) (todoFinish == 0 ? 1: 0);
+//        System.out.println("changeFinish" + changeFinish);
+
+        int result = todoMapper.updateFinish(todoNo, changeFinish);
+
+        if (result != 1) {
+            throw new SQLException("완료 여부 표시 변경 실패");
+
+        }
+
+        return "완료 여부 표시 변경 성공";
     }
 
 
