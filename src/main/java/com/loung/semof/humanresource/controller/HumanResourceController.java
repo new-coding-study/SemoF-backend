@@ -269,6 +269,29 @@ public class HumanResourceController {
     }
 
     /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 이번달이 생일인 사원의 수를 조회하는 메소드
+     */
+    @GetMapping("/birthday/count")
+    public ResponseEntity<ResponseDto> selectBirthEmpCount() {
+        try {
+            int totalCount = humanResourceService.selectBirthEmpCount();
+
+            log.info("[HumanResourceController] totalCount: " + totalCount);
+
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "조회 성공", totalCount));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
+    /**
      * @작성일 : 2023-03-23
      * @작성자 : 이현도
      * @메소드설명 : 조직도를 위한 조건 검색 메소드
@@ -348,6 +371,54 @@ public class HumanResourceController {
 
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto(HttpStatus.NOT_FOUND, "조회 실패", null));
+        }
+    }
+
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 출근자를 조회하는 메소드
+     */
+    @GetMapping("/attendance/today")
+    public ResponseEntity<ResponseDto> selectTodayAttendanceList() {
+
+        try {
+            int todayAttendance  =  humanResourceService.selectTodayAttendanceList();
+
+            log.info("[HumanResourceController] totalCount: " + todayAttendance );
+
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "조회 성공", todayAttendance ));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 휴가자를 조회하는 메소드
+     */
+    @GetMapping("/vacation")
+    public ResponseEntity<ResponseDto> selectVacationCount() {
+
+        try {
+            int vacationCount = humanResourceService.selectVacationCount();
+
+            log.info("[HumanResourceController] totalCount: " + vacationCount);
+
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "조회 성공", vacationCount));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
         }
     }
 }

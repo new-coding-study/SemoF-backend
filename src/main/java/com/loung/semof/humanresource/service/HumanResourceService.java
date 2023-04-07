@@ -428,4 +428,70 @@ public class HumanResourceService {
 
         return humanResourceMapper.selectEmployeePhotoByEmpNo(empNo);
     }
+
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 생일자 수를 조회하는 비즈니스 로직
+     */
+    public int selectBirthEmpCount() throws SQLException {
+
+        LocalDate now = LocalDate.now();    // 이번 달 날짜 정보 추출
+
+        log.info("[HumanResourceService] LocalDate :" + now);
+
+        int monthValue = now.getMonthValue();
+
+        log.info("[HumanResourceService] MonthValue :" + monthValue);
+
+        int totalCount = 0;
+
+        try {
+            totalCount =  humanResourceMapper.selectBirthEmpCount(monthValue);
+
+            log.info("[HumanResourceService] totalCount :" + totalCount);
+
+        } catch (Exception e) {
+            throw new SQLException("전체 직원 수를 조회하지 못했습니다.", e);
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 오늘의 출근자를 조회하는 비즈니스 로직
+     */
+    public int selectTodayAttendanceList() throws SQLException {
+
+        LocalDate today = LocalDate.now();
+
+        int todayAttendance  = 0;
+
+        try {
+            todayAttendance  =  humanResourceMapper.selectTodayAttendanceList(today);
+
+            log.info("[HumanResourceService] totalCount :" + todayAttendance );
+
+        } catch (Exception e) {
+            throw new SQLException("출근 직원 수를 조회하지 못했습니다.", e);
+        }
+
+        return todayAttendance ;
+    }
+
+    public int selectVacationCount() throws SQLException {
+        int vacationCount  = 0;
+
+        try {
+            vacationCount  =  humanResourceMapper.selectVacationCount();
+
+            log.info("[HumanResourceService] totalCount :" + vacationCount );
+
+        } catch (Exception e) {
+            throw new SQLException("휴가자 수를 조회하지 못했습니다.", e);
+        }
+        return vacationCount ;
+    }
 }
