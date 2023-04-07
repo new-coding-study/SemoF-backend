@@ -34,7 +34,7 @@ public interface HumanResourceMapper {
 
     List<HumanResourceDto> SelectEmployeesForChart(String empName, String deptName, String branchName);
 
-    List<EmployeeDto> selectEmployeeByEmpNo(Long empNo);
+    List<HumanResourceDto> selectEmployeeByEmpNo(Long empNo);
 
     void insertEmployeePhoto(EmployeePhotoDto employeePhotoDto);
 
