@@ -143,6 +143,7 @@
           ,TODO_TIME = #{todoTime}
           ,TODO_CONTENT = #{todoContent}
           ,TODO_STAR = #{todoStar}
+          ,TODO_FINISH = #{todoFinish}
           ,CATE_NO = #{cateNo}
         WHERE TODO_NO = #{todoNo}
     </update>
