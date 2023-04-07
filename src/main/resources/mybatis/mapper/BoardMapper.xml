@@ -383,7 +383,7 @@
                  #{boardTitle}
                , #{boardContent}
                , #{boardCateCode}
-               , (SELECT EMP_NO FROM tbl_employee WHERE tbl_employee.EMP_NO= #{empNo})
+               , #{empNo}
                 )
     </insert>
 
