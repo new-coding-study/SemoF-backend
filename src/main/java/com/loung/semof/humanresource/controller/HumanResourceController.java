@@ -8,6 +8,7 @@ import com.loung.semof.common.paging.Pagenation;
 import com.loung.semof.common.paging.ResponseDtoWithPaging;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.humanresource.Exception.NotFoundException;
+import com.loung.semof.humanresource.dto.EmployeePhotoDto;
 import com.loung.semof.humanresource.dto.HumanResourceDto;
 import com.loung.semof.humanresource.service.HumanResourceService;
 import com.loung.semof.todo.service.TodoService;
@@ -335,5 +336,18 @@ public class HumanResourceController {
     public ResponseEntity<List<BranchDto>> selectBranches() {
         List<BranchDto> branches = humanResourceService.selectBranches();
         return ResponseEntity.ok(branches);
+    }
+
+    @GetMapping("/present/photo/{empNo}")
+    public ResponseEntity<ResponseDto> selectEmpPhotoByEmpNo(@PathVariable("empNo") Long empNo) {
+
+        EmployeePhotoDto employee = humanResourceService.selectEmployeePhotoByEmpNo(empNo);
+
+        if (employee != null) {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", employee));
+
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ResponseDto(HttpStatus.NOT_FOUND, "조회 실패", null));
+        }
     }
 }

@@ -157,7 +157,6 @@ public class HumanResourceService {
     public EmployeeDto insertEmployee(EmployeeDto employeeDto) throws SQLException {
         log.info("[EmployeeService] insertEmployee Start ===================================");
 
-
         try {
             employeeMapper.insertEmployee(employeeDto);
 
@@ -423,5 +422,10 @@ public class HumanResourceService {
                 .map(BranchOrderDto::getBranchDto)
                 .collect(Collectors.toList());
         return branch;
+    }
+
+    public EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo) {
+
+        return humanResourceMapper.selectEmployeePhotoByEmpNo(empNo);
     }
 }

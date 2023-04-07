@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -41,17 +42,19 @@ public class SecurityConfig  {
     }
 
 //    @Bean
-//    public void configure(WebSecurity web) throws Exception {
-//        web
-//                // 외부에서 이미지 파일에 접근 가능 하도록 설정
-//                .ignoring()
+    public void configure(WebSecurity web) throws Exception {
+        web
+                // 외부에서 이미지 파일에 접근 가능 하도록 설정
+                .ignoring()
 //                .antMatchers("/productimgs/**");
-//
-//    }
+              .antMatchers("/employeephotos/**");
+
+    }
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
-                .antMatchers("/productimgs/**");
+//                .antMatchers("/productimgs/**");
+                .antMatchers("/employeephotos/**");
     }
 
     @Bean
