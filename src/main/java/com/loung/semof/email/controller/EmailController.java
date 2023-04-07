@@ -247,6 +247,11 @@ public class EmailController {
         }
     }
 
+    /**
+     * @작성일 : 2023-04-06
+     * @작성자 : 이현도
+     * @메소드설명 :  상태를 바꿔서 휴지통으로 이동시키는 메소드
+     */
     @PutMapping("/{mailNo}/{category}")
     public ResponseEntity<ResponseDto> updateToTrash(@PathVariable Long mailNo, @PathVariable String category) {
 

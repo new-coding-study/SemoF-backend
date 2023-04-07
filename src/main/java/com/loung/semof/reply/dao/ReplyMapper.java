@@ -8,23 +8,15 @@ import java.util.List;
 
 @Mapper
 public interface ReplyMapper {
-    int selectReplyTotal();
+    int selectReplyTotal(int boardNo);
     List<ReplyDto> selectReplyWithPaging(SelectCriteria selectCriteria, int boardNo);
-
-//    int insertReply(String replyContent,int boardNo, int empNo);
-//    int updateReplyForAdmin(ReplyDto replyDto);
-//    int updateReply(ReplyDto replyDto, int empNo, int boardNo, int replyCode);
-//    int deleteForAdmin(ReplyDto replyDto, int replyCode, int boardNo);
-//    int deleteForEmp(ReplyDto replyDto, int empNo, int boardNo, int replyCode);
-
-    ReplyDto selectReply(int boardNo);
-
     int insertReply(ReplyDto replyDto);
+    int deleteForAdmin(int boardNo, int replyCode);
 
-    int deleteForAdmin(ReplyDto replyDto);
+//    int deleteForEmp(ReplyDto replyDto);
 
-    int deleteForEmp(ReplyDto replyDto);
+//    int updateReply(ReplyDto replyDto);
 
-    int updateReply(ReplyDto replyDto);
+    int deleteForEmp(int empNo, int replyCode);
 //
 }

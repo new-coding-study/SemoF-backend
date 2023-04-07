@@ -104,10 +104,10 @@
     <!-- SELECT 쿼리 - 페이지네이션 포함 : 사원 전체 조회 -->
     <select id="selectEmployeeListWithPaging" parameterType="HumanResourceDto" resultMap="employeesResultExtend">
         SELECT DISTINCT
-            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
-            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
-            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
-            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+            ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+            ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+            ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM  (SELECT *
                FROM tbl_employee
                WHERE WORK_STATUS = 'Y'
@@ -130,10 +130,10 @@
     <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
     <select id="selectEmployees"  resultMap="employeesResultExtend">
         SELECT DISTINCT
-            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
-            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
-            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
-            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+            ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+            ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+            ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM  (SELECT *
                FROM tbl_employee
                WHERE WORK_STATUS = 'Y'
@@ -172,10 +172,10 @@
     <!-- SELECT 쿼리 : 해당 조건을 만족하는 사원 조회 -->
     <select id="SelectEmployeesForChart"  resultMap="employeesResultExtend">
         SELECT
-            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE,
-            E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE,
-            E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME,
-            E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+            ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+            ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+            ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM tbl_employee E
             JOIN tbl_job J ON E.job_code = J.job_code
             JOIN tbl_department D ON E.dept_code = D.dept_code
@@ -194,18 +194,23 @@
     </select>
 
     <!-- SELECT 쿼리 : 사원 번호로 사원 조회  -->
-    <select id="selectEmployeeByEmpNo"  resultType="EmployeeDto">
+    <select id="selectEmployeeByEmpNo"  resultType="HumanResourceDto">
         SELECT
-        *
-        FROM tbl_employee
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE, E.EMP_REG
+            ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+            ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+            ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                 JOIN tbl_job J ON E.job_code = J.job_code
+                 JOIN tbl_department D ON E.dept_code = D.dept_code
+                 JOIN tbl_branch B ON E.branch_code = B.branch_code
         WHERE EMP_NO = #{empNo}
         AND WORK_STATUS = 'Y'
     </select>
 
     <!-- SELECT 쿼리 : 사원 번호로 사원 조회  -->
     <select id="selectEmployeeByGender"  resultType="EmployeeDto">
-        SELECT
-            *
+        SELECT *
         FROM tbl_employee
         WHERE GENDER = #{gender}
         AND WORK_STATUS = 'Y'
@@ -221,8 +226,7 @@
 
     <!-- SELECT 쿼리 : 사원 번호로 사원 사진 조회  -->
     <select id="selectEmployeePhotoByEmpNo" parameterType="long" resultMap="employeePhotoResult">
-        SELECT
-            *
+        SELECT *
         FROM tbl_employee_photo
         WHERE EMP_NO = #{empNo}
     </select>
@@ -250,4 +254,26 @@
         WHERE e.EMP_NO = #{empNo}
           AND do.ORDER_DATE BETWEEN #{startDate} AND #{endDate}
     </select>
+
+    <!-- SELECT 쿼리 : 생일자 수를 조회 -->
+    <select id="selectBirthEmpCount" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_employee
+        WHERE WORK_STATUS = 'Y'
+          AND MONTH(STR_TO_DATE(CONCAT('19', SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%Y-%m-%d')) = #{monthValue}
+    </select>
+
+    <!-- SELECT 쿼리 : 오늘의 출근자 수를 조회 -->
+    <select id="selectTodayAttendanceList" resultType="int">
+        SELECT COUNT(DISTINCT ATD_NO) AS todayAtd
+        FROM tbl_attendance
+        WHERE DATE_FORMAT(ATD_DATE, '%Y-%m-%d') = CURDATE();
+    </select>
+
+    <select id="selectVacationCount" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_employee e
+                 JOIN tbl_emp_vacation_info v ON e.EMP_NO = v.EMP_NO
+    </select>
+
 </mapper>
