@@ -1,10 +1,8 @@
 package com.loung.semof.email.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.loung.semof.common.dto.EmployeeDto;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,13 +15,14 @@ import java.util.List;
  * @작성자 : 이현도
  * @클래스설명 : 모델(Model)과 뷰(View) 사이에서 데이터 전송을 담당하는 클래스
  */
+@ToString
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class SendEmailDto extends EmailAttachDto {
-    public SendEmailDto(Long emailFileNo, String originName, String changeName, String filePath, LocalDateTime uploadDate, Long mailNo, Long empNo, Long emailFileNo1, String receiverAddr, String senderName, String senderAddr, String title, String content, LocalDateTime sendDate, String tempStatus, List<EmailAttachDto> emailAttachDtoList) {
-        super(emailFileNo, originName, changeName, filePath, uploadDate);
+
+    public SendEmailDto(Long emailFileNo, String originName, String changeName, String filePath, LocalDateTime uploadDate, byte[] fileData, Long mailNo, Long empNo, Long emailFileNo1, String receiverAddr, String senderName, String senderAddr, String title, String content, LocalDateTime sendDate, String tempStatus, List<EmailAttachDto> emailAttachDtoList, String status, String category) {
+        super(emailFileNo, originName, changeName, filePath, uploadDate, fileData);
         this.mailNo = mailNo;
         this.empNo = empNo;
         this.emailFileNo = emailFileNo1;
@@ -35,6 +34,24 @@ public class SendEmailDto extends EmailAttachDto {
         this.sendDate = sendDate;
         this.tempStatus = tempStatus;
         this.emailAttachDtoList = emailAttachDtoList;
+        this.status = status;
+        this.category = category;
+    }
+
+    public SendEmailDto(Long mailNo, Long empNo, Long emailFileNo, String receiverAddr, String senderName, String senderAddr, String title, String content, LocalDateTime sendDate, String tempStatus, List<EmailAttachDto> emailAttachDtoList, String status, String category) {
+        this.mailNo = mailNo;
+        this.empNo = empNo;
+        this.emailFileNo = emailFileNo;
+        this.receiverAddr = receiverAddr;
+        this.senderName = senderName;
+        this.senderAddr = senderAddr;
+        this.title = title;
+        this.content = content;
+        this.sendDate = sendDate;
+        this.tempStatus = tempStatus;
+        this.emailAttachDtoList = emailAttachDtoList;
+        this.status = status;
+        this.category = category;
     }
 
     private Long mailNo;    //이메일번호
@@ -45,10 +62,12 @@ public class SendEmailDto extends EmailAttachDto {
     private String senderAddr; // 발신자 이메일주소
     private String title;   //이메일제목
     private String content; //이메일내용
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd HH:mm:ss", timezone="Asia/Seoul")
     private LocalDateTime sendDate; //이메일발송날짜
     private String tempStatus;  //임시저장여부
     private List<EmailAttachDto> emailAttachDtoList; // 첨부파일 리스트
     private String status;  //삭제 여부
+    private String category; //이메일카테고리
 
     // emailAttachDtoList 필드의 getter, setter
     public List<EmailAttachDto> getEmailAttachDtoList() {

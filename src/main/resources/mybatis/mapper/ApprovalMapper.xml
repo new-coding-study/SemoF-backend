@@ -9,6 +9,7 @@
         <result property="lineName" column="LINE_NAME"/>
         <result property="empName" column="EMP_NAME"/>
         <result property="empNo" column="EMP_NO"/>
+        <result property="branchName" column="BRANCH_NAME"/>
         <result property="branchCode" column="BRANCH_CODE"/>
         <collection property="approvOrderDTOList" resultMap="orderResultMap"/>
     </resultMap>
@@ -16,6 +17,7 @@
         <id property="orderNo" column="ORDER_NO"/>
         <result property="lineNo" column="LINE_NO"/>
         <result property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
     </resultMap>
 
     <resultMap type="com.loung.semof.approval.dto.ApprovalDTO" id="approveResultMap">
@@ -24,17 +26,17 @@
         <result property="approvDate" column="APPROV_DATE"/>
         <result property="empNo" column="EMP_NO"/>
         <result property="lineNo" column="LINE_NO"/>
-        <collection property="ApprovFileDTOList" resultMap="fileResultMap"/>
+<!--        <collection property="ApprovFileDTOList" resultMap="fileResultMap"/>-->
         <collection property="ApprovContentDTOList" resultMap="contentResultMap"/>
-        <collection property="ApprovStatusDTOList" resultMap="statusResultMap"/>
+<!--        <collection property="ApprovStatusDTOList" resultMap="statusResultMap"/>-->
     </resultMap>
-    <resultMap id="fileResultMap" type="com.loung.semof.approval.dto.ApprovFileDTO">
-        <id property="fileNo" column="FILE_NO"/>
-        <result property="originName" column="ORIGIN_NAME"/>
-        <result property="newName" column="NEW_NAME"/>
-        <result property="filePath" column="FILE_PATH"/>
-        <result property="approvNo" column="APPROV_NO"/>
-    </resultMap>
+<!--    <resultMap id="fileResultMap" type="com.loung.semof.approval.dto.ApprovFileDTO">-->
+<!--        <id property="fileNo" column="FILE_NO"/>-->
+<!--        <result property="originName" column="ORIGIN_NAME"/>-->
+<!--        <result property="newName" column="NEW_NAME"/>-->
+<!--        <result property="filePath" column="FILE_PATH"/>-->
+<!--        <result property="approvNo" column="APPROV_NO"/>-->
+<!--    </resultMap>-->
     <resultMap id="contentResultMap" type="com.loung.semof.approval.dto.ApprovContentDTO">
         <id property="contentNo" column="CONTENT_NO"/>
         <result property="content" column="CONTENT"/>
@@ -42,11 +44,11 @@
         <result property="approvNo" column="APPROV_NO"/>
         <result property="formTitle" column="FORM_TITLE"/>
     </resultMap>
-    <resultMap id="statusResultMap" type="com.loung.semof.approval.dto.ApprovStatusDTO">
-        <id property="statusNo" column="STATUS_NO"/>
-        <result property="status" column="STATUS"/>
-        <result property="approvNo" column="APPROV_NO"/>
-    </resultMap>
+<!--    <resultMap id="statusResultMap" type="com.loung.semof.approval.dto.ApprovStatusDTO">-->
+<!--        <id property="statusNo" column="STATUS_NO"/>-->
+<!--        <result property="status" column="STATUS"/>-->
+<!--        <result property="approvNo" column="APPROV_NO"/>-->
+<!--    </resultMap>-->
 
     <!--    결재라인-->
     <!--    결재라인 추가-->
@@ -78,16 +80,82 @@
     </insert>
 
     <!--결재라인 조회-->
-    <select id="selectApprovLineListWithPaging" resultType="ApprovLineDTO">
+<!--    <select id="selectApprovLineListWithPaging" resultType="ApprovLineDTO">-->
+<!--        SELECT-->
+<!--            A.*, B.*, te.*, tb.*-->
+<!--        FROM TBL_APPROV_LINE A-->
+<!--        JOIN TBL_APPROV_ORDER B-->
+<!--        ON A.LINE_NO = B.LINE_NO-->
+<!--        JOIN tbl_employee te-->
+<!--             on A.EMP_NO = te.EMP_NO-->
+<!--        JOIN tbl_branch tb-->
+<!--             on tb.BRANCH_CODE = A.BRANCH_CODE-->
+<!--        ORDER BY A.LINE_NO-->
+<!--    </select>-->
+<!--    A.LINE_NO-->
+<!--    , A.LINE_NAME-->
+<!--    , A.EMP_NO c-->
+<!--    , A.BRANCH_CODE-->
+<!--    , B.ORDER_NO-->
+<!--    , B.EMP_NO d-->
+<select id="selectApprovLineListWithPaging" resultMap="lineResultMap">
+    SELECT P.*
+    FROM (SELECT
+              A.LINE_NO
+               , A.LINE_NAME
+               , A.BRANCH_CODE
+               , B.ORDER_NO
+               , B.EMP_NO
+                ,tb.BRANCH_NAME
+          , tee.EMP_NAME
+    FROM TBL_APPROV_LINE A
+    JOIN TBL_APPROV_ORDER B
+    ON A.LINE_NO = B.LINE_NO
+    JOIN tbl_employee te
+    on A.EMP_NO = te.EMP_NO
+    JOIN tbl_branch tb
+    on tb.BRANCH_CODE = A.BRANCH_CODE
+    JOIN tbl_employee tee
+         on B.EMP_NO = tee.EMP_NO
+    ORDER BY A.LINE_NO
+
+    ) P
+
+    LIMIT #{ startRow }
+    , #{endRow}
+    </select>
+
+<!--결재라인 수정 페이지를 위한 라인 상세조회-->
+    <select id="selectLineDetail" resultMap="lineResultMap">
         SELECT
-            A.*, B.*, te.*, tb.*
+            A.*, B.*, te.*
         FROM TBL_APPROV_LINE A
-        JOIN TBL_APPROV_ORDER B
-        ON A.LINE_NO = B.LINE_NO
-        JOIN tbl_employee te
-            on A.EMP_NO = te.EMP_NO
-        JOIN tbl_branch tb
-            on tb.BRANCH_CODE = A.BRANCH_CODE
+                 JOIN TBL_APPROV_ORDER B
+                      ON A.LINE_NO = B.LINE_NO
+                 JOIN tbl_employee te
+                      on A.EMP_NO = te.EMP_NO
+                 JOIN tbl_employee tee
+                      on B.EMP_NO = tee.EMP_NO
+        WHERE A.LINE_NO = #{lineNo}
+        ORDER BY A.LINE_NO
+    </select>
+<!--   A.LINE_NO
+             , A.LINE_NAME
+             , A.EMP_NO c
+             , A.BRANCH_CODE
+             , B.ORDER_NO
+             , B.EMP_NO d-->
+<!--    결재 등록 페이지를 위한 페이징 처리를 하지않은 결재 라인 목록조회-->
+    <select id="selectLineList" resultMap="lineResultMap">
+        SELECT
+         A.*, B.*
+        FROM TBL_APPROV_LINE A
+                 JOIN TBL_APPROV_ORDER B
+                      ON A.LINE_NO = B.LINE_NO
+                 JOIN tbl_employee te
+                      on A.EMP_NO = te.EMP_NO
+                JOIN tbl_employee tee
+                    on B.EMP_NO = tee.EMP_NO
         ORDER BY A.LINE_NO
     </select>
 
@@ -96,6 +164,7 @@
         SELECT
             count(*)
         FROM tbl_approv_line
+
     </select>
 
     <!--    결재라인수정-->
@@ -122,26 +191,37 @@
         FROM TBL_APPROV_LINE
         WHERE LINE_NO=#{lineNo}
     </delete>
-    <!--    결재순서 삭제-->
-<!--    <delete id="deleteApprovOrder" parameterType="ApprovOrderDTO">-->
-<!--        DELETE-->
-<!--        FROM TBL_APPROV_order-->
-<!--        WHERE LINE_NO=#{lineNo}-->
-<!--    </delete>-->
-
 
     <!--    결재문서-->
     <!--    결재상신-->
-    <insert id="insertApproval" parameterType="ApprovalDTO">
+    <insert id="insertApproval" parameterType="ApprovalDTO" >
         INSERT INTO TBL_APPROVAL
         (
-         APPROV_TITLE
-         , LINE_NO
+            APPROV_TITLE,
+            LINE_NO,
+            EMP_NO
         )
         VALUES
             (
-           #{ approvTitle }
-            ,#{ lineNo }
+                #{approvTitle},
+                #{lineNo},
+                2
+            )
+    </insert>
+    <insert id="insertApprovContent" parameterType="ApprovContentDTO">
+        INSERT INTO TBL_APPROV_CONTENT
+        (
+            CONTENT
+        , FORM_CODE
+        , APPROV_NO
+
+        )
+        VALUES
+        (
+            #{content}
+        , #{formCode}
+        , (SELECT APPROV_NO FROM TBL_APPROVal ORDER BY APPROV_NO DESC LIMIT 1)
+
             )
     </insert>
     <insert id="insertApprovFile" parameterType="ApprovFileDTO">
@@ -157,22 +237,13 @@
             #{ originName }
             ,#{ newName }
             ,#{ filePath }
-            ,#{ approvNo }
-            )
-    </insert>
-    <insert id="insertApprovContent" parameterType="ApprovContentDTO">
-        INSERT INTO TBL_APPROV_CONTENT
-        (
-            APPROV_CONTENT
-        )
-        VALUES
-            (
-            #{approvContent}
+            ,(SELECT APPROV_NO FROM TBL_APPROVal ORDER BY APPROV_NO DESC LIMIT 1)
             )
     </insert>
 
+
     <!--    결재상신함-->
-    <select id="selectApprovalInWithPaging" resultType="ApprovalDTO">
+    <select id="selectApprovalInWithPaging" resultMap="approveResultMap">
         SELECT P.APP_CATEGORY
              , P.APPROV_TITLE
              , LAST_VALUE(P.STATUS) OVER (
@@ -205,7 +276,9 @@
                             ON (G.EMP_NO = A.EMP_NO)
 
              ) P
-        WHERE P.e = 37
+
+        WHERE P.EMP_NO = 2
+
 
             LIMIT #{ startRow }
             , #{limit}
@@ -432,7 +505,7 @@
     <select id="selectLatestStatus" resultType="String">
         SELECT
             C.STATUS
-        FROM TBL_APPROV_ORDER C
+        FROM tbl_approv_status C
         WHERE ORDER_NO =
               (
                   SELECT

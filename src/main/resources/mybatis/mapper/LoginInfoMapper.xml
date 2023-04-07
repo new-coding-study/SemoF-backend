@@ -15,15 +15,18 @@
         FROM TBL_MEMBER
         WHERE MEMBER_ID = #{memberId}
     </select>
-    <select id="selectByEmpReg" resultType="LoginInfoDto">
+    <select id="selectByEmpReg" resultType="EmployeeDto">
         SELECT
-            B.EMP_REG
-            , A.EMP_NO
-        FROM tbl_login_info A
-        JOIN tbl_employee B
-        ON A.EMP_NO = B.EMP_NO
-        WHERE B.EMP_REG= #{empReg}
+        EMP_NO
+        , EMP_REG
+        FROM tbl_employee
+
+        WHERE EMP_REG= ${empReg}
     </select>
+<!--    EMP_REG-->
+<!--    ,-->
+    <!--    &#45;&#45;         ON A.EMP_NO = B.EMP_NO-->
+<!--    &#45;&#45;         FROM tbl_login_info A-->
     <select id="selectById" resultType="string">
         SELECT
             LOGIN_ID
@@ -56,14 +59,9 @@
 
     <select id="findByMemberId" resultType="LoginInfoDto">
         SELECT
-                MEMBER_CODE
-             ,  MEMBER_ID
-             ,  MEMBER_NAME
-             ,  MEMBER_PASSWORD
-             ,  MEMBER_ROLE
-             ,  MEMBER_EMAIL
-        FROM TBL_MEMBER
-        WHERE MEMBER_ID = #{memberId}
+                *
+        FROM TBL_login_info
+        WHERE login_ID = #{loginId}
     </select>
 
     <insert id="insertMember" parameterType="LoginInfoDto">
