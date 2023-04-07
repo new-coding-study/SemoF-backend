@@ -252,12 +252,13 @@
             	UNBOUNDED FOLLOWING
 	) STATUS
              , P.APPROV_DATE
+        , P.e
         FROM (SELECT D.APP_CATEGORY
                    , A.APPROV_TITLE
                    , C.STATUS
                    , A.APPROV_DATE
 
-                   ,F.EMP_NO
+                   ,F.EMP_NO as e
 
 
               FROM tbl_APPROVAL A
@@ -275,7 +276,9 @@
                             ON (G.EMP_NO = A.EMP_NO)
 
              ) P
+
         WHERE P.EMP_NO = 2
+
 
             LIMIT #{ startRow }
             , #{limit}

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.report.dao.SalesMapper">
+
+    <select id="selectAllSalesReportForAdmin" resultType="SalesDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
+           ,TS.SALES_REPORT_CODE
+           ,TS.REPORT_WRITE_DATE
+           ,TS.START_DATE
+           ,TS.END_DATE
+           ,TS.EMP_NO
+           ,TE.EMP_NAME
+           ,TS.SALES_REPORT_TITLE
+           ,TS.SALES_REPORT_TITLE
+           ,TS.CUSTOMER_COMMENT
+           ,TS.COMPETITION_ANALYSIS
+           ,TS.ISSUES_IMPROVEMENT
+           ,TS.NEXT_PLAN
+           ,TS.CONCLUSION
+           ,TR.REPORT_CATEGORY_NAME
+           ,TS.REPORT_STATUS
+           ,TS.REPORT_COMMENT
+        FROM tbl_sales_report TS
+        JOIN tbl_report_category TR
+        ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+        JOIN tbl_employee TE
+        ON TS.EMP_NO = TE.EMP_NO
+        WHERE TS.REPORT_STATUS = 'N' OR TS.REPORT_STATUS = 'Y'
+        ORDER BY
+            CASE TS.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC;
+    </select>
+
+    <select id="selectAllSalesReportForAdmin" resultType="SalesDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
+           ,TS.SALES_REPORT_CODE
+             ,TS.REPORT_WRITE_DATE
+             ,TS.START_DATE
+             ,TS.END_DATE
+             ,TS.EMP_NO
+             ,TE.EMP_NAME
+             ,TS.SALES_REPORT_TITLE
+             ,TS.SALES_REPORT_TITLE
+             ,TS.CUSTOMER_COMMENT
+             ,TS.COMPETITION_ANALYSIS
+             ,TS.ISSUES_IMPROVEMENT
+             ,TS.NEXT_PLAN
+             ,TS.CONCLUSION
+             ,TR.REPORT_CATEGORY_NAME
+             ,TS.REPORT_STATUS
+             ,TS.REPORT_COMMENT
+        FROM tbl_sales_report TS
+                 JOIN tbl_report_category TR
+                      ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TS.EMP_NO = TE.EMP_NO
+        WHERE TS.REPORT_STATUS = 'N' OR TS.REPORT_STATUS = 'Y'
+          AND TS.EMP_NO=#{empNo}
+        ORDER BY
+            CASE TS.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC;
+    </select>
+
+    <select id="selectAllSalesReportForAdminWithPaging" resultType="SalesDto">
+        SELECT
+            P.ROW_NUM
+            ,P.SALES_REPORT_CODE
+            ,P.REPORT_WRITE_DATE
+            ,P.START_DATE
+            ,P.END_DATE
+            ,P.EMP_NO
+            ,P.EMP_NAME
+            ,P.SALES_REPORT_TITLE
+            ,P.SALES_REPORT_CONTENT
+            ,P.CUSTOMER_COMMENT
+            ,P.COMPETITION_ANALYSIS
+            ,P.ISSUES_IMPROVEMENT
+            ,P.NEXT_PLAN
+            ,P.CONCLUSION
+            ,P.REPORT_CATEGORY_NAME
+            ,P.REPORT_STATUS
+            ,P.REPORT_COMMENT
+        FROM
+        (SELECT
+            ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
+           ,TS.SALES_REPORT_CODE
+             ,TS.REPORT_WRITE_DATE
+             ,TS.START_DATE
+             ,TS.END_DATE
+             ,TS.EMP_NO
+             ,TE.EMP_NAME
+             ,TS.SALES_REPORT_TITLE
+             ,TS.SALES_REPORT_CONTENT
+             ,TS.CUSTOMER_COMMENT
+             ,TS.COMPETITION_ANALYSIS
+             ,TS.ISSUES_IMPROVEMENT
+             ,TS.NEXT_PLAN
+             ,TS.CONCLUSION
+             ,TR.REPORT_CATEGORY_NAME
+             ,TS.REPORT_STATUS
+             ,TS.REPORT_COMMENT
+        FROM tbl_sales_report TS
+                 JOIN tbl_report_category TR
+                      ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TS.EMP_NO = TE.EMP_NO
+        WHERE TS.REPORT_STATUS = 'N' OR TS.REPORT_STATUS = 'Y'
+        ORDER BY
+            CASE TS.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC) P
+        ORDER BY P.ROW_NUM DESC
+        LIMIT #{startRow}, #{endRow}
+    </select>
+
+    <select id="selectAllSalesReportForEmpWithPaging" resultType="SalesDto">
+        SELECT
+            P.ROW_NUM
+             ,P.SALES_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.SALES_REPORT_TITLE
+             ,P.SALES_REPORT_CONTENT
+             ,P.CUSTOMER_COMMENT
+             ,P.COMPETITION_ANALYSIS
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+                 ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
+           ,TS.SALES_REPORT_CODE
+                  ,TS.REPORT_WRITE_DATE
+                  ,TS.START_DATE
+                  ,TS.END_DATE
+                  ,TS.EMP_NO
+                  ,TE.EMP_NAME
+                  ,TS.SALES_REPORT_TITLE
+                  ,TS.SALES_REPORT_CONTENT
+                  ,TS.CUSTOMER_COMMENT
+                  ,TS.COMPETITION_ANALYSIS
+                  ,TS.ISSUES_IMPROVEMENT
+                  ,TS.NEXT_PLAN
+                  ,TS.CONCLUSION
+                  ,TR.REPORT_CATEGORY_NAME
+                  ,TS.REPORT_STATUS
+                  ,TS.REPORT_COMMENT
+             FROM tbl_sales_report TS
+                      JOIN tbl_report_category TR
+                           ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                      JOIN tbl_employee TE
+                           ON TS.EMP_NO = TE.EMP_NO
+             WHERE TS.REPORT_STATUS = 'N' OR TS.REPORT_STATUS = 'Y'
+               AND TS.EMP_NO = #{empNo}
+             ORDER BY
+                 CASE TS.REPORT_STATUS
+                     WHEN 'N' THEN 0
+                     WHEN 'Y' THEN 1
+                     ELSE 2
+                     END,
+                 ROW_NUM DESC) P
+        ORDER BY P.ROW_NUM DESC
+            LIMIT #{startRow}, #{endRow}
+    </select>
+
+    <select id="detailSalesReportForAdmin" resultType="SalesDto">
+
+    </select>
+
+
+    <select id="selectSalesReportTotalForAdmin" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_sales_report TS
+        JOIN tbl_employee te on te.EMP_NO = TS.EMP_NO
+        JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TS.REPORT_CATEGORY_CODE
+    </select>
+
+    <select id="selectSalesReportTotalForEmp" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_sales_report TS
+                 JOIN tbl_employee TE on TE.EMP_NO = TS.EMP_NO
+                 JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TS.REPORT_CATEGORY_CODE
+        WHERE TS.EMP_NO = #{empNo}
+    </select>
+
+    <insert id="insertSalesReport" parameterType="salesDto">
+        INSERT INTO tbl_sales_report
+            (
+             START_DATE
+             ,END_DATE
+             ,EMP_NO
+             ,SALES_REPORT_TITLE
+             ,SALSE_REPORT_CONTENT
+             ,CUSTOMER_COMMENT
+             ,COMPETITION_ANALYSIS
+             ,ISSUES_IMPROVEMENT
+             ,NEXT_PLAN
+             ,CONCLUSION
+             ,REPORT_CATEGORY_CODE
+            )
+            VALUES
+                (
+                 #{startDate}
+                 ,#{endDate}
+                 ,(SELECT EMP_NO FROM tbl_employee WHERE tbl_employee.EMP_NO = #{empNo})
+                 ,#{salesReportTitle}
+                 ,#{salesReportContent}
+                 ,#{customerComment}
+                 ,#{competitionAnalysis}
+                 ,#{issuesImprovement}
+                 ,#{nextPlan}
+                 ,#{conclusion}
+                 ,(SELECT REPORT_CATEGORY_CODE FROM tbl_report_category WHERE tbl_report_category.REPORT_CATEGORY_CODE = 1)
+                )
+    </insert>
+
+    <update id="updateSalesReportForAdmin" parameterType="salesDto">
+        UPDATE tbl_sales_report
+        SET
+            REPORT_COMMENT = #{reportComment}
+          ,REPORT_STATUS = 'Y'
+    </update>
+
+    <update id="updateSalesReportForEmp" parameterType="salesDto">
+        UPDATE tbl_sales_report TS
+          JOIN tbl_employee TE
+            ON TS.EMP_NO = TE.EMP_NO
+        SET
+            TS.START_DATE = #{startDate}
+            ,TS.END_DATE = #{endDate}
+            ,TS.SALES_REPORT_TITLE = #{salesReportTitle}
+            ,TS.SALES_REPORT_CONTENT = #{salesReportTitle}
+            ,TS.CUSTOMER_COMMENT = #{customerComment}
+            ,TS.COMPETITION_ANALYSIS = #{competitionAnalysis}
+            ,TS.ISSUES_IMPROVEMENT = #{issuesImprovement}
+            ,TS.NEXT_PLAN = #{nextPlan}
+            ,TS.CONCLUSION = #{conclusion}
+        WHERE TS.SALES_REPORT_CODE = #{salesReportCode}
+          AND (SELECT EMP_NO FROM tbl_employee WHERE EMP_NO = #{empNo})
+    </update>
+
+    <delete id="deleteSalesReportForAdmin" parameterType="salesDto">
+        DELETE FROM tbl_sales_report
+        WHERE SALES_REPORT_CODE = #{salesReportCode}
+    </delete>
+
+    <delete id="deleteSalesReportForEmp" parameterType="salesDto">
+        DELETE FROM tbl_sales_report
+        WHERE SALES_REPORT_CODE = #{salesReportCode}
+    </delete>
+</mapper>

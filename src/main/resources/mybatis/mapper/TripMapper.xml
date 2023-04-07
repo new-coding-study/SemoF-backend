@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.report.dao.TripMapper">
+
+    <!--관리자용 보고서 전체조회-->
+    <select id="selectAllTripReportForAdmin" resultType="TripDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TB.REPORT_WRITE_DATE DESC) AS ROW_NUM,
+            TB.TRIP_REPORT_CODE,
+            TB.REPORT_WRITE_DATE,
+            TB.START_DATE,
+            TB.END_DATE,
+            TB.EMP_NO,
+            TE.EMP_NAME,
+            TB.DESTINATION,
+            TB.TRIP_REPORT_TITLE,
+            TB.TRIP_REPORT_CONTENT,
+            TB.ISSUES_IMPROVEMENT,
+            TB.CONCLUSION,
+            TR.REPORT_CATEGORY_NAME,
+            TB.REPORT_STATUS,
+            TB.REPORT_COMMENT
+        FROM tbl_business_trip_report TB
+         JOIN tbl_report_category TR
+              ON TB.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+         JOIN tbl_employee TE
+              ON TB.EMP_NO = TE.EMP_NO
+        WHERE TB.REPORT_STATUS = 'N' OR TB.REPORT_STATUS = 'Y'
+        ORDER BY
+            CASE TB.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC;
+    </select>
+
+    <!--회원용 보고서 조회-->
+    <select id="selectAllTripSelectForEmp" resultType="TripDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TB.REPORT_WRITE_DATE DESC) AS ROW_NUM,
+            TB.TRIP_REPORT_CODE,
+            TB.REPORT_WRITE_DATE,
+            TB.START_DATE,
+            TB.END_DATE,
+            TB.EMP_NO,
+            TE.EMP_NAME,
+            TB.DESTINATION,
+            TB.TRIP_REPORT_TITLE,
+            TB.TRIP_REPORT_CONTENT,
+            TB.ISSUES_IMPROVEMENT,
+            TB.CONCLUSION,
+            TR.REPORT_CATEGORY_NAME,
+            TB.REPORT_STATUS,
+            TB.REPORT_COMMENT
+        FROM tbl_business_trip_report TB
+                 JOIN tbl_report_category TR
+                      ON TB.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TB.EMP_NO = TE.EMP_NO
+        WHERE TB.REPORT_STATUS = 'N' OR TB.REPORT_STATUS = 'Y'
+          AND TB.EMP_NO=#{empNo}
+        ORDER BY
+            CASE TB.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC;
+    </select>
+
+    <!--출장보고서 전체 갯수(관리자)-->
+    <select id="selectTripReportTotalForAdmin" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_business_trip_report TB
+        JOIN tbl_report_category trc
+        ON TB.REPORT_CATEGORY_CODE = trc.REPORT_CATEGORY_CODE
+        JOIN tbl_employee TE
+        on TE.EMP_NO = TB.EMP_NO
+    </select>
+
+    <!--출장보고서 전체 갯수(직원)-->
+    <select id="selectTripReportTotalForEmp" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_business_trip_report TB
+        JOIN tbl_report_category trc
+          ON TB.REPORT_CATEGORY_CODE = trc.REPORT_CATEGORY_CODE
+        JOIN tbl_employee TE
+          on TE.EMP_NO = TB.EMP_NO
+        WHERE TB.EMP_NO = #{empNo}
+    </select>
+
+    <select id="selectAllTripReportForAdminWithPaging" resultType="TripDto">
+        SELECT
+            T.ROW_NUM
+           ,T.TRIP_REPORT_CODE
+           ,T.REPORT_WRITE_DATE
+           ,T.START_DATE
+           ,T.END_DATE
+           ,T.EMP_NO
+           ,T.EMP_NAME
+           ,T.DESTINATION
+           ,T.TRIP_REPORT_TITLE
+           ,T.TRIP_REPORT_CONTENT
+           ,T.ISSUES_IMPROVEMENT
+           ,T.CONCLUSION
+           ,T.REPORT_CATEGORY_NAME
+           ,T.REPORT_STATUS
+           ,T.REPORT_COMMENT
+        FROM
+        (SELECT
+            ROW_NUMBER() OVER(ORDER BY TB.REPORT_WRITE_DATE DESC) AS ROW_NUM,
+            TB.TRIP_REPORT_CODE,
+            TB.REPORT_WRITE_DATE,
+            TB.START_DATE,
+            TB.END_DATE,
+            TB.EMP_NO,
+            TE.EMP_NAME,
+            TB.DESTINATION,
+            TB.TRIP_REPORT_TITLE,
+            TB.TRIP_REPORT_CONTENT,
+            TB.ISSUES_IMPROVEMENT,
+            TB.CONCLUSION,
+            TR.REPORT_CATEGORY_NAME,
+            TB.REPORT_STATUS,
+            TB.REPORT_COMMENT
+        FROM tbl_business_trip_report TB
+         JOIN tbl_report_category TR
+              ON TB.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+         JOIN tbl_employee TE
+              ON TB.EMP_NO = TE.EMP_NO
+        WHERE TB.REPORT_STATUS = 'N' OR TB.REPORT_STATUS = 'Y'
+        ORDER BY
+            CASE TB.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC) T
+        ORDER BY T.ROW_NUM DESC
+        LIMIT #{startRow}, #{endRow}
+    </select>
+
+    <select id="selectAllTripReportForEmpWithPaging" resultType="TripDto">
+        SELECT
+            T.ROW_NUM
+             ,T.TRIP_REPORT_CODE
+             ,T.REPORT_WRITE_DATE
+             ,T.START_DATE
+             ,T.END_DATE
+             ,T.EMP_NO
+             ,T.EMP_NAME
+             ,T.DESTINATION
+             ,T.TRIP_REPORT_TITLE
+             ,T.TRIP_REPORT_CONTENT
+             ,T.ISSUES_IMPROVEMENT
+             ,T.CONCLUSION
+             ,T.REPORT_CATEGORY_NAME
+             ,T.REPORT_STATUS
+        FROM
+            (SELECT
+            ROW_NUMBER() OVER(ORDER BY TB.REPORT_WRITE_DATE DESC) AS ROW_NUM,
+                TB.TRIP_REPORT_CODE,
+                TB.REPORT_WRITE_DATE,
+                TB.START_DATE,
+                TB.END_DATE,
+                TB.EMP_NO,
+                TE.EMP_NAME,
+                TB.DESTINATION,
+                TB.TRIP_REPORT_TITLE,
+                TB.TRIP_REPORT_CONTENT,
+                TB.ISSUES_IMPROVEMENT,
+                TB.CONCLUSION,
+                TR.REPORT_CATEGORY_NAME,
+                TB.REPORT_STATUS,
+                TB.REPORT_COMMENT
+                    FROM tbl_business_trip_report TB
+                 JOIN tbl_report_category TR
+                      ON TB.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TB.EMP_NO = TE.EMP_NO
+        WHERE TB.REPORT_STATUS = 'N' OR TB.REPORT_STATUS = 'Y'
+          AND TB.EMP_NO=#{empNo}
+        ORDER BY
+            CASE TB.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+                ROW_NUM DESC) T
+        ORDER BY T.ROW_NUM DESC
+            LIMIT #{selectCritera.startRow}, #{selectCritera.endRow}
+    </select>
+
+    <select id="detailTripReportForAdmin" resultType="TripDto">
+        SELECT
+            TB.TRIP_REPORT_CODE,
+            TB.REPORT_WRITE_DATE,
+            TB.START_DATE,
+            TB.END_DATE,
+            TB.EMP_NO,
+            TE.EMP_NAME,
+            TB.DESTINATION,
+            TB.TRIP_REPORT_TITLE,
+            TB.TRIP_REPORT_CONTENT,
+            TB.ISSUES_IMPROVEMENT,
+            TB.CONCLUSION,
+            TR.REPORT_CATEGORY_NAME,
+            TB.REPORT_STATUS,
+            TB.REPORT_COMMENT
+        FROM tbl_business_trip_report TB
+         JOIN tbl_report_category TR
+              ON TB.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+         JOIN tbl_employee TE
+              ON TB.EMP_NO = TE.EMP_NO
+        WHERE TB.TRIP_REPORT_CODE = #{tripReportCode}
+    </select>
+
+    <select id="detailTripReportForEmp" resultType="TripDto">
+        SELECT
+            TB.TRIP_REPORT_CODE,
+            TB.REPORT_WRITE_DATE,
+            TB.START_DATE,
+            TB.END_DATE,
+            TB.EMP_NO,
+            TE.EMP_NAME,
+            TB.DESTINATION,
+            TB.TRIP_REPORT_TITLE,
+            TB.TRIP_REPORT_CONTENT,
+            TB.ISSUES_IMPROVEMENT,
+            TB.CONCLUSION,
+            TR.REPORT_CATEGORY_NAME,
+            TB.REPORT_STATUS,
+            TB.REPORT_COMMENT
+        FROM tbl_business_trip_report TB
+                 JOIN tbl_report_category TR
+                      ON TB.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TB.EMP_NO = TE.EMP_NO
+        WHERE TB.TRIP_REPORT_CODE = #{tripReportCode}
+    </select>
+
+    <insert id="insertTripReport" parameterType="tripDto">
+        INSERT INTO tbl_business_trip_report
+            (
+              START_DATE
+            , END_DATE
+            , EMP_NO
+            , DESTINATION
+            , TRIP_REPORT_TITLE
+            , TRIP_REPORT_CONTENT
+            , ISSUES_IMPROVEMENT
+            , CONCLUSION
+            , REPORT_CATEGORY_CODE
+            )
+        values
+            (
+                #{startDate}
+                ,#{endDate}
+                ,(SELECT EMP_NO FROM tbl_employee WHERE tbl_employee.EMP_NO = #{empNo})
+                ,#{destination}
+                ,#{tripReportTitle}
+                ,#{tripReportContent}
+                ,#{issuesImprovement}
+                ,#{conclusion}
+                ,(SELECT REPORT_CATEGORY_CODE FROM tbl_report_category WHERE tbl_report_category.REPORT_CATEGORY_CODE = 3)
+            )
+    </insert>
+    
+    <update id="updateTripReportForAdmin" parameterType="tripDto">
+        UPDATE tbl_business_trip_report
+           SET
+             REPORT_COMMENT = #{reportComment}
+            ,REPORT_STATUS = 'Y'
+    </update>
+
+    <update id="updateTripReportForEmp" parameterType="tripDto">
+        UPDATE tbl_business_trip_report TB
+          JOIN tbl_employee TE
+            ON TB.EMP_NO = TE.EMP_NO
+           SET
+            TB.START_DATE = #{startDate}
+            ,TB.END_DATE = #{endDate}
+            ,TB.TRIP_REPORT_TITLE = #{tripReportTitle}
+            ,TB.TRIP_REPORT_CONTENT = #{tripReportContent}
+            ,TB.ISSUES_IMPROVEMENT = #{issuesImprovement}
+            ,TB.CONCLUSION = #{conclusion}
+        WHERE TB.TRIP_REPORT_CODE = #{tripReportCode}
+          AND (SELECT EMP_NO FROM tbl_employee WHERE EMP_NO = #{empNo})
+    </update>
+
+    <delete id="deleteTripReportForAdmin" parameterType="tripDto">
+        DELETE FROM tbl_business_trip_report
+        WHERE TRIP_REPORT_CODE = #{tripReportCode}
+    </delete>
+
+    <delete id="deleteTripReportForEmp" parameterType="tripDto">
+        DELETE  FROM tbl_business_trip_report
+        WHERE TRIP_REPORT_CODE = #{tripReportCode}
+    </delete>
+</mapper>
