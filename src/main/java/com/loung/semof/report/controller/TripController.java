@@ -38,8 +38,7 @@ public class TripController {
     }
 
     @GetMapping("/trip-lists-emp")
-    public ResponseEntity<ResponseDto> selectAllTripReportForEmpWithPaging(
-            @RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
+    public ResponseEntity<ResponseDto> selectAllTripReportForEmpWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
 
         int totalCount = tripService.selectTripReportTotalForEmp();
         int limit = 10;
@@ -65,17 +64,19 @@ public class TripController {
     }
 
     @PostMapping("/trip-lists-emp")
-    public ResponseEntity<ResponseDto> insertTripReport(@ModelAttribute TripDto tripDto){
+    public ResponseEntity<ResponseDto> insertTripReport(@RequestBody TripDto tripDto){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "출장보고서 작성", tripService.insertTripReport(tripDto)));
     }
 
     @PutMapping("/trip-lists-admin/{tripReportCode}")
-    public ResponseEntity<ResponseDto> updateTripReportForAdmin(@ModelAttribute TripDto tripDto){
+    public ResponseEntity<ResponseDto> updateTripReportForAdmin(@RequestBody TripDto tripDto, @PathVariable int tripReportCode){
+        tripDto.setTripReportCode(tripReportCode);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK,"관리자용 보고서 업데이트", tripService.updateTripReportForAdmin(tripDto)));
     }
 
     @PutMapping("/trip-lists-emp/{tripReportCode}")
-    public ResponseEntity<ResponseDto> updateTripReportForEmp(@RequestBody TripDto tripDto){
+    public ResponseEntity<ResponseDto> updateTripReportForEmp(@RequestBody TripDto tripDto, @PathVariable int tripReportCode){
+        tripDto.setTripReportCode(tripReportCode);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 보고서 수정", tripService.updateTripReportForEmp(tripDto)));
     }
 

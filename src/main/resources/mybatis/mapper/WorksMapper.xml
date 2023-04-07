@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.report.dao.WorksMapper">
+
+    <select id="selectAllWorksReportForAdmin" resultType="WorksDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+            ,TW.WORKS_REPORT_CODE
+             ,TW.REPORT_WRITE_DATE
+             ,TW.START_DATE
+             ,TW.END_DATE
+             ,TW.EMP_NO
+             ,TE.EMP_NAME
+             ,TW.WORKS_REPORT_TITLE
+             ,TW.WORKS_REPORT_CONTENT
+             ,TW.ISSUES_IMPROVEMENT
+             ,TW.NEXT_PLAN
+             ,TW.ETC
+             ,TW.CONCLUSION
+             ,TR.REPORT_CATEGORY_CODE
+             ,TW.REPORT_STATUS
+             ,TW.REPORT_COMMENT
+        FROM tbl_works_report TW
+                 JOIN tbl_report_category TR
+                      ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TW.EMP_NO = TE.EMP_NO
+        WHERE TW.REPORT_STATUS = 'N' OR TW.REPORT_STATUS = 'Y'
+        ORDER BY
+            CASE TW.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC;
+    </select>
+
+    <select id="selectAllWorksReportForEmp" resultType="WorksDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+            ,TW.WORKS_REPORT_CODE
+             ,TW.REPORT_WRITE_DATE
+             ,TW.START_DATE
+             ,TW.END_DATE
+             ,TW.EMP_NO
+             ,TE.EMP_NAME
+             ,TW.WORKS_REPORT_TITLE
+             ,TW.WORKS_REPORT_CONTENT
+             ,TW.ISSUES_IMPROVEMENT
+             ,TW.NEXT_PLAN
+             ,TW.ETC
+             ,TW.CONCLUSION
+             ,TR.REPORT_CATEGORY_CODE
+             ,TW.REPORT_STATUS
+             ,TW.REPORT_COMMENT
+        FROM tbl_works_report TW
+                 JOIN tbl_report_category TR
+                      ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TW.EMP_NO = TE.EMP_NO
+        WHERE TW.REPORT_STATUS = 'N' OR TW.REPORT_STATUS = 'Y'
+          AND TW.EMP_NO = #{empNo}
+        ORDER BY
+            CASE TW.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC;
+    </select>
+
+    <select id="selectAllWorksReportForAdminWithPaging" resultType="WorksDto">
+        SELECT
+            P.ROW_NUM
+             ,P.WORKS_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,p.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.WORKS_REPORT_TITLE
+             ,P.WORKS_REPORT_CONTENT
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.ETC
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (
+                SELECT
+                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+                    ,TW.WORKS_REPORT_CODE
+                     ,TW.REPORT_WRITE_DATE
+                     ,TW.START_DATE
+                     ,TW.END_DATE
+                     ,TW.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TW.WORKS_REPORT_TITLE
+                     ,TW.WORKS_REPORT_CONTENT
+                     ,TW.ISSUES_IMPROVEMENT
+                     ,TW.NEXT_PLAN
+                     ,TW.ETC
+                     ,TW.CONCLUSION
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TW.REPORT_STATUS
+                     ,TW.REPORT_COMMENT
+                FROM tbl_works_report TW
+                         JOIN tbl_report_category TR
+                              ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                         JOIN tbl_employee TE
+                              ON TW.EMP_NO = TE.EMP_NO
+                WHERE TW.REPORT_STATUS = 'N' OR TW.REPORT_STATUS = 'Y'
+                ORDER BY
+                    CASE TW.REPORT_STATUS
+                        WHEN 'N' THEN 0
+                        WHEN 'Y' THEN 1
+                        ELSE 2
+                        END,
+                    ROW_NUM DESC) P
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${startRow}, #{endRow}
+    </select>
+
+    <select id="selectAllWorksReportForEmpWithPaging" resultType="WorksDto">
+        SELECT
+            P.ROW_NUM
+             ,P.WORKS_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,p.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.WORKS_REPORT_TITLE
+             ,P.WORKS_REPORT_CONTENT
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.ETC
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (
+                SELECT
+                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+                    ,TW.WORKS_REPORT_CODE
+                     ,TW.REPORT_WRITE_DATE
+                     ,TW.START_DATE
+                     ,TW.END_DATE
+                     ,TW.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TW.WORKS_REPORT_TITLE
+                     ,TW.WORKS_REPORT_CONTENT
+                     ,TW.ISSUES_IMPROVEMENT
+                     ,TW.NEXT_PLAN
+                     ,TW.ETC
+                     ,TW.CONCLUSION
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TW.REPORT_STATUS
+                     ,TW.REPORT_COMMENT
+                FROM tbl_works_report TW
+                         JOIN tbl_report_category TR
+                              ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                         JOIN tbl_employee TE
+                              ON TW.EMP_NO = TE.EMP_NO
+                WHERE TW.REPORT_STATUS = 'N' OR TW.REPORT_STATUS = 'Y'
+                  AND TW.EMP_NO = #{empNo}
+                ORDER BY
+                    CASE TW.REPORT_STATUS
+                        WHEN 'N' THEN 0
+                        WHEN 'Y' THEN 1
+                        ELSE 2
+                        END,
+                    ROW_NUM DESC) P
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
+
+    <select id="selectDetailWorksForAdmin" resultType="WorksDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+            ,TW.WORKS_REPORT_CODE
+             ,TW.REPORT_WRITE_DATE
+             ,TW.START_DATE
+             ,TW.END_DATE
+             ,TW.EMP_NO
+             ,TE.EMP_NAME
+             ,TW.WORKS_REPORT_TITLE
+             ,TW.WORKS_REPORT_CONTENT
+             ,TW.ISSUES_IMPROVEMENT
+             ,TW.NEXT_PLAN
+             ,TW.ETC
+             ,TW.CONCLUSION
+             ,TR.REPORT_CATEGORY_CODE
+             ,TW.REPORT_STATUS
+             ,TW.REPORT_COMMENT
+        FROM tbl_works_report TW
+                 JOIN tbl_report_category TR
+                      ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TW.EMP_NO = TE.EMP_NO
+        WHERE TW.WORKS_REPORT_CODE = #{worksReportCode}
+    </select>
+
+    <select id="selectDetailWorksForEmp" resultType="WorksDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+            ,TW.WORKS_REPORT_CODE
+             ,TW.REPORT_WRITE_DATE
+             ,TW.START_DATE
+             ,TW.END_DATE
+             ,TW.EMP_NO
+             ,TE.EMP_NAME
+             ,TW.WORKS_REPORT_TITLE
+             ,TW.WORKS_REPORT_CONTENT
+             ,TW.ISSUES_IMPROVEMENT
+             ,TW.NEXT_PLAN
+             ,TW.ETC
+             ,TW.CONCLUSION
+             ,TR.REPORT_CATEGORY_CODE
+             ,TW.REPORT_STATUS
+             ,TW.REPORT_COMMENT
+        FROM tbl_works_report TW
+                 JOIN tbl_report_category TR
+                      ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TW.EMP_NO = TE.EMP_NO
+        WHERE TW.WORKS_REPORT_CODE = #{worksReportCode}
+    </select>
+
+    <select id="selectWorksReportTotalForAdmin" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_works_report TW
+                 JOIN tbl_employee te on te.EMP_NO = TW.EMP_NO
+                 JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TW.REPORT_CATEGORY_CODE
+    </select>
+
+    <select id="selectWorksReportTotalForEmp" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_works_report TW
+                 JOIN tbl_employee TE on TE.EMP_NO = TW.EMP_NO
+                 JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TW.REPORT_CATEGORY_CODE
+        WHERE TW.EMP_NO = #{empNo}
+    </select>
+
+    <insert id="insertWorksReport" parameterType="worksDto">
+       INSERT INTO tbl_works_report
+        (
+         START_DATE
+         ,END_DATE
+         ,EMP_NO
+         ,WORKS_REPORT_TITLE
+         ,WORKS_REPORT_CONTENT
+         ,ISSUES_IMPROVEMENT
+         ,NEXT_PLAN
+         ,ETC
+         ,CONCLUSION
+         ,REPORT_CATEGORY_CODE
+        )
+        VALUES
+            (
+             #{startDate}
+             ,#{endDate}
+             ,(SELECT EMP_NO FROM tbl_employee WHERE tbl_employee.EMP_NO = #{empNo})
+             ,#{worksReportTitle}
+             ,#{worksReportContent}
+             ,#{issuesImprovement}
+             ,#{nextPlan}
+             ,#{etc}
+             ,#{conclusion}
+             ,(SELECT REPORT_CATEGORY_CODE FROM tbl_report_category WHERE tbl_report_category.REPORT_CATEGORY_CODE = 2)
+            )
+    </insert>
+
+    <update id="updateWorksReportForAdmin" parameterType="worksDto">
+        UPDATE tbl_works_report
+        SET
+            REPORT_COMMENT = #{reportComment}
+          ,REPORT_STATUS = 'Y'
+        WHERE WORKS_REPORT_CODE = #{worksReportCode}
+    </update>
+
+    <update id="updateWorksReportForEmp" parameterType="worksDto">
+        UPDATE tbl_works_report
+        SET
+            WORKS_REPORT_CONTENT = #{worksReportTitle}
+          ,WORKS_REPORT_CONTENT = #{worksReportContent}
+          ,ISSUES_IMPROVEMENT = #{issuesImprovement}
+          ,NEXT_PLAN = #{nextPlan}
+          ,ETC = #{etc}
+          ,CONCLUSION = #{conclusion}
+        WHERE WORKS_REPORT_CODE = #{worksReportCode}
+    </update>
+
+    <delete id="deleteWorksReportForAdmin" parameterType="worksDto">
+        DELETE FROM tbl_works_report
+        WHERE WORKS_REPORT_CODE = #{worksReportCode}
+    </delete>
+
+    <delete id="deleteWorksReportForEmp" parameterType="worksDto">
+        DELETE  FROM tbl_works_report
+        WHERE WORKS_REPORT_CODE = #{worksReportCode}
+    </delete>
+</mapper>
