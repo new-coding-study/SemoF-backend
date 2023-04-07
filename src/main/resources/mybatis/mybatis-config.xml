@@ -68,9 +68,9 @@
 
 		<mapper resource="BoardMapper.xml"/>
 		<mapper resource="ReplyMapper.xml"/>
-		<mapper resource="TripReportMapper.xml"/>
-		<mapper resource="SalesReportMapper.xml"/>
-		<mapper resource="MeetingReportMapper.xml"/>
-		<mapper resource="WorksReportMapper.xml"/>
+		<mapper resource="TripMapper.xml"/>
+		<mapper resource="SalesMapper.xml"/>
+		<mapper resource="MeetingMapper.xml"/>
+		<mapper resource="WorksMapper.xml"/>
 	</mappers>
 </configuration>

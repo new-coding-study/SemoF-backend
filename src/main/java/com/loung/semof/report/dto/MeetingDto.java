@@ -6,23 +6,22 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-public class TripDto {
+public class MeetingDto {
 
     private Integer rowNum;
-    private Integer tripReportCode;
+    private Integer meetingReportCode;
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
     private LocalDate reportWriteDate;
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
-    private LocalDate startDate;
-    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
-    private LocalDate endDate;
     private Integer empNo;
     private String empName;
-    private String destination;
-    private String tripReportTitle;
-    private String tripReportContent;
-    private String issuesImprovement;
+    @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
+    private LocalDate meetingDate;
+    private String location;
+    private String participants;
+    private String meetingReportTitle;
+    private String meetingReportContent;
     private String conclusion;
+    private String nextMeetingPlan;
     private String reportCategoryName;
     private char reportStatus;
     private String reportComment;

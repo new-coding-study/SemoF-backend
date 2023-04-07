@@ -10,7 +10,6 @@ import com.loung.semof.email.dto.SendEmailDto;
 import com.loung.semof.email.utils.ByteArrayResource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.jsoup.Jsoup;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -274,7 +273,7 @@ public class EmailService {
 
                 String html = (String) bodyPart.getContent();
 
-                result.append("\n").append(Jsoup.parse(html).text());
+//                result.append("\n").append(Jsoup.parse(html).text());
 
             } else if (bodyPart.getContent() instanceof MimeMultipart) {
 

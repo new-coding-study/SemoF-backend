@@ -1,7 +1,7 @@
 package com.loung.semof.report.dao;
 
 import com.loung.semof.common.paging.SelectCriteria;
-import com.loung.semof.report.dto.TripDto;
+import com.loung.semof.report.dto.SalesDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -11,13 +11,13 @@ public interface SalesMapper {
 
     int selectSalesReportTotalForAdmin();
     int selectSalesReportTotalForEmp();
-    List<TripDto> selectAllSalesReportForAdminWithPaging(SelectCriteria selectCriteria);
-    List<TripDto> selectAllSalesReportForEmpWithPaging(SelectCriteria selectCriteria, int empNo);
-//    TripDto detailTripReportForAdmin(Integer tripReportCode);
-//    TripDto detailTripReportForEmp(Integer tripReportCode);
-    int insertSalesReport(TripDto salesDto);
-    int updateSalesReportForAdmin(TripDto salesDto);
-    int updateSalesReportForEmp(TripDto salesDto);
+    List<SalesDto> selectAllSalesReportForAdminWithPaging(SelectCriteria selectCriteria);
+    List<SalesDto> selectAllSalesReportForEmpWithPaging(SelectCriteria selectCriteria, int empNo);
+    SalesDto detailSalesReportForAdmin(Integer salesReportCode);
+    SalesDto detailSalesReportForEmp(Integer salesReportCode);
+    int insertSalesReport(SalesDto salesDto);
+    int updateSalesReportForAdmin(SalesDto salesDto);
+    int updateSalesReportForEmp(SalesDto salesDto);
     int deleteSalesReportForAdmin(Integer salesReportCode);
     int deleteSalesReportForEmp(Integer salesReportCode);
 }
