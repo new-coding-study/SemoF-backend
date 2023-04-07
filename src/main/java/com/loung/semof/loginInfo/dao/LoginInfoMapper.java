@@ -1,6 +1,7 @@
 package com.loung.semof.loginInfo.dao;
 
 
+import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.loginInfo.dto.LoginInfoDto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -18,8 +19,10 @@ public interface LoginInfoMapper {
 
     LoginInfoDto selectByMemberId(String memberId);
 
-    LoginInfoDto selectByEmpReg(String empReg);
+//    Optional<EmployeeDto> selectByEmpReg(String empReg);
 
+    EmployeeDto selectByEmpReg(String empReg);
+//    int selectByEmpReg(String empReg);
     int checkEmpReg(String empReg);
 
    String selectById(String loginId);

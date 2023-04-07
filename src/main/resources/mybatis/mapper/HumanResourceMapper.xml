@@ -110,12 +110,14 @@
             E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM  (SELECT *
                FROM tbl_employee
+               WHERE WORK_STATUS = 'Y'
                ORDER BY EMP_NO DESC
                LIMIT #{startRow}, #{endRow}
               ) AS E
                   LEFT JOIN tbl_job J ON E.job_code = J.job_code
                   LEFT JOIN tbl_department D ON E.dept_code = D.dept_code
                   LEFT JOIN tbl_branch B ON E.branch_code = B.branch_code
+
     </select>
 
     <!-- SELECT 쿼리 : 사원 전체 숫자 조회 -->
@@ -134,6 +136,7 @@
             E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM  (SELECT *
                FROM tbl_employee
+               WHERE WORK_STATUS = 'Y'
         ) AS E
         LEFT JOIN tbl_job J ON E.job_code = J.job_code
         LEFT JOIN tbl_department D ON E.dept_code = D.dept_code
@@ -154,7 +157,8 @@
     <select id="selectEmployeeByBirthMonth" resultMap="employeeResult">
         SELECT *
         FROM tbl_employee
-        WHERE MONTH(STR_TO_DATE(CONCAT('19', SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%Y-%m-%d')) = #{monthValue}
+        WHERE WORK_STATUS = 'Y'
+        AND MONTH(STR_TO_DATE(CONCAT('19', SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%Y-%m-%d')) = #{monthValue}
     </select>
 
     <!-- SELECT 쿼리 : 다음달에 생일이 있는 사원 조회 -->
@@ -177,6 +181,7 @@
             JOIN tbl_department D ON E.dept_code = D.dept_code
             JOIN tbl_branch B ON E.branch_code = B.branch_code
         WHERE 1=1
+        AND WORK_STATUS = 'Y'
         <if test="empName != null">
             AND EMP_NAME = #{empName}
         </if>
@@ -194,6 +199,7 @@
         *
         FROM tbl_employee
         WHERE EMP_NO = #{empNo}
+        AND WORK_STATUS = 'Y'
     </select>
 
     <!-- SELECT 쿼리 : 사원 번호로 사원 조회  -->
@@ -202,6 +208,7 @@
             *
         FROM tbl_employee
         WHERE GENDER = #{gender}
+        AND WORK_STATUS = 'Y'
     </select>
 
     <!-- INSERT 쿼리 : 사원 사진 등록  -->
@@ -229,18 +236,18 @@
     <select id="selectBranchesOrders" resultMap="branchOrderResultMap">
         SELECT *
         FROM tbl_branch_order bo
-                 JOIN tbl_employee e ON bo.emp_no = e.emp_no
-                 JOIN tbl_branch b ON bo.branch_code = b.branch_code
-        WHERE e.emp_no = #{empNo}
-          AND bo.order_date BETWEEN #{startDate} AND #{endDate}
+                 JOIN tbl_employee e ON bo.EMP_NO = e.EMP_NO
+                 JOIN tbl_branch b ON bo.BRANCH_CODE = b.BRANCH_CODE
+        WHERE e.EMP_NO = #{empNo}
+          AND bo.ORDER_DATE BETWEEN #{startDate} AND #{endDate}
     </select>
 
     <select id="selectDepartmentsOrders" resultMap="departmentOrderResultMap">
         SELECT *
         FROM tbl_department_order do
-                 JOIN tbl_employee e ON do.emp_no = e.emp_no
-                 JOIN tbl_department d ON do.dept_code = d.dept_code
-        WHERE e.emp_no = #{empNo}
-          AND do.order_date BETWEEN #{startDate} AND #{endDate}
+                 JOIN tbl_employee e ON do.EMP_NO = e.EMP_NO
+                 JOIN tbl_department d ON do.DEPT_CODE = d.DEPT_CODE
+        WHERE e.EMP_NO = #{empNo}
+          AND do.ORDER_DATE BETWEEN #{startDate} AND #{endDate}
     </select>
 </mapper>

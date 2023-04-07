@@ -16,14 +16,15 @@
             att.END_TIME,
             vac.ALL_DAYS,
             vac.USED_DAYS,
+            vac.USED_HALF,
             vac.LEFT_DAYS
         FROM tbl_employee emp
-        JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
-        JOIN tbl_attendance_status_info ats ON (att.ATD_NO = ats.ATD_NO)
-        JOIN tbl_attendance_status sts ON (ats.STATUS_CODE = sts.STATUS_CODE)
-        JOIN tbl_emp_vacation_info vac ON (emp.EMP_NO = vac.EMP_NO)
+        LEFT JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
+        LEFT JOIN tbl_attendance_status_info ats ON (att.ATD_NO = ats.ATD_NO)
+        LEFT JOIN tbl_attendance_status sts ON (ats.STATUS_CODE = sts.STATUS_CODE)
+        LEFT JOIN tbl_emp_vacation_info vac ON (emp.EMP_NO = vac.EMP_NO)
         WHERE emp.EMP_NO = #{ empNo }
-        ORDER BY sts.STATUS_NAME, att.ATD_DATE DESC LIMIT 1;
+        ORDER BY att.ATD_DATE DESC, sts.STATUS_NAME DESC LIMIT 1;
     </select>
     <!-- AND att.ATD_DATE = (SELECT MAX(ATD_DATE) FROM tbl_attendance WHERE EMP_NO = #{ empNo } ORDER BY ATD_DATE DESC LIMIT 1) -->
 
@@ -39,6 +40,7 @@
             att.END_TIME,
             vac.ALL_DAYS,
             vac.USED_DAYS,
+            vac.USED_HALF,
             vac.LEFT_DAYS
         FROM tbl_employee emp
         JOIN tbl_attendance att ON (emp.EMP_NO = att.EMP_NO)
@@ -55,6 +57,7 @@
             EMP_NAME,
             ALL_DAYS,
             USED_DAYS,
+            USED_HALF,
             LEFT_DAYS
         FROM tbl_employee emp
         JOIN tbl_emp_vacation_info vac ON (vac.EMP_NO = emp.EMP_NO)
@@ -85,8 +88,9 @@
     </insert>
 
     <!-- 사원 근무상태정보 기록 생성(출퇴근 발생시간)  -->
-    <insert id="insertAttendanceStatusInfo" parameterType="int">
-        INSERT INTO TBL_ATTENDANCE_STATUS_INFO(ATD_NO, STATUS_CODE, OCCUR_TIME) VALUES (#{ atdNo }, #{ statusCode }, NOW());
+    <!-- <insert id="insertAttendanceStatusInfo" parameterType="int"> -->
+    <insert id="insertAttendanceStatusInfo" parameterType="hashmap">
+        INSERT INTO TBL_ATTENDANCE_STATUS_INFO(ATD_NO, STATUS_CODE, OCCUR_TIME) VALUES (#{ atdNo }, #{ statusCode }, #{ nowTime });
     </insert>
 
     <!-- 사원 근무정보 출퇴근 시간 변경  -->
@@ -114,33 +118,4 @@
                                          GROUP BY ATD_NO
                                          ORDER BY ATD_NO DESC LIMIT 1) A);
     </update>
-    <!-- <update id="updateAttendance" parameterType="int">
-        UPDATE tbl_attendance att
-        <if test="statusCode == 1">
-            SET att.START_TIME = (SELECT MAX(ati.OCCUR_TIME)
-                                  FROM tbl_attendance_status_info ati
-                                 WHERE ati.ATD_NO = #{ atdNo }
-                              GROUP BY ati.OCCUR_TIME
-                              ORDER BY ati.OCCUR_TIME DESC LIMIT 1)
-            WHERE att.ATD_NO = (SELECT * FROM (SELECT MAX(ATD_NO)
-                                   FROM tbl_attendance
-                                  WHERE EMP_NO = #{ empNo }
-                               GROUP BY ATD_NO
-                               ORDER BY ATD_NO DESC LIMIT 1) A);
-        </if>
-        <if test="statusCode != 1">
-            SET att.END_TIME = (SELECT MAX(ati.OCCUR_TIME)
-                                  FROM tbl_attendance_status_info ati
-                                 WHERE ati.ATD_NO = #{ atdNo }
-                              GROUP BY ati.OCCUR_TIME
-                              ORDER BY ati.OCCUR_TIME DESC LIMIT 1)
-         WHERE att.ATD_NO = (SELECT * FROM (SELECT MAX(ATD_NO)
-                                FROM tbl_attendance
-                               WHERE EMP_NO = #{ empNo }
-                            GROUP BY ATD_NO
-                            ORDER BY ATD_NO DESC LIMIT 1) A);
-        </if>
-    </update> -->
-
-
 </mapper>

@@ -208,38 +208,6 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 정보 수정 비즈니스 로직을 수행하는 메소드
      */
-//    public EmployeeDto updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode) throws Exception {
-//
-//        EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
-//
-//        if(employee == null) {
-//            throw new NotFoundException("해당 사원을 찾을 수 없습니다.");
-//        }
-//
-//        if (phone != null) {
-//            employee.setPhone(phone);
-//        }
-//        if (email != null) {
-//            employee.setEmail(email);
-//        }
-//        if (address != null) {
-//            employee.setAddress(address);
-//        }
-//        if (salary != null) {
-//            employee.setSalary(salary);
-//        }
-//        if (jobCode != null) {
-//            employee.setJobCode(jobCode);
-//        }
-//
-//        int affectedRows = employeeMapper.updateEmployee(employee); //update 쿼리가 실행된 결과로, 몇 개의 row가 업데이트 되었는지를 나타내는 변수
-//
-//        if (affectedRows != 1) {
-//            throw new SQLException("사원 정보 업데이트에 실패하였습니다.");
-//        }
-//
-//        return employee;
-//    }
     public EmployeeDto updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode, MultipartFile employeePhoto) throws Exception {
         EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
         if (employee == null) {
