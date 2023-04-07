@@ -8,19 +8,23 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    @Value("${image.add-resource-locations}")
+    private String imageResourceLocations;
+
+    @Value("${image.add-resource-handler}")
+    private String imageResourceHandler;
 
     @Value("${file.add-resource-locations}")
-    private String ADD_RESOURCE_LOCATION;
+    private String fileResourceLocations;
 
     @Value("${file.add-resource-handler}")
-    private String ADD_RESOURCE_HANDLER;
+    private String fileResourceHandler;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(ADD_RESOURCE_HANDLER)
-                .addResourceLocations("file://" +ADD_RESOURCE_LOCATION);
-
-
+        registry.addResourceHandler(fileResourceHandler)
+                .addResourceLocations("file://" + fileResourceLocations);
+        registry.addResourceHandler(imageResourceHandler)
+                .addResourceLocations("file://" + imageResourceLocations);
     }
-
 }

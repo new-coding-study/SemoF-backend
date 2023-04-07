@@ -157,7 +157,6 @@ public class HumanResourceService {
     public EmployeeDto insertEmployee(EmployeeDto employeeDto) throws SQLException {
         log.info("[EmployeeService] insertEmployee Start ===================================");
 
-
         try {
             employeeMapper.insertEmployee(employeeDto);
 
@@ -392,13 +391,13 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 번호와 일치하는 사원을 조회하는 비즈니스 로직
      */
-    public EmployeeDto selectEmployeeByEmpNo(Long empNo) {
+    public HumanResourceDto selectEmployeeByEmpNo(Long empNo) {
 
             if (empNo == null) {
                 throw new IllegalArgumentException("사원 번호를 입력해주세요.");
             }
 
-            List<EmployeeDto> result = humanResourceMapper.selectEmployeeByEmpNo(empNo);
+            List<HumanResourceDto> result = humanResourceMapper.selectEmployeeByEmpNo(empNo);
 
             if (result == null || result.isEmpty()) {
                 return null; // 조회된 사원이 없는 경우 null 반환
@@ -423,5 +422,76 @@ public class HumanResourceService {
                 .map(BranchOrderDto::getBranchDto)
                 .collect(Collectors.toList());
         return branch;
+    }
+
+    public EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo) {
+
+        return humanResourceMapper.selectEmployeePhotoByEmpNo(empNo);
+    }
+
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 생일자 수를 조회하는 비즈니스 로직
+     */
+    public int selectBirthEmpCount() throws SQLException {
+
+        LocalDate now = LocalDate.now();    // 이번 달 날짜 정보 추출
+
+        log.info("[HumanResourceService] LocalDate :" + now);
+
+        int monthValue = now.getMonthValue();
+
+        log.info("[HumanResourceService] MonthValue :" + monthValue);
+
+        int totalCount = 0;
+
+        try {
+            totalCount =  humanResourceMapper.selectBirthEmpCount(monthValue);
+
+            log.info("[HumanResourceService] totalCount :" + totalCount);
+
+        } catch (Exception e) {
+            throw new SQLException("전체 직원 수를 조회하지 못했습니다.", e);
+        }
+
+        return totalCount;
+    }
+
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 오늘의 출근자를 조회하는 비즈니스 로직
+     */
+    public int selectTodayAttendanceList() throws SQLException {
+
+        LocalDate today = LocalDate.now();
+
+        int todayAttendance  = 0;
+
+        try {
+            todayAttendance  =  humanResourceMapper.selectTodayAttendanceList(today);
+
+            log.info("[HumanResourceService] totalCount :" + todayAttendance );
+
+        } catch (Exception e) {
+            throw new SQLException("출근 직원 수를 조회하지 못했습니다.", e);
+        }
+
+        return todayAttendance ;
+    }
+
+    public int selectVacationCount() throws SQLException {
+        int vacationCount  = 0;
+
+        try {
+            vacationCount  =  humanResourceMapper.selectVacationCount();
+
+            log.info("[HumanResourceService] totalCount :" + vacationCount );
+
+        } catch (Exception e) {
+            throw new SQLException("휴가자 수를 조회하지 못했습니다.", e);
+        }
+        return vacationCount ;
     }
 }

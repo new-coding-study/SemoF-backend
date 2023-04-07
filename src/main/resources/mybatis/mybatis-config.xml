@@ -22,7 +22,12 @@
 
 		<typeAlias alias="BoardDto" type="com.loung.semof.board.dto.BoardDto"/>
 		<typeAlias alias="ReplyDto" type="com.loung.semof.reply.dto.ReplyDto"/>
-		
+		<typeAlias alias="TripReportDto" type="com.loung.semof.report.dto.TripDto"/>
+		<typeAlias alias="SalesReportDto" type="com.loung.semof.report.dto.SalesDto"/>
+		<typeAlias alias="MeetingReportDto" type="com.loung.semof.report.dto.MeetingDto"/>
+		<typeAlias alias="WorksDto" type="com.loung.semof.report.dto.WorksDto"/>
+
+
 		<typeAlias alias="ApprovalDTO" type="com.loung.semof.approval.dto.ApprovalDTO"/>
 		<typeAlias alias="ApprovLineDTO" type="com.loung.semof.approval.dto.ApprovLineDTO"/>
 		<typeAlias alias="ApprovOrderDTO" type="com.loung.semof.approval.dto.ApprovOrderDTO"/>
@@ -41,8 +46,8 @@
 		<typeAlias alias="ReceiveEmailDto" type="com.loung.semof.email.dto.ReceiveEmailDto"/>
 		<typeAlias alias="EmailAttachDto" type="com.loung.semof.email.dto.EmailAttachDto"/>
 
-
 		<typeAlias alias="TodoDto" type="com.loung.semof.todo.dto.TodoDto"/>
+		<typeAlias alias="CalendarDto" type="com.loung.semof.calendar.dto.CalendarDto"/>
 	</typeAliases>
 
 	<mappers>
@@ -63,6 +68,9 @@
 
 		<mapper resource="BoardMapper.xml"/>
 		<mapper resource="ReplyMapper.xml"/>
-
+		<mapper resource="TripMapper.xml"/>
+		<mapper resource="SalesMapper.xml"/>
+		<mapper resource="MeetingMapper.xml"/>
+		<mapper resource="WorksMapper.xml"/>
 	</mappers>
 </configuration>

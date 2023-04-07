@@ -13,6 +13,7 @@ import com.loung.semof.email.dto.SendEmailDto;
 import com.loung.semof.email.service.EmailService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,7 +58,7 @@ public class EmailController {
      */
     @PostMapping("/send")
     public ResponseEntity<?> sendEmail(@ModelAttribute SendEmailDto emailDto,
-                                       @RequestParam("file") MultipartFile file) {
+                                       @RequestParam(value = "file", required = false) MultipartFile file) {
 
         // 사원 정보 조회
         EmployeeDto sender = emailService.getEmployee(emailDto.getEmpNo());
@@ -99,18 +100,22 @@ public class EmailController {
 
         // 이메일 정보 설정
         emailDto.setEmailAttachDtoList(emailAttachDtoList);
+
         emailDto.setSenderName(sender.getEmpName());
+
         emailDto.setSenderAddr(senderAddr);
+
         emailDto.setTempStatus("N");
 
         // 이메일 발송 및 저장
         try {
-            emailService.insertSendEmail(emailDto, file); // Pass the MultipartFile to the service class
+            emailService.insertSendEmail(emailDto, file);
         } catch (Exception e) {
             throw new RuntimeException("이메일을 보내는 중 예외가 발생했습니다.", e);
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body("{\"success\":true}");
+
     }
 
     /**
@@ -121,6 +126,7 @@ public class EmailController {
     @GetMapping("/temp")
     public ResponseEntity<List<SendEmailDto>> getTempEmails() {
         List<SendEmailDto> emails = emailMapper.selectByTempStatus("Y");
+
         return ResponseEntity.ok(emails);
     }
 
@@ -169,8 +175,16 @@ public class EmailController {
     @GetMapping("/send/{mailNo}")
     public ResponseEntity<ResponseDto> selectSendEmail(@PathVariable("mailNo") Long mailNo) {
 
-        return ResponseEntity.ok()
-                .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectSendEmail(mailNo)));
+        try {
+            SendEmailDto email = emailService.selectSendEmail(mailNo);
+
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "정상 확인", email));
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 조회에 실패했습니다.", null));
+        }
     }
 
     /**
@@ -221,7 +235,34 @@ public class EmailController {
     @GetMapping("/receive/{receiveNo}")
     public ResponseEntity<ResponseDto> selectReceiveEmail(@PathVariable("receiveNo") Long receiveNo) {
 
-        return ResponseEntity.ok()
-                .body(new ResponseDto(HttpStatus.OK, "정상 확인",  emailService.selectReceiveEmail(receiveNo)));
+        try {
+            ReceiveEmailDto email = emailService.selectReceiveEmail(receiveNo);
+
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "정상 확인", email));
+
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "이메일 조회에 실패했습니다.", null));
+        }
+    }
+
+    /**
+     * @작성일 : 2023-04-06
+     * @작성자 : 이현도
+     * @메소드설명 :  상태를 바꿔서 휴지통으로 이동시키는 메소드
+     */
+    @PutMapping("/{mailNo}/{category}")
+    public ResponseEntity<ResponseDto> updateToTrash(@PathVariable Long mailNo, @PathVariable String category) {
+
+        String result = emailService.updateToTrash(mailNo, category);
+
+        if (result.equals("삭제 성공")) {
+            return ResponseEntity.ok()
+                    .body(new ResponseDto(HttpStatus.OK, "성공적으로 삭제되었습니다.",  result));
+        } else {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "삭제 실패", null));
+        }
     }
 }

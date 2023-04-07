@@ -10,7 +10,6 @@ import com.loung.semof.email.dto.SendEmailDto;
 import com.loung.semof.email.utils.ByteArrayResource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.jsoup.Jsoup;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,8 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.mail.*;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.search.ComparisonTerm;
-import javax.mail.search.ReceivedDateTerm;
+import javax.mail.search.FlagTerm;
 import javax.mail.search.SearchTerm;
 import java.io.*;
 import java.sql.SQLException;
@@ -94,7 +92,7 @@ public class EmailService {
 
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
         helper.setSubject(emailDto.getTitle());
 
@@ -110,11 +108,12 @@ public class EmailService {
 
             for (EmailAttachDto emailAttachDto : emailAttachDtoList) {
 
-                // Save attachment data to the database
+                //DB에 첨부 파일 저장
                 emailMapper.insertEmailAttach(emailAttachDto);
 
-                // Attach the file to the email using the custom ByteArrayResource
+                // 사용자 지정 ByteArrayResource를 사용하여 이메일에 파일을 첨부
                 ByteArrayResource byteArrayResource = new ByteArrayResource(emailAttachDto.getFileData());
+
                 helper.addAttachment(emailAttachDto.getOriginName(), byteArrayResource);
             }
         }
@@ -132,6 +131,7 @@ public class EmailService {
     private File saveUploadedFile(MultipartFile file) throws IOException {
         if (!file.isEmpty()) {
             File tempFile = File.createTempFile("email_attach_", "_" + file.getOriginalFilename());
+
             try (InputStream in = file.getInputStream(); OutputStream out = new FileOutputStream(tempFile)) {
                 IOUtils.copy(in, out);
             }
@@ -169,59 +169,80 @@ public class EmailService {
      * @메소드설명 : 이메일 수신함과 관련된 기능을 수행하는 메소드
      */
     public void fetchEmailsFromGmailAndStore() {
+
         String host = emailConfig.getHost();
+
         String username = emailConfig.getUsername();
+
         String password = emailConfig.getPassword();
 
         Properties props = new Properties();
+
         props.setProperty("mail.store.protocol", "imaps");
+
         props.setProperty("mail.imaps.host", host);
+
         props.setProperty("mail.imaps.port", "993");
 
         List<ReceiveEmailDto> mailList = new ArrayList<>();
 
         try {
             Session session = Session.getDefaultInstance(props, null);
+
             Store store = session.getStore("imaps");
+
             store.connect(host, username, password);
 
-
             Folder inbox = store.getFolder("INBOX");
+
             inbox.open(Folder.READ_ONLY);
 
             // Get the last email's send date from the database
             ReceiveEmailDto lastEmail = emailMapper.selectLastEmail();
+
             LocalDateTime lastEmailSendDate = lastEmail != null ? lastEmail.getSendDate() : null;
 
             // Fetch only new emails
             SearchTerm searchTerm = lastEmailSendDate != null ? searchForNewEmails(lastEmailSendDate) : null;
-            Message[] messages = searchTerm != null ? inbox.search(searchTerm) : inbox.getMessages();
-//            Message[] messages = inbox.getMessages();
+
+//            Message[] messages = searchTerm != null ? inbox.search(searchTerm) : inbox.getMessages();
+
+            Message[] messages = inbox.getMessages();
+
             System.out.println("Fetched messages count: " + messages.length);
 
             for (Message message : messages) {
                 ReceiveEmailDto receiveEmailDto = new ReceiveEmailDto();
+
                 receiveEmailDto.setReceiverAddr(Arrays.toString(message.getRecipients(Message.RecipientType.TO)));
+
                 receiveEmailDto.setSenderName(message.getFrom()[0].toString());
+
                 receiveEmailDto.setTitle(message.getSubject());
 
                 Object content = message.getContent();
+
                 if (content instanceof MimeMultipart) {
                     MimeMultipart mimeMultipart = (MimeMultipart) content;
+
                     receiveEmailDto.setContent(getTextFromMimeMultipart(mimeMultipart));
                 } else {
                     receiveEmailDto.setContent(content.toString());
                 }
 
                 receiveEmailDto.setSendDate(LocalDateTime.ofInstant(message.getSentDate().toInstant(), ZoneId.systemDefault()));
+
                 mailList.add(receiveEmailDto);
             }
 
             inbox.close(false);
+
             store.close();
 
             insertEmailList(mailList);
+
             List<ReceiveEmailDto> emailList = selectEmailList();
+
             System.out.println("Email list from database: " + emailList);
 
         } catch (MessagingException | IOException e) {
@@ -237,16 +258,25 @@ public class EmailService {
      */
     private String getTextFromMimeMultipart(MimeMultipart mimeMultipart) throws MessagingException, IOException {
         StringBuilder result = new StringBuilder();
+
         int count = mimeMultipart.getCount();
+
         for (int i = 0; i < count; i++) {
             BodyPart bodyPart = mimeMultipart.getBodyPart(i);
+
             if (bodyPart.isMimeType("text/plain")) {
                 result.append("\n").append(bodyPart.getContent());
-                break; // without break, it can concatenate text/plain and text/html content
+
+                break;
+
             } else if (bodyPart.isMimeType("text/html")) {
+
                 String html = (String) bodyPart.getContent();
-                result.append("\n").append(Jsoup.parse(html).text());
+
+//                result.append("\n").append(Jsoup.parse(html).text());
+
             } else if (bodyPart.getContent() instanceof MimeMultipart) {
+
                 result.append(getTextFromMimeMultipart((MimeMultipart) bodyPart.getContent()));
             }
         }
@@ -261,10 +291,13 @@ public class EmailService {
     public LocalDateTime getLastFetchedTimestamp() {
         try {
             ReceiveEmailDto lastEmail = emailMapper.selectLastEmail();
+
             return lastEmail == null ? null : lastEmail.getSendDate();
+
         } catch (Exception e) {
-            log.error("Error getting last fetched email timestamp.", e);
-            throw new RuntimeException("Error getting last fetched email timestamp.");
+            log.error("마지막으로 가져온 이메일 타임스탬프를 가져오는 동안 오류가 발생했습니다.", e);
+
+            throw new RuntimeException("마지막으로 가져온 이메일 타임스탬프를 가져오는 동안 오류가 발생했습니다.");
         }
     }
 
@@ -275,16 +308,15 @@ public class EmailService {
      */
     public SearchTerm searchForNewEmails(LocalDateTime lastEmailSendDate) {
         Instant lastEmailInstant = lastEmailSendDate.atZone(ZoneId.systemDefault()).toInstant();
+
         Date lastEmailDate = Date.from(lastEmailInstant);
 
         // Create a search term for all emails received after the lastEmailDate
-        SearchTerm newerThan = new ReceivedDateTerm(ComparisonTerm.GT, lastEmailDate);
+//        SearchTerm newerThan = new ReceivedDateTerm(ComparisonTerm.GT, lastEmailDate);
+        SearchTerm newerThan = new FlagTerm(new Flags(Flags.Flag.RECENT), true);
 
         return newerThan;
     }
-
-
-
 
     /**
      * @작성일 : 2023-03-24
@@ -292,6 +324,13 @@ public class EmailService {
      * @메소드설명 : 수신된 이메일을 DB에 저장하는 메소드
      */
     public void insertEmailList(List<ReceiveEmailDto> mailList) {
+
+        System.out.println("mailList size = " + mailList.size());
+
+        int processedEmails = 0;
+        int insertedEmails = 0;
+        int skippedEmails = 0;
+
         for (ReceiveEmailDto receiveEmailDto : mailList) {
             try {
                 // 중복 체크
@@ -299,18 +338,27 @@ public class EmailService {
                         .selectEmailByTitleAndSenderName(receiveEmailDto.getTitle(), receiveEmailDto.getSenderName());
                 if (existingEmail != null) {
                     // 이미 해당 제목과 동일한 수신자가 존재하면, 저장하지 않음
+                    skippedEmails++;
                     continue;
                 }
 
                 emailMapper.insertEmail(receiveEmailDto);
+                insertedEmails++;
 
             } catch (Exception e) {
                 log.error("이메일을 저장하는 중 예외가 발생했습니다.", e);
-
                 throw new RuntimeException("이메일을 저장하는 중 예외가 발생했습니다.");
             }
+
+            processedEmails++;
         }
+        log.info("Processed emails count: " + processedEmails);
+
+        log.info("Inserted emails count: " + insertedEmails);
+
+        log.info("Skipped emails count: " + skippedEmails);
     }
+
 
     /**
      * @작성일 : 2023-03-24
@@ -373,6 +421,11 @@ public class EmailService {
         return emailMapper.selectSendEmail(mailNo);
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신함 전체 갯수를 카운트하는 메소드
+     */
     public int selectReceiveEmailTotal() throws SQLException {
         int totalCount = 0;
 
@@ -387,6 +440,11 @@ public class EmailService {
         return totalCount;
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 수신 메일을 조회하여 페이지네이션 처리를 하는 메소드
+     */
     public List<ReceiveEmailDto> selectEmailListWithPaging(int startRow, int endRow) {
         List<ReceiveEmailDto> receiveList = Collections.emptyList();
 
@@ -399,7 +457,30 @@ public class EmailService {
         return receiveList;
     }
 
+    /**
+     * @작성일 : 2023-04-05
+     * @작성자 : 이현도
+     * @메소드설명 : 메일 번호에 따라 수신 메일을 조회하는 메소드
+     */
     public ReceiveEmailDto selectReceiveEmail(Long receiveNo) {
         return emailMapper.selectReceiveEmail(receiveNo);
+    }
+
+    /**
+     * @작성일 : 2023-04-06
+     * @작성자 : 이현도
+     * @메소드설명 : 메일함 카테고리와, 메일 번호를 활용하여 메일의 상태값을 변경하는 메소드
+     */
+    public String updateToTrash(Long mailNo, String category) {
+        if ("send".equals(category)) {
+            emailMapper.updateSendTrash(mailNo);
+
+        } else if ("receive".equals(category)) {
+            emailMapper.updateReceiveTrash(mailNo);
+
+        } else {
+            throw new IllegalArgumentException("부정확한 카테고리 입니다.");
+        }
+        return "삭제 성공";
     }
 }

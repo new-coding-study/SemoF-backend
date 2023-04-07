@@ -7,6 +7,7 @@ import com.loung.semof.humanresource.dto.EmployeePhotoDto;
 import com.loung.semof.humanresource.dto.HumanResourceDto;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -20,8 +21,6 @@ import java.util.List;
 @Mapper
 public interface HumanResourceMapper {
     void updateEmployee(EmployeeDto employee);
-
-
     int selectEmployeeTotal();
 
     List<HumanResourceDto> selectEmployeeListWithPaging(int startRow, int endRow);
@@ -34,15 +33,21 @@ public interface HumanResourceMapper {
 
     List<HumanResourceDto> SelectEmployeesForChart(String empName, String deptName, String branchName);
 
-    List<EmployeeDto> selectEmployeeByEmpNo(Long empNo);
+    List<HumanResourceDto> selectEmployeeByEmpNo(Long empNo);
 
     void insertEmployeePhoto(EmployeePhotoDto employeePhotoDto);
 
-    EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo);
+     EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo);
 
     void deleteEmployeePhoto(Long photoNo);
 
     List<DepartmentOrderDto> selectDepartmentsOrders();
 
     List<BranchOrderDto> selectBranchesOrders();
+
+    int selectBirthEmpCount(int monthValue);
+
+    int selectTodayAttendanceList(LocalDate date);
+
+    int selectVacationCount();
 }

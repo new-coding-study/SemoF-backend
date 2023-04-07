@@ -29,10 +29,10 @@ public interface TodoMapper {
     int insertTodo(TodoDto todoDto);
     int updateTodo(TodoDto todoDto);
     int deleteTodo(Long todoNo);
-
     int checkStar(Long todoNo);
-
     int updateStar(Long todoNo, Long changeStar);
+    int checkFinish(Long todoNo);
 
-//
+    int updateFinish(Long todoNo, Long changeFinish);
+
 }
