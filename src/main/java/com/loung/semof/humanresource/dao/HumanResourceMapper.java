@@ -7,6 +7,7 @@ import com.loung.semof.humanresource.dto.EmployeePhotoDto;
 import com.loung.semof.humanresource.dto.HumanResourceDto;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -44,4 +45,9 @@ public interface HumanResourceMapper {
 
     List<BranchOrderDto> selectBranchesOrders();
 
+    int selectBirthEmpCount(int monthValue);
+
+    int selectTodayAttendanceList(LocalDate date);
+
+    int selectVacationCount();
 }
