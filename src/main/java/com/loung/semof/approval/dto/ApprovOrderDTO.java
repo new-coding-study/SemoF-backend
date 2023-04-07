@@ -22,5 +22,7 @@ public class ApprovOrderDTO {
   private Integer empNo;
 
   private String empName;
+
+  private String jobName;
 //  private ApprovStatusDTO approvStatusDTO;
 }

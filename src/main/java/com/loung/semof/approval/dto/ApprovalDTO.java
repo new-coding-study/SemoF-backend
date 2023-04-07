@@ -24,7 +24,11 @@ public class ApprovalDTO {
     private LocalDateTime approvDate;
     private Integer lineNo;
     private Integer empNo;
+    private String empName;
+    private String category;
 //    private List<ApprovFileDTO> approvFileDTOList;
     private List <ApprovContentDTO> approvContentDTOList;
 //    private List<ApprovStatusDTO> approvStatusDTOList;
+    private String status;
+    private List<String> statuses;
 }

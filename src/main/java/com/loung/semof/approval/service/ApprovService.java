@@ -1,6 +1,5 @@
 package com.loung.semof.approval.service;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 //import com.google.gson.Gson;
 //import com.google.gson.Gson;
 //import com.google.gson.Gson;
@@ -9,14 +8,14 @@ import com.loung.semof.approval.dto.*;
 import com.loung.semof.common.dto.BranchDto;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.util.FileUploadUtils;
+import com.sun.tools.jconsole.JConsoleContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+        import java.util.List;
 import java.util.UUID;
 
 /**
@@ -79,6 +78,9 @@ public class ApprovService {
     }
 
     public String insertApproval(ApprovalDTO approval, List<MultipartFile> files) {
+
+//        approval.setCategory(category);
+
         List<ApprovFileDTO> fileDTOs = new ArrayList<>();
         System.out.println("결재등록 서비스 호출");
         System.out.println("files = " + files);
@@ -98,6 +100,8 @@ public class ApprovService {
             }
             fileDTOs.add(fileDTO);
         }
+
+
         int approvResult = approvMapper.insertApproval(approval);
         int fileResult = 0;
         int contentResult = 0;
@@ -157,6 +161,13 @@ public class ApprovService {
 
     public Object selectApprovalInWithPaging(SelectCriteria selectCriteria) {
         List<ApprovalDTO> approvalList = approvMapper.selectApprovalInWithPaging(selectCriteria);
+        for(int i=0 ; i<approvalList.size();i++){
+            approvalList.get(i).setCategory(approvMapper.selectCategory(approvalList.get(i).getApprovNo()));
+            approvalList.get(i).setStatus(approvMapper.selectLatestStatus(approvalList.get(i).getApprovNo()));
+            System.out.println(approvalList.get(i).getCategory());
+            System.out.println(approvalList.get(i).getStatus());
+        }
+//        String[] status = approvMapper.selectLatestStatus();
 //        String status = approvMapper.selectLatestStatus();
 //        for(int i=0; i<approvalList.size(); i++){
 //            approvalList.get(i).getApprovFileDTOList().get(i).setFilePath(FILE_DIR + approvalList.get(i).getApprovFileDTOList().get(i).getFilePath());
@@ -199,6 +210,18 @@ public class ApprovService {
 
     public Object selectApproval(Integer approvNo) {
         ApprovalDTO approvalDTO = approvMapper.selectApproval(approvNo);
+        approvalDTO.setCategory(approvMapper.selectCategory(approvNo));
+        approvalDTO.setStatus(approvMapper.selectLatestStatus(approvNo));
+        System.out.println("approvalDTO = " + approvalDTO);
+
+
+        for(int i =0 ; i<approvMapper.selectStatus(approvNo).size();i++){
+            System.out.println("approvMapper.selectStatus(approvNo).get(i)) = " + approvMapper.selectStatus(approvNo).get(i));
+
+        }
+        System.out.println("매퍼의 값 : "+approvMapper.selectStatus(approvNo));
+            System.out.println("approvalDTO.getStatuses() = " + approvalDTO.getStatuses());
+//        }
         return approvalDTO;
     }
 
@@ -276,15 +299,17 @@ public class ApprovService {
         return(result>0)? "결재처리완료":"결재처리실패";
     }
 
-    public Object updateApprovLine(ApprovLineDTO line, List<ApprovOrderDTO> orders) {
-        line.setApprovOrderDTOList(orders);
+    public Object updateApprovLine(ApprovLineDTO line) {
+        for(int i=0;i<line.getApprovOrderDTOList().size();i++){
+            System.out.println(line.getApprovOrderDTOList().get(i));
+        }
         int result = 0;
         int lineResult = approvMapper.updateApprovLine(line);
         int orderResult = 0;
-        for(int i =0; i<orders.size();i++){
+        for(int i =0; i<line.getApprovOrderDTOList().size();i++){
             orderResult += approvMapper.updateApprovOrder(line.getApprovOrderDTOList().get(i));
         }
-        if(lineResult>0 && orderResult == orders.size()){
+        if(lineResult>0 && orderResult ==  line.getApprovOrderDTOList().size()){
             result = 1;
         }
         return(result > 0 ) ? "결재라인업데이트성공" : "결재라인업데이트실패";
@@ -378,6 +403,23 @@ public class ApprovService {
     public Object selectLineDetail(Integer lineNo) {
         ApprovLineDTO lineDTO = approvMapper.selectLineDetail(lineNo);
         return lineDTO;
+    }
+
+    public Object selectApprovalOutWithPaging(SelectCriteria selectCriteria) {
+        List<ApprovalDTO> approvalList = approvMapper.selectApprovalOutWithPaging(selectCriteria);
+        for(int i=0 ; i<approvalList.size();i++){
+            approvalList.get(i).setCategory(approvMapper.selectCategory(approvalList.get(i).getApprovNo()));
+            approvalList.get(i).setStatus(approvMapper.selectLatestStatus(approvalList.get(i).getApprovNo()));
+            System.out.println(approvalList.get(i).getCategory());
+            System.out.println(approvalList.get(i).getStatus());
+        }
+        return approvalList;
+    }
+
+    public int selectApprovOutTotal() {
+        int result = approvMapper.selectApprovOutTotal();
+
+        return result;
     }
 
 //    public Object insertApprovOrders(List<ApprovOrderDTO> orders) {

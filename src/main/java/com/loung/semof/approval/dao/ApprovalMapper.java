@@ -7,7 +7,6 @@ import com.loung.semof.common.paging.SelectCriteria;
 import org.apache.ibatis.annotations.Mapper;
 
 
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -65,10 +64,12 @@ public interface ApprovalMapper {
     int updateStatus(ApprovStatusDTO status);
 
     int selectApprovalTotal();
-
+    int selectApprovOutTotal();
     int selectApprovLineTotal();
 
-    String selectLatestStatus();
+    String selectLatestStatus(Integer approvNo);
+
+    String selectCategory(Integer approvNo);
 
     List<String> selectFormTitle();
 
@@ -80,6 +81,10 @@ public interface ApprovalMapper {
     List<ApprovLineDTO> selectLineList();
 
     ApprovLineDTO selectLineDetail(Integer lineNo);
+
+    List<ApprovalDTO> selectApprovalOutWithPaging(SelectCriteria selectCriteria);
+
+    List<String> selectStatus(Integer approvNo);
 
 //    int insertApprovOrders(List<ApprovOrderDTO> orders);
 

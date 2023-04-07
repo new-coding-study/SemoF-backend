@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 public class ApprovStatusDTO {
     private char statusCode;
     private String statusName;
-    private Integer orderNo;
+    private Integer statusOrder;
     private Integer approvNo;
 }

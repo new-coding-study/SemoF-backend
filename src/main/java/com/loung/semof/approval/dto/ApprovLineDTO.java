@@ -23,10 +23,11 @@ import java.util.List;
 public class ApprovLineDTO {
     private Integer lineNo;
     private String lineName;
-    private String empName;
-    private Integer empNo;
+    private String activity;
     private String branchName;
     private Integer branchCode;
+    private String deptName;
+
     private List<ApprovOrderDTO> approvOrderDTOList;
 //    private List<ApprovOrderDTO> approvOrderDTOList = new ArrayList<>();
 //    public List<ApprovOrderDTO> getApprovOrderDTOList() {
