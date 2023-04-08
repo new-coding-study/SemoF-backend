@@ -17,11 +17,9 @@ import java.util.List;
 @ToString
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class ReceiveEmailDto extends EmailAttachDto {
-        public ReceiveEmailDto(Long emailFileNo, String originName, String changeName, String filePath, LocalDateTime uploadDate, byte[] fileData, Long receiveNo, String receiverAddr, String senderName, String title, String content, LocalDateTime sendDate, List<EmailAttachDto> attachList, String status, String isRead, String category) {
-                super(emailFileNo, originName, changeName, filePath, uploadDate, fileData);
+public class ReceiveEmailDto extends EmailDto {
+        public ReceiveEmailDto(Long receiveNo, String receiverAddr, String senderName, String title, String content, LocalDateTime sendDate, List<EmailAttachDto> attachList, String status, String isRead, String category) {
                 this.receiveNo = receiveNo;
                 this.receiverAddr = receiverAddr;
                 this.senderName = senderName;
@@ -32,6 +30,20 @@ public class ReceiveEmailDto extends EmailAttachDto {
                 this.status = status;
                 this.isRead = isRead;
                 this.category = category;
+        }
+
+        public ReceiveEmailDto(Long emailFileNo, String senderName, String title, String content, LocalDateTime sendDate, String status, String category, Long receiveNo, String receiverAddr, String senderName1, String title1, String content1, LocalDateTime sendDate1, List<EmailAttachDto> attachList, String status1, String isRead, String category1) {
+                super(emailFileNo, senderName, title, content, sendDate, status, category);
+                this.receiveNo = receiveNo;
+                this.receiverAddr = receiverAddr;
+                this.senderName = senderName1;
+                this.title = title1;
+                this.content = content1;
+                this.sendDate = sendDate1;
+                this.attachList = attachList;
+                this.status = status1;
+                this.isRead = isRead;
+                this.category = category1;
         }
 
         private Long receiveNo; //수신이메일번호

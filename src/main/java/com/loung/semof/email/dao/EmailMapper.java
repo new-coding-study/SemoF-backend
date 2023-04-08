@@ -2,6 +2,7 @@ package com.loung.semof.email.dao;
 
 import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.email.dto.EmailAttachDto;
+import com.loung.semof.email.dto.EmailDto;
 import com.loung.semof.email.dto.ReceiveEmailDto;
 import com.loung.semof.email.dto.SendEmailDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -54,4 +55,10 @@ public interface EmailMapper {
     void updateSendTrash(Long mailNo);
 
     void updateReceiveTrash(Long mailNo);
+
+    int selectTrashSendListTotal();
+
+    int selectTrashReceiveListTotal();
+
+    List<EmailDto> selectTrashEmailListWithPaging(int startRow, int endRow);
 }

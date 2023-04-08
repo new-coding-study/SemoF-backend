@@ -8,6 +8,7 @@ import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.email.config.EmailConfig;
 import com.loung.semof.email.dao.EmailMapper;
 import com.loung.semof.email.dto.EmailAttachDto;
+import com.loung.semof.email.dto.EmailDto;
 import com.loung.semof.email.dto.ReceiveEmailDto;
 import com.loung.semof.email.dto.SendEmailDto;
 import com.loung.semof.email.service.EmailService;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 /**
@@ -255,6 +257,10 @@ public class EmailController {
     @PutMapping("/{mailNo}/{category}")
     public ResponseEntity<ResponseDto> updateToTrash(@PathVariable Long mailNo, @PathVariable String category) {
 
+        log.info("[EmailController]  mailNo :  " + mailNo);
+
+        log.info("[EmailController]  category :  " + category);
+
         String result = emailService.updateToTrash(mailNo, category);
 
         if (result.equals("삭제 성공")) {
@@ -265,4 +271,43 @@ public class EmailController {
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "삭제 실패", null));
         }
     }
+
+    @GetMapping("/deleted")
+    public ResponseEntity<ResponseDto> selectTrashEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
+        try {
+            int sendCount = emailService.selectTrashSendListTotal();
+            int receiveCount = emailService.selectTrashReceiveListTotal();
+            int totalCount = sendCount + receiveCount;
+            int limit = 10;
+            int buttonAmount = 5;
+
+            SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
+
+            List<EmailDto> deleteEmails = emailService.selectTrashEmailListWithPaging(selectCriteria.getStartRow(), selectCriteria.getEndRow());
+
+            List<EmailDto> deleteEmailsDtoList = deleteEmails.stream() // 가져온 이메일 리스트를 stream() 메소드를 사용해 스트림으로 변환
+                    .map(emailDto -> new EmailDto( // map() 메소드를 사용해 스트림의 각 요소에 대해 EmailDto 객체로 매핑(람다식 사용)
+                            emailDto.getEmailFileNo(),
+                            emailDto.getSenderName(),
+                            emailDto.getTitle(),
+                            emailDto.getContent(),
+                            emailDto.getSendDate(),
+                            emailDto.getStatus(),
+                            emailDto.getCategory()
+                    ))
+                    .collect(Collectors.toList()); // collect() 메소드를 사용해 매핑된 객체들을 리스트로 반환
+
+            ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+
+            responseDtoWithPaging.setPageInfo(selectCriteria);
+
+            responseDtoWithPaging.setData(deleteEmailsDtoList);
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
 }
