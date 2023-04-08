@@ -19,25 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SendEmailDto extends EmailAttachDto {
-
-    public SendEmailDto(Long emailFileNo, String originName, String changeName, String filePath, LocalDateTime uploadDate, byte[] fileData, Long mailNo, Long empNo, Long emailFileNo1, String receiverAddr, String senderName, String senderAddr, String title, String content, LocalDateTime sendDate, String tempStatus, List<EmailAttachDto> emailAttachDtoList, String status, String category) {
-        super(emailFileNo, originName, changeName, filePath, uploadDate, fileData);
-        this.mailNo = mailNo;
-        this.empNo = empNo;
-        this.emailFileNo = emailFileNo1;
-        this.receiverAddr = receiverAddr;
-        this.senderName = senderName;
-        this.senderAddr = senderAddr;
-        this.title = title;
-        this.content = content;
-        this.sendDate = sendDate;
-        this.tempStatus = tempStatus;
-        this.emailAttachDtoList = emailAttachDtoList;
-        this.status = status;
-        this.category = category;
-    }
-
+public class SendEmailDto extends EmailDto {
     public SendEmailDto(Long mailNo, Long empNo, Long emailFileNo, String receiverAddr, String senderName, String senderAddr, String title, String content, LocalDateTime sendDate, String tempStatus, List<EmailAttachDto> emailAttachDtoList, String status, String category) {
         this.mailNo = mailNo;
         this.empNo = empNo;
@@ -52,6 +34,23 @@ public class SendEmailDto extends EmailAttachDto {
         this.emailAttachDtoList = emailAttachDtoList;
         this.status = status;
         this.category = category;
+    }
+
+    public SendEmailDto(Long emailFileNo, String senderName, String title, String content, LocalDateTime sendDate, String status, String category, Long mailNo, Long empNo, Long emailFileNo1, String receiverAddr, String senderName1, String senderAddr, String title1, String content1, LocalDateTime sendDate1, String tempStatus, List<EmailAttachDto> emailAttachDtoList, String status1, String category1) {
+        super(emailFileNo, senderName, title, content, sendDate, status, category);
+        this.mailNo = mailNo;
+        this.empNo = empNo;
+        this.emailFileNo = emailFileNo1;
+        this.receiverAddr = receiverAddr;
+        this.senderName = senderName1;
+        this.senderAddr = senderAddr;
+        this.title = title1;
+        this.content = content1;
+        this.sendDate = sendDate1;
+        this.tempStatus = tempStatus;
+        this.emailAttachDtoList = emailAttachDtoList;
+        this.status = status1;
+        this.category = category1;
     }
 
     private Long mailNo;    //이메일번호

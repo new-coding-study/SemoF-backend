@@ -47,106 +47,111 @@
         , CATEGORY
     </sql>
 
+    <!-- SELECT 쿼리 : 사원 번호로 사원을 조회 -->
     <select id="getEmployee" parameterType="java.lang.Long" resultType="EmployeeDto">
-        SELECT emp_no AS empNo, emp_name AS empName, email
+        SELECT EMP_NO , EMP_NAME , EMAIL
         FROM tbl_employee
-        WHERE emp_no = #{empNo}
+        WHERE EMP_NO = #{empNo}
     </select>
 
+    <!-- INSERT 쿼리 : 발신 이메일을 저장 -->
     <insert id="insertSendEmail" parameterType="SendEmailDto">
         INSERT INTO tbl_send_email
         VALUES (#{mailNo}, #{empNo}, #{emailFileNo}, #{receiverAddr}, #{senderName}, #{senderAddr}, #{title}, #{content}, default, default, default, default)
     </insert>
 
+    <!-- INSERT 쿼리 : 첨부 파일을 저장 -->
     <insert id="insertEmailAttach" parameterType="EmailAttachDto">
         INSERT INTO tbl_email_attach (ORIGIN_NAME, CHANGE_NAME, FILE_PATH, UPLOAD_DATE, FILE_DATA)
         VALUES (#{originName}, #{changeName}, #{filePath}, #{uploadDate}, #{fileData})
     </insert>
 
+    <!-- UPDATE 쿼리 : 임시 저장 여부를 업데이트 -->
     <update id="updateEmailStatus">
         UPDATE tbl_send_email
         SET TEMP_STATUS = 'N'
         WHERE MAIL_NO = #{mailNo}
     </update>
 
+    <!-- SELECT 쿼리 : 임시저장으로 조회 -->
+<!--    <select id="selectByTempStatus" resultType="SendEmailDto">-->
+<!--        SELECT *-->
+<!--        FROM tbl_send_email-->
+<!--        WHERE TEMP_STATUS = #{tempStatus}-->
+<!--    </select>-->
 
-    <select id="selectByTempStatus" resultType="SendEmailDto">
-        SELECT
-        *
-        FROM tbl_send_email
-        WHERE TEMP_STATUS = #{tempStatus}
-    </select>
-
+    <!-- INSERT 쿼리 : 수신 이메일을 저장 -->
     <insert id="insertEmail" parameterType="ReceiveEmailDto">
         INSERT INTO tbl_receive_email
         VALUES
             (#{receiveNo}, #{receiverAddr}, #{senderName}, #{title}, #{content}, #{sendDate}, default, default, default)
     </insert>
 
+    <!-- SELECT 쿼리 :  상태가 N인 수신메일 전체를 조회 -->
     <select id="selectEmailList" resultType="ReceiveEmailDto">
-        SELECT
-        *
+        SELECT *
         FROM tbl_receive_email
         WHERE STATUS = 'N'
     </select>
 
+    <!-- SELECT 쿼리 : 제목과 발신자, 상태값에 따라서 수신 메일을 조회 -->
     <select id="selectEmailByTitleAndSenderName" resultType="ReceiveEmailDto">
-        SELECT
-        *
+        SELECT *
         FROM tbl_receive_email
         WHERE TITLE = #{title}
         AND SENDER_NAME = #{senderName}
         AND STATUS = 'N'
     </select>
 
+    <!-- SELECT 쿼리 : 번호에 따라서 발신 메일을 조회 -->
     <select id="selectByEmailNo" resultType="SendEmailDto">
-        SELECT
-            *
+        SELECT *
         FROM tbl_send_email
         WHERE MAIL_NO = #{mailNo}
         AND STATUS = 'N'
     </select>
 
+    <!-- SELECT 쿼리 : 발신 메일 수를 조회 -->
     <select id="selectEmailListTotal" resultType="int">
-        SELECT
-            COUNT(*)
+        SELECT COUNT(*)
         FROM tbl_send_email
         WHERE STATUS = 'N'
     </select>
 
+    <!-- SELECT 쿼리 : 페이지 처리가 된 발신 메일 전체를 조회 -->
     <select id="selectSendEmailListWithPaging" resultType="SendEmailDto">
-    SELECT
-    *
+    SELECT *
     FROM tbl_send_email
     WHERE STATUS = 'N'
     ORDER BY MAIL_NO DESC
     LIMIT #{startRow}, #{endRow}
     </select>
 
+    <!-- SELECT 쿼리 : 발신 메일 조회 -->
     <select id="selectSendEmail" resultType="SendEmailDto">
-        SELECT
-            *
+        SELECT *
         FROM tbl_send_email
         WHERE MAIL_NO = #{mailNo}
         AND STATUS = 'N'
     </select>
 
+    <!-- SELECT쿼리 : 전체 수신 이메일 수를 조회 -->
     <select id="selectReceiveEmailTotal" resultType="int">
-        SELECT
-            COUNT(*)
+        SELECT COUNT(*)
         FROM tbl_receive_email
         WHERE STATUS = 'N'
     </select>
 
+    <!-- SELECT 쿼리 : 페이지 처리가 된 수신 메일 전체를 조회 -->
     <select id="selectEmailListWithPaging" resultType="ReceiveEmailDto">
-        SELECT
-         *
+        SELECT *
         FROM tbl_receive_email
         WHERE STATUS = 'N'
         ORDER BY RECEIVE_NO DESC
         LIMIT #{startRow}, #{endRow}
     </select>
 
+    <!-- SELECT 쿼리 : 최신 수신 메일을 조회 -->
     <select id="selectLastEmail" resultType="ReceiveEmailDto">
         SELECT *
         FROM tbl_receive_email
@@ -154,24 +159,65 @@
         LIMIT 1
     </select>
 
+    <!-- SELECT 쿼리 : 번호에 따라서 수신 메일을 조회 -->
     <select id="selectReceiveEmail" resultType="ReceiveEmailDto">
-        SELECT
-            *
+        SELECT *
         FROM tbl_receive_email
         WHERE RECEIVE_NO = #{receiveNo}
         AND STATUS = 'N'
     </select>
 
+    <!-- UPDATE 쿼리 : 수신 메일의 상태값을 변경 -->
     <update id="updateReceiveTrash">
         UPDATE tbl_receive_email
         SET STATUS = 'Y'
         WHERE RECEIVE_NO = #{mailNo}
     </update>
 
+    <!-- UPDATE 쿼리 : 발신 메일의 상태값을 변경 -->
     <update id="updateSendTrash">
         UPDATE tbl_send_email
         SET STATUS = 'Y'
         WHERE MAIL_NO = #{mailNo}
     </update>
+
+    <!-- SELECT 쿼리 : 삭제 메일 숫자를 조회  -->
+    <select id="selectTrashSendListTotal" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_send_email
+        WHERE STATUS = 'Y'
+    </select>
+
+    <!-- SELECT 쿼리 : 삭제 메일 숫자를 조회  -->
+    <select id="selectTrashReceiveListTotal" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_receive_email
+        WHERE STATUS = 'Y'
+    </select>
+
+    <!-- SELECT 쿼리 : 페이지 처리가 된 삭제 메일 전체를 조회 -->
+    <select id="selectTrashEmailListWithPaging" resultType="EmailDto">
+        (
+            SELECT
+                MAIL_NO as id,  EMP_NO as emp_no, RECEIVER_ADDR as receiver_addr,
+                SENDER_NAME as sender_name, SENDER_ADDR as sender_addr, TITLE as title,
+                CONTENT as content, SEND_DATE as send_date, STATUS as status,
+                CATEGORY as category
+            FROM tbl_send_email se
+            WHERE se.STATUS = 'Y'
+        )
+        UNION ALL
+        (
+            SELECT
+                RECEIVE_NO as id, NULL as emp_no, RECEIVER_ADDR as receiver_addr,
+                SENDER_NAME as sender_name, NULL as sender_addr, TITLE as title,
+                CONTENT as content, SEND_DATE as send_date, STATUS as status,
+                CATEGORY as category
+            FROM tbl_receive_email re
+            WHERE re.STATUS = 'Y'
+        )
+        ORDER BY SEND_DATE DESC
+        LIMIT #{startRow}, #{endRow}
+    </select>
 
 </mapper>

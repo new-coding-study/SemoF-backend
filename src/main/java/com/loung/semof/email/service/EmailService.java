@@ -5,6 +5,7 @@ import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.email.config.EmailConfig;
 import com.loung.semof.email.dao.EmailMapper;
 import com.loung.semof.email.dto.EmailAttachDto;
+import com.loung.semof.email.dto.EmailDto;
 import com.loung.semof.email.dto.ReceiveEmailDto;
 import com.loung.semof.email.dto.SendEmailDto;
 import com.loung.semof.email.utils.ByteArrayResource;
@@ -45,6 +46,7 @@ public class EmailService {
     private final EmployeeMapper employeeMapper;
     private final EmailConfig emailConfig;
 
+    private Set<String> processedMessageIds = new HashSet<>();
     public EmailService(EmailMapper emailMapper, JavaMailSender javaMailSender, EmployeeMapper employeeMapper, EmailConfig emailConfig) {
         this.emailMapper = emailMapper;
         this.javaMailSender = javaMailSender;
@@ -213,6 +215,14 @@ public class EmailService {
             System.out.println("Fetched messages count: " + messages.length);
 
             for (Message message : messages) {
+                String messageId = message.getHeader("Message-ID")[0];
+                if (processedMessageIds.contains(messageId)) { // 메일함 갱신 건너뜀
+                    continue;
+                }
+
+                // 처리된 세트에 메시지 ID 추가
+                processedMessageIds.add(messageId);
+
                 ReceiveEmailDto receiveEmailDto = new ReceiveEmailDto();
 
                 receiveEmailDto.setReceiverAddr(Arrays.toString(message.getRecipients(Message.RecipientType.TO)));
@@ -329,7 +339,9 @@ public class EmailService {
         System.out.println("mailList size = " + mailList.size());
 
         int processedEmails = 0;
+
         int insertedEmails = 0;
+
         int skippedEmails = 0;
 
         for (ReceiveEmailDto receiveEmailDto : mailList) {
@@ -483,5 +495,53 @@ public class EmailService {
             throw new IllegalArgumentException("부정확한 카테고리 입니다.");
         }
         return "삭제 성공";
+    }
+
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 삭제로 변경된 발신 메일 숫자를 조회하는 비즈니스 로직
+     */
+    public int selectTrashSendListTotal() throws SQLException {
+        int totalCount = 0;
+
+        try {
+            totalCount = emailMapper.selectTrashSendListTotal();
+
+        } catch (Exception e) {
+            throw new SQLException("삭제 된 이메일을 조회하지 못했습니다.", e);
+        }
+        return totalCount;
+    }
+
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 삭제로 변경된 수신 메일 숫자를 조회하는 비즈니스 로직
+     */
+    public int selectTrashReceiveListTotal() throws SQLException {
+        int totalCount = 0;
+
+        try {
+            totalCount = emailMapper.selectTrashReceiveListTotal();
+
+        } catch (Exception e) {
+            throw new SQLException("삭제 된 이메일을 조회하지 못했습니다.", e);
+        }
+        return totalCount;
+    }
+
+    public List<EmailDto> selectTrashEmailListWithPaging(int startRow, int endRow) {
+
+        List<EmailDto> trashList = Collections.emptyList();
+
+        try {
+            trashList = emailMapper. selectTrashEmailListWithPaging(startRow, endRow);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return trashList;
     }
 }
