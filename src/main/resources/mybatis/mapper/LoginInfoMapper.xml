@@ -78,5 +78,12 @@
            , #{loginPwd}
         )
     </insert>
-
+    <select id="selectUserRole" resultType="String">
+        SELECT
+            MEMBER_ROLE
+        FROM tbl_employee
+        JOIN tbl_login_info tli on tbl_employee.EMP_NO = tli.EMP_NO
+        WHERE tli.LOGIN_ID=#{loginId}
+    </select>
 </mapper>
+<!--        -->

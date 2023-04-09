@@ -407,6 +407,7 @@ public class ApprovService {
 
     public Object selectApprovalOutWithPaging(SelectCriteria selectCriteria) {
         List<ApprovalDTO> approvalList = approvMapper.selectApprovalOutWithPaging(selectCriteria);
+        System.out.println("approvalList = " + approvalList);
         for(int i=0 ; i<approvalList.size();i++){
             approvalList.get(i).setCategory(approvMapper.selectCategory(approvalList.get(i).getApprovNo()));
             approvalList.get(i).setStatus(approvMapper.selectLatestStatus(approvalList.get(i).getApprovNo()));
@@ -422,6 +423,10 @@ public class ApprovService {
         return result;
     }
 
+    public List<ApprovOpinDTO> selectOpinion(Integer approvNo){
+        List<ApprovOpinDTO> opinList= approvMapper.selectOpinion(approvNo);
+        return opinList;
+    }
 //    public Object insertApprovOrders(List<ApprovOrderDTO> orders) {
 //        int result = approvMapper.insertApprovOrders(orders);
 //        return (result>0)?"결재순서 등록 성공": "결재순서 등록 실패";

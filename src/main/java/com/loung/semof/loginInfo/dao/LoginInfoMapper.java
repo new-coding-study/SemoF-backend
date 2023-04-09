@@ -28,4 +28,6 @@ public interface LoginInfoMapper {
    String selectById(String loginId);
 
     int checkId(String loginId);
+
+    String selectUserRole(String loginId);
 }

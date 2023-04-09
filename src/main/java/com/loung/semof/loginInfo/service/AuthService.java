@@ -27,7 +27,11 @@ public class AuthService {
 
 //    private final EmployeeDto employeeDto;
     public Integer newEmpNo;
-    public AuthService(LoginInfoMapper loginInfoMapper, PasswordEncoder passwordEncoder, TokenProvider tokenProvider) {
+
+    public String role;
+    public AuthService(LoginInfoMapper loginInfoMapper, PasswordEncoder passwordEncoder, TokenProvider tokenProvider
+//    ,EmployeeDto employeeDto
+    ) {
         this.loginInfoMapper = loginInfoMapper;
         this.passwordEncoder = passwordEncoder;
         this.tokenProvider = tokenProvider;
@@ -49,8 +53,11 @@ public class AuthService {
         log.info("[AuthService] Member Signup Start ==============================");
         loginInfoDto.setLoginPwd(passwordEncoder.encode(loginInfoDto.getLoginPwd()));
         log.info("[AuthService] Member {}", loginInfoDto);
+        System.out.println("newEmpNo = " + newEmpNo);
         loginInfoDto.setEmpNo(newEmpNo);
 
+//        String role = loginInfoMapper.selectUserRole(newEmpNo);
+//        loginInfoDto.setMemberRole(role);
         int result = loginInfoMapper.insertMember(loginInfoDto);
         log.info("[AuthService] Member Insert Result {}", result > 0 ? "회원 가입 성공" : "회원 가입 실패");
 
@@ -58,13 +65,23 @@ public class AuthService {
 
         return loginInfoDto;
     }
+//    public void setRole(LoginInfoDto memberDto){
+//        role = loginInfoMapper.selectUserRole(memberDto.getLoginId());
+//        System.out.println("role = " + role);
+//        memberDto.setMemberRole(role);
+//    }
 
 
     @Transactional
     public TokenDto login(LoginInfoDto memberDto) {
+//        setRole(memberDto);
         log.info("[AuthService] Login Start ===================================");
         log.info("[AuthService] {}", memberDto);
-
+//        System.out.println("newEmpNo = " + newEmpNo);
+        role = loginInfoMapper.selectUserRole(memberDto.getLoginId());
+        System.out.println("role = " + role);
+        memberDto.setMemberRole(role);
+        System.out.println("memberDto = " + memberDto);
         // 1. 아이디 조회
         LoginInfoDto member = loginInfoMapper.findByMemberId(memberDto.getLoginId())
                 .orElseThrow(() -> new LoginFailedException("잘못된 아이디 또는 비밀번호입니다"));
@@ -76,7 +93,7 @@ public class AuthService {
         }
 
         // 3. 토큰 발급
-        TokenDto tokenDto = tokenProvider.generateTokenDto(member);
+        TokenDto tokenDto = tokenProvider.generateTokenDto(memberDto);
         log.info("[AuthService] tokenDto {}", tokenDto);
 
         log.info("[AuthService] Login End ===================================");

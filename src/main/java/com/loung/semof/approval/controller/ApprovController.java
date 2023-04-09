@@ -119,6 +119,7 @@ public class ApprovController {
     @GetMapping("/approv-out")
     public ResponseEntity<ResponseDto> selectApprovalOutWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
         int totalCount = approvService.selectApprovOutTotal();
+        System.out.println("totalCount = " + totalCount);
         int limit = 10;
         int buttonAmount = 10;
 
@@ -254,5 +255,10 @@ public class ApprovController {
     public ResponseEntity<ResponseDto> selectDept(){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "부서조회", approvService.selectDept()));
 
+    }
+
+    @GetMapping("/opinions")
+    public ResponseEntity<ResponseDto> selectOpinion(Integer approvNo){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "의견조회", approvService.selectOpinion(approvNo)));
     }
 }
