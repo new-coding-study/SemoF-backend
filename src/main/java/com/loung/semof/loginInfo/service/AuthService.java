@@ -78,14 +78,14 @@ public class AuthService {
         log.info("[AuthService] Login Start ===================================");
         log.info("[AuthService] {}", memberDto);
 //        System.out.println("newEmpNo = " + newEmpNo);
-        role = loginInfoMapper.selectUserRole(memberDto.getLoginId());
-        System.out.println("role = " + role);
-        memberDto.setMemberRole(role);
+
         System.out.println("memberDto = " + memberDto);
         // 1. 아이디 조회
         LoginInfoDto member = loginInfoMapper.findByMemberId(memberDto.getLoginId())
                 .orElseThrow(() -> new LoginFailedException("잘못된 아이디 또는 비밀번호입니다"));
-
+        role = loginInfoMapper.selectUserRole(memberDto.getLoginId());
+        System.out.println("role = " + role);
+        member.setMemberRole(role);
         // 2. 비밀번호 매칭
         if (!passwordEncoder.matches(memberDto.getLoginPwd(), member.getLoginPwd())) {
             log.info("[AuthService] Password Match Fail!!!!!!!!!!!!");
@@ -93,7 +93,7 @@ public class AuthService {
         }
 
         // 3. 토큰 발급
-        TokenDto tokenDto = tokenProvider.generateTokenDto(memberDto);
+        TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         log.info("[AuthService] tokenDto {}", tokenDto);
 
         log.info("[AuthService] Login End ===================================");
