@@ -272,6 +272,11 @@ public class EmailController {
         }
     }
 
+    /**
+     * @작성일 : 2023-04-09
+     * @작성자 : 이현도
+     * @메소드설명 : 휴지통에 있는 메일을 조회하는 메소드
+     */
     @GetMapping("/deleted")
     public ResponseEntity<ResponseDto> selectTrashEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
         try {
@@ -307,6 +312,45 @@ public class EmailController {
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
+        }
+    }
+
+    /**
+     * @작성일 : 2023-04-09
+     * @작성자 : 이현도
+     * @메소드설명 : 제목에 따라 메일을 검색하는 메소드
+     */
+    @GetMapping("/search")
+    public ResponseEntity<ResponseDto> selectEmailByTitle(@RequestParam String searchKeyword,
+                                                          @RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
+        try {
+
+            int sendCount = emailService.selectSendByTitleTotalCount(searchKeyword);
+
+            int receiveCount = emailService.selectReceiveByTitleTotalCount(searchKeyword);
+
+            int totalCount = sendCount + receiveCount;
+
+            int limit = 10;
+
+            int buttonAmount = 5;
+
+            SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
+
+            List<EmailDto> searchEmails = emailService.searchEmailByTitle(searchKeyword, selectCriteria.getStartRow(),
+                    selectCriteria.getEndRow());
+
+            ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+
+            responseDtoWithPaging.setPageInfo(selectCriteria);
+
+            responseDtoWithPaging.setData(searchEmails);
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
         }
     }
 
