@@ -89,4 +89,6 @@ public interface ApprovalMapper {
 //    int insertApprovOrders(List<ApprovOrderDTO> orders);
 
 //    int insertLine(ApprovLineDTO line);
+
+    List<ApprovOpinDTO> selectOpinion(Integer approvNo);
 }
