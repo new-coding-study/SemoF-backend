@@ -220,4 +220,46 @@
         LIMIT #{startRow}, #{endRow}
     </select>
 
+    <!-- SELECT 쿼리 : 발신함에서 일치하는 키워드 숫자를 카운트-->
+    <select id="selectSendByTitleTotalCount" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_send_email
+        WHERE title LIKE CONCAT('%', #{searchKeyword}, '%')
+    </select>
+
+    <!-- SELECT 쿼리 : 발신함에서  일치하는 키워드 숫자를 카운트-->
+    <select id="selectReceiveByTitleTotalCount" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_send_email
+        WHERE title LIKE CONCAT('%', #{searchKeyword}, '%')
+    </select>
+
+    <!-- SELECT 쿼리 : 제목에 따라 메일함을 조회 -->
+    <select id="searchEmailByTitle" resultType="EmailDto">
+        (
+            SELECT
+                MAIL_NO as id,  EMP_NO as emp_no, RECEIVER_ADDR as receiver_addr,
+                SENDER_NAME as sender_name, SENDER_ADDR as sender_addr, TITLE as title,
+                CONTENT as content, SEND_DATE as send_date, STATUS as status,
+                CATEGORY as category
+            FROM tbl_send_email se
+            WHERE se.STATUS = 'N'
+              AND se.TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
+        )
+        UNION ALL
+        (
+            SELECT
+                RECEIVE_NO as id, NULL as emp_no, RECEIVER_ADDR as receiver_addr,
+                SENDER_NAME as sender_name, NULL as sender_addr, TITLE as title,
+                CONTENT as content, SEND_DATE as send_date, STATUS as status,
+                CATEGORY as category
+            FROM tbl_receive_email re
+            WHERE re.STATUS = 'N'
+              AND re.TITLE LIKE CONCAT('%', #{searchKeyword}, '%')
+        )
+        ORDER BY SEND_DATE DESC
+        LIMIT #{startRow}, #{endRow}
+    </select>
+
+
 </mapper>
