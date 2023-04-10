@@ -285,8 +285,17 @@
         SELECT P.*
         FROM (SELECT
                     *
-              FROM tbl_APPROVAL
+              FROM tbl_APPROVAL A
+              JOIN tbl_approv_status tas on A.APPROV_NO = tas.APPROV_NO
               WHERE EMP_NO = 2
+              <if test="status = '승인'">
+                  AND tas.STATUS_NO = (SELECT MAX(A.STATUS_NO)
+                  FROM TBL_APPROV_STATUS A
+                  JOIN tbl_approval B
+                  ON A.APPROV_NO = B.APPROV_NO
+                  WHERE B.APPROV_NO =#{approvNo}
+                  )
+              </if>
         ) P
 
             LIMIT #{ startRow }
@@ -312,6 +321,15 @@
                 FROM tbl_approv_order
                 WHERE EMP_NO = 17
             ) tao ON tal.LINE_NO = tao.LINE_NO
+                    JOIN tbl_approv_status tas on a.APPROV_NO = tas.APPROV_NO
+        <if test="status = '승인'">
+            WHERE tas.STATUS_NO = (SELECT MAX(A.STATUS_NO)
+            FROM TBL_APPROV_STATUS A
+            JOIN tbl_approval B
+            ON A.APPROV_NO = B.APPROV_NO
+            WHERE B.APPROV_NO =#{approvNo}
+            )
+        </if>
         ) P
             LIMIT #{startRow}, #{endRow}
     </select>
@@ -534,10 +552,16 @@
         UPDATE TBL_APPROV_STATUS
         SET STATUS = #{status}
         WHERE APPROV_NO = #{approvNo}
-          AND ORDER_NO = (SELECT ORDER_NO FROM tbl_approv_order WHERE EMP_NO = 17)
-
+          AND STATUS_ORDER = (
+        SELECT ROW_NUMBER() OVER (ORDER BY o.ORDER_NO)
+        FROM tbl_approv_order AS o
+        WHERE o.LINE_NO = #{lineNo}
+        GROUP BY o.ORDER_NO
+        )
+            (SELECT ORDER_NO FROM tbl_approv_order WHERE EMP_NO = 17)
 
     </update>
+<!--    (SELECT ORDER_NO FROM tbl_approv_order WHERE EMP_NO = 17)-->
 <!--    처리한것도 상태가 하나만나오면 안되는거 아님??-->
 <!--    아니 의견 조회는 되야하는거 아님? ㅋㅋㅋ-->
     <!--    결재의견작성-->
