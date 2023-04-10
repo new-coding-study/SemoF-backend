@@ -17,6 +17,7 @@ public class WorksDto {
     @JsonFormat(shape= JsonFormat.Shape.STRING, pattern="yyyy-MM-dd", timezone="Asia/Seoul")
     private LocalDate endDate;
     private Integer empNo;
+    private String empName;
     private String worksReportTitle;
     private String worksReportContent;
     private String issuesImprovement;

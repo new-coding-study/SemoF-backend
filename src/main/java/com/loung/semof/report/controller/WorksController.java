@@ -36,6 +36,37 @@ public class WorksController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
     }
 
+    @GetMapping("/works-n-lists-admin")
+    public ResponseEntity<ResponseDto> selectAllWorkNStatusForAdmin(@RequestParam(name="offset", defaultValue = "1") String offset){
+
+        int totalCount = worksService.selectWorksReportTotalForAdmin();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(worksService.selectAllWorkNStatusForAdmin(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
+    }
+
+    @GetMapping("/works-y-lists-admin")
+    public ResponseEntity<ResponseDto> selectAllWorkYStatusForAdmin(@RequestParam(name="offset", defaultValue = "1") String offset){
+
+        int totalCount = worksService.selectWorksReportTotalForAdmin();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(worksService.selectAllWorkYStatusForAdmin(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
+    }
     @GetMapping("/works-lists-emp")
     public ResponseEntity<ResponseDto> selectAllWorksReportForEmpWithPaging(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
@@ -53,6 +84,38 @@ public class WorksController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 업무보고서 조회", responseDtoWithPaging));
     }
 
+    @GetMapping("/works-n-lists-emp")
+    public ResponseEntity<ResponseDto> selectAllWorkNStatusForEmp(
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
+
+        int totalCount = worksService.selectWorksReportTotalForEmp();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(worksService.selectAllWorkNStatusForEmp(selectCriteria, empNo));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 업무보고서 조회", responseDtoWithPaging));
+    }
+    @GetMapping("/works-y-lists-emp")
+    public ResponseEntity<ResponseDto> selectAllWorkYStatusForEmp(
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
+
+        int totalCount = worksService.selectWorksReportTotalForEmp();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(worksService.selectAllWorkYStatusForEmp(selectCriteria, empNo));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 업무보고서 조회", responseDtoWithPaging));
+    }
     @GetMapping("/works-lists-admin/{worksReportCode}")
     public ResponseEntity<ResponseDto> detailWorksReportForAdmin(@PathVariable Integer worksReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "관리자 업무보고서 조회", worksService.detailWorksReportForAdmin(worksReportCode)));
