@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.schedule.dao.ScheduleMapper">
+
+    <resultMap id="scheduleResultMap" type="com.loung.semof.schedule.dto.ScheduleDto">
+        <id property="scdNo" column="SCD_NO"/>
+        <result property="scdName" column="SCD_NAME"/>
+        <result property="scdStartDay" column="SCD_START_DAY"/>
+        <result property="scdStartTime" column="SCD_START_TIME"/>
+        <result property="scdEndDay" column="SCD_END_DAY"/>
+        <result property="scdEndTime" column="SCD_END_TIME"/>
+        <result property="scdAllDay" column="SCD_ALL_DAY"/>
+        <result property="scdContent" column="SCD_CONTENT"/>
+        <result property="scdPlace" column="SCD_FINISH"/>
+        <result property="scdWriter" column="SCD_WRITER"/>
+<!--        <association property="calendar" resultMap="calendarMap"/>-->
+        <result property="calNo" column="CAL_NO"/>
+        <result property="calName" column="CAL_NAME"/>
+        <result property="calColor" column="CAL_COLOR"/>
+        <result property="madeEmpNo" column="MADE_EMP_NO"/>
+        <result property="madeEmpName" column="MADE_EMP_NAME"/>
+    </resultMap>
+
+<!--    <resultMap id="calendarMap" type="com.loung.semof.schedule.dto.CalendarDto">-->
+<!--        <id property="calNo" column="CAL_NO"/>-->
+<!--        <result property="calName" column="CAL_NAME"/>-->
+<!--        <result property="calColor" column="CAL_COLOR"/>-->
+<!--        <result property="madeEmpNo" column="MADE_EMP_NO"/>-->
+<!--        <result property="madeEmpName" column="MADE_EMP_NAME"/>-->
+<!--    </resultMap>-->
+
+    <resultMap id="scheduleCommentResultMap" type="com.loung.semof.schedule.dto.ScheduleCommentDto">
+        <id property="commentNo" column="COM_NO"/>
+        <result property="scdNo" column="SCD_NO"/>
+        <result property="writerEmpNo" column="WRITER"/>
+        <result property="content" column="CONTENT"/>
+        <result property="writerTime" column="WRITE_TIME"/>
+        <!--        <result property="writerEmpName" column="EMP_NAME"/>-->
+    </resultMap>
+
+    <select id="selectScheduleList" resultType="ScheduleDto">
+        SELECT DISTINCT
+            A.*
+            ,B.*
+        FROM tbl_schedule A
+            JOIN tbl_calendar B ON A.CAL_NO = B.CAL_NO
+            LEFT JOIN tbl_calendar_mem C ON B.CAL_NO = C.CAL_NO
+            LEFT JOIN tbl_employee D ON C.EMP_NO = D.EMP_NO
+            LEFT Join tbl_employee E ON B.MADE_EMP_NO = E.EMP_NO
+        WHERE B.MADE_EMP_NO = #{empNo}
+        OR    C.EMP_NO = #{empNo}
+        ORDER BY SCD_START_DAY, SCD_START_TIME
+    </select>
+
+    <select id="selectScheduleDetail" resultType="ScheduleDto">
+        SELECT
+            A.*
+            ,B.*
+        FROM tbl_schedule A
+            JOIN tbl_calendar B ON A.CAL_NO = B.CAL_NO
+        WHERE SCD_NO = #{scdNo}
+    </select>
+
+    <insert id="insertSchedule" parameterType="ScheduleDto">
+        INSERT INTO tbl_schedule
+        (
+            SCD_NAME
+            , SCD_START_DAY
+            , SCD_START_TIME
+            , SCD_END_DAY
+            , SCD_END_TIME
+            , SCD_ALL_DAY
+            , SCD_CONTENT
+            , SCD_PLACE
+            , CAL_NO
+            , SCD_WRITER
+        )
+        VALUES
+            (
+                #{scdName}
+            ,#{scdStartDay}
+            ,#{scdStartTime}
+            ,#{scdEndDay}
+            ,#{scdEndTime}
+            ,#{scdAllDay}
+            ,#{scdContent}
+            ,#{scdPlace}
+            ,#{calNo}
+            ,#{scdWriter}
+            )
+    </insert>
+
+    <update id="updateSchedule" parameterType="ScheduleDto">
+        UPDATE tbl_schedule
+        SET SCD_NAME = #{scdName}
+          ,SCD_START_DAY = #{scdStartDay}
+          ,SCD_START_TIME = #{scdStartTime}
+          ,SCD_END_DAY = #{scdEndDay}
+          ,SCD_END_TIME = #{scdEndTime}
+          ,SCD_ALL_DAY = #{scdAllDay}
+          ,SCD_CONTENT = #{scdContent}
+          ,SCD_PLACE = #{scdPlace}
+          ,CAL_NO = #{calNo}
+          ,SCD_WRITER = #{scdWriter}
+        WHERE SCD_NO = #{scdNo}
+    </update>
+
+    <delete id="deleteSchedule" parameterType="java.lang.Long">
+        DELETE FROM tbl_schedule
+        WHERE SCD_NO = #{scdNo}
+    </delete>
+
+    <select id="selectSearchSchedule" parameterType="String" resultType="ScheduleDto">
+        SELECT
+            A.*
+        FROM
+            (
+                SELECT DISTINCT
+                            A.*
+                            ,B.CAL_NAME
+                            ,B.CAL_COLOR
+                        FROM tbl_schedule A
+                            JOIN tbl_calendar B ON A.CAL_NO = B.CAL_NO
+                            LEFT JOIN tbl_calendar_mem C ON B.CAL_NO = C.CAL_NO
+                        WHERE A.SCD_NAME LIKE CONCAT('%', #{searchSchedule}, '%')
+                        AND ( B.MADE_EMP_NO = #{empNo} OR C.EMP_NO = #{empNo} )
+            ) AS A
+        ORDER BY A.SCD_START_DAY, A.SCD_START_TIME
+    </select>
+
+
+
+<!-- 캘린더 관련 매퍼 -->
+    <select id="selectCalendarList" parameterType="java.lang.Long" resultType="CalendarDto">
+        SELECT DISTINCT
+            A.*
+        FROM tbl_calendar A
+            LEFT JOIN tbl_calendar_mem B ON A.CAL_NO = B.CAL_NO
+        WHERE A.MADE_EMP_NO = #{empNo}
+        OR B.EMP_NO = #{empNo}
+    </select>
+
+    <insert id="insertCalendar" parameterType="CalendarDto">
+        INSERT INTO tbl_calendar
+        (
+            CAL_NAME
+            ,CAL_COLOR
+            ,MADE_EMP_NO
+        )
+        VALUES
+            (
+            #{calName},
+            #{calColor},
+            #{madeEmpNo}
+            )
+    </insert>
+
+    <select id="selectCalendarNo" parameterType="CalendarDto">
+        SELECT
+            CAL_NO
+        FROM tbl_calendar
+        WHERE CAL_NAME = #{calName}
+        AND CAL_COLOR = #{calColor}
+        AND MADE_EMP_NO = #{madeEmpNo}
+    </select>
+
+    <insert id="insertCalendarMem" parameterType="java.lang.Long">
+        INSERT INTO tbl_calendar_mem
+        (
+            EMP_NO
+            ,CAL_NO
+        )
+        VALUES
+            (
+            #{memNo},
+            #{calNo}
+            )
+    </insert>
+
+    <update id="updateCalendar" parameterType="CalendarDto">
+        UPDATE tbl_calendar
+        SET CAL_NAME = #{calName}
+          ,CAL_COLOR = #{calColor}
+        WHERE CAL_NO = #{calNo}
+    </update>
+
+<!--    <update id="updateCalendarMem" parameterType="java.lang.Long">-->
+<!--        UPDATE tbl_calendar_mem-->
+<!--        SET EMP_NO = #{memNo}-->
+<!--          ,CAL_NO = #{calNo}-->
+<!--    </update>-->
+
+    <delete id="deleteCalendarAllMem" parameterType="java.lang.Long">
+        DELETE FROM tbl_calendar
+        WHERE CAL_NO = #{calNo}
+    </delete>
+
+    <delete id="deleteCalendarOnlyMe" parameterType="java.lang.Long">
+        DELETE FROM tbl_calendar_mem
+        WHERE CAL_NO = #{calNo}
+        AND EMP_NO = #{empNo}
+    </delete>
+
+<!-- 일정 댓글 관련 매퍼 -->
+    <select id="selectScheduleCommentList" resultType="ScheduleCommentDto">
+        SELECT
+            A.*
+            ,C.EMP_NAME as comWriterEmpName
+        FROM TBL_SCHEDULE_COMMENT A
+            JOIN TBL_SCHEDULE B ON A.SCD_NO = B.SCD_NO
+            JOIN TBL_EMPLOYEE C on A.COM_WRITER = C.EMP_NO
+        WHERE A.SCD_NO = #{scdNo}
+        ORDER BY A.COM_NO
+    </select>
+
+    <insert id="insertScheduleComment" parameterType="ScheduleCommentDto">
+        INSERT INTO tbl_schedule_comment
+        (
+            SCD_NO
+            ,COM_WRITER
+            ,COM_CONTENT
+        )
+        VALUES
+            (
+                #{scdNo}
+            ,#{comWriter}
+            ,#{comContent}
+            )
+    </insert>
+
+    <update id="updateScheduleComment" parameterType="ScheduleCommentDto">
+        UPDATE tbl_schedule_comment
+        SET COM_CONTENT = #{comContent}
+        WHERE COM_NO = #{comNo}
+    </update>
+
+    <delete id="deleteScheduleComment" parameterType="java.lang.Long">
+        DELETE FROM tbl_schedule_comment
+        WHERE COM_NO = #{comNo}
+    </delete>
+
+</mapper>
