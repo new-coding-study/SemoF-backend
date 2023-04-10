@@ -530,6 +530,11 @@ public class EmailService {
         return totalCount;
     }
 
+    /**
+     * @작성일 : 2023-04-09
+     * @작성자 : 이현도
+     * @메소드설명 : 휴지통에 있는 메일을 조회하는 비즈니스 로직
+     */
     public List<EmailDto> selectTrashEmailListWithPaging(int startRow, int endRow) {
 
         List<EmailDto> trashList = Collections.emptyList();
@@ -542,5 +547,54 @@ public class EmailService {
             e.printStackTrace();
         }
         return trashList;
+    }
+
+    /**
+     * @작성일 : 2023-04-09
+     * @작성자 : 이현도
+     * @메소드설명 : 발신함에서 키워드와 일치하는 숫자를 카운트하는 비즈니스 로직
+     */
+    public int selectSendByTitleTotalCount(String searchKeyword) throws SQLException {
+        int totalCount = 0;
+
+        try {
+            totalCount = emailMapper.selectSendByTitleTotalCount();
+
+        } catch (Exception e) {
+            throw new SQLException("삭제 된 이메일을 조회하지 못했습니다.", e);
+        }
+        return totalCount;
+    }
+
+    /**
+     * @작성일 : 2023-04-09
+     * @작성자 : 이현도
+     * @메소드설명 : 수신함에서 키워드와 일치하는 숫자를 카운트하는 비즈니스 로직
+     */
+    public int selectReceiveByTitleTotalCount(String searchKeyword) throws SQLException {
+        int totalCount = 0;
+
+        try {
+            totalCount = emailMapper.selectReceiveByTitleTotalCount();
+
+        } catch (Exception e) {
+            throw new SQLException("삭제 된 이메일을 조회하지 못했습니다.", e);
+        }
+        return totalCount;
+    }
+
+    public List<EmailDto> searchEmailByTitle(String searchKeyword, int startRow, int endRow) {
+
+        List<EmailDto> searchList = Collections.emptyList();
+
+        try {
+            searchList = emailMapper. searchEmailByTitle(searchKeyword, startRow, endRow);
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+        return searchList;
+
     }
 }

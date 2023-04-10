@@ -1,6 +1,7 @@
 package com.loung.semof.jwt;
 
 
+import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.exception.TokenException;
 import com.loung.semof.loginInfo.dto.LoginInfoDto;
 
@@ -48,6 +49,7 @@ public class TokenProvider {
     public TokenDto generateTokenDto(LoginInfoDto member) {
         log.info("[TokenProvider] generateTokenDto Start ===================================");
         log.info("[TokenProvider] {}", member.getMemberRole());
+        log.info("[TokenProvider] {}", member);
 
         // 권한들 가져오기
         List<String> roles =  Collections.singletonList(member.getMemberRole());

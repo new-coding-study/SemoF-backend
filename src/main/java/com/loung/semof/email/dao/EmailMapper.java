@@ -61,4 +61,10 @@ public interface EmailMapper {
     int selectTrashReceiveListTotal();
 
     List<EmailDto> selectTrashEmailListWithPaging(int startRow, int endRow);
+
+    int selectSendByTitleTotalCount();
+
+    int selectReceiveByTitleTotalCount();
+
+    List<EmailDto> searchEmailByTitle(String searchKeyword, int startRow, int endRow);
 }

@@ -107,6 +107,7 @@
                 ,tb.BRANCH_NAME
                 , tee.EMP_NAME
                 , tj.JOB_NAME
+                , tdo.DEPT_NAME
     FROM TBL_APPROV_LINE A
     JOIN TBL_APPROV_ORDER B
     ON A.LINE_NO = B.LINE_NO
@@ -115,6 +116,7 @@
     JOIN tbl_employee tee
          on B.EMP_NO = tee.EMP_NO
     JOIN tbl_job tj on tee.JOB_CODE = tj.JOB_CODE
+    JOIN tbl_department tdo on tee.DEPT_CODE = tdo.DEPT_CODE
     WHERE A.ACTIVITY='y'
     ORDER BY A.LINE_NO
 
@@ -141,7 +143,6 @@
                 JOIN tbl_department td
                     on td.DEPT_CODE = tee.DEPT_CODE
         WHERE A.LINE_NO = #{lineNo}
-        AND A.ACTIVITY='y'
         ORDER BY A.LINE_NO
     </select>
 <!--   A.LINE_NO
@@ -227,6 +228,7 @@
         , #{formCode}
         , (SELECT APPROV_NO FROM TBL_APPROVal ORDER BY APPROV_NO DESC LIMIT 1)
 
+
             )
     </insert>
     <insert id="insertApprovFile" parameterType="ApprovFileDTO">
@@ -295,21 +297,23 @@
 <!--    </if>-->
     <select id ="selectApprovalOutWithPaging" resultMap="approveResultMap">
         SELECT P.*
-        FROM (SELECT
-                  APPROV_NO
-                   , APPROV_TITLE
-                   , APPROV_DATE
-                    , te.EMP_NAME
-              FROM tbl_APPROVAL
-              JOIN tbl_approv_line tal
-                  on tal.LINE_NO = tbl_approval.LINE_NO
-            JOIN tbl_employee te on te.EMP_NO = tbl_approval.EMP_NO
-              JOIN tbl_approv_order tao
-                  on tal.LINE_NO = tao.LINE_NO
-              WHERE tao.EMP_NO = 17
+        FROM (
+            SELECT
+                a.APPROV_NO
+                 , a.APPROV_TITLE
+                 , a.APPROV_DATE
+                 , a.EMP_NO
+                 , te.EMP_NAME
+            FROM tbl_APPROVAL a
+                     JOIN tbl_approv_line tal ON tal.LINE_NO = a.LINE_NO
+                     JOIN tbl_employee te ON te.EMP_NO = a.EMP_NO
+                     JOIN (
+                SELECT *
+                FROM tbl_approv_order
+                WHERE EMP_NO = 17
+            ) tao ON tal.LINE_NO = tao.LINE_NO
         ) P
-            LIMIT #{ startRow }
-           , #{endRow}
+            LIMIT #{startRow}, #{endRow}
     </select>
 <!--    <select id="selectFinApprovalInWithPaging" resultType="approvalDTO">-->
 <!--        SELECT P.*-->
@@ -449,11 +453,12 @@
     <!--    결재상세조회 -->
     <select id="selectApproval" resultMap="approveResultMap">
         SELECT
-            A.*, B.*, tac.*
+            A.*, B.*, tac.FORM_TITLE, te.EMP_NAME
         FROM TBL_APPROVal A
                  JOIN TBL_APPROV_CONTENT B
                       ON A.APPROV_NO = B.APPROV_NO
                 JOIN tbl_approv_category tac on tac.FORM_CODE = B.FORM_CODE
+                JOIN tbl_employee te on te.EMP_NO = A.EMP_NO
         WHERE A.APPROV_NO = #{approvNo}
     </select>
 
@@ -529,16 +534,8 @@
         UPDATE TBL_APPROV_STATUS
         SET STATUS = #{status}
         WHERE APPROV_NO = #{approvNo}
-          AND STATUS_NO = (
-            SELECT MAX(s.STATUS_NO)
-            FROM TBL_APPROVAL AS a
-                     INNER JOIN TBL_approv_LINE AS l ON l.LINE_NO = a.LINE_NO
-                     INNER JOIN TBL_approv_ORDER AS o ON o.LINE_NO = l.LINE_NO
-                     INNER JOIN TBL_APPROV_STATUS AS s ON s.APPROV_NO = a.APPROV_NO
-            WHERE a.APPROV_NO = #{approvNo}
-            ORDER BY s.STATUS_NO DESC
-            LIMIT 1
-            );
+          AND ORDER_NO = (SELECT ORDER_NO FROM tbl_approv_order WHERE EMP_NO = 17)
+
 
     </update>
 <!--    처리한것도 상태가 하나만나오면 안되는거 아님??-->
@@ -558,6 +555,13 @@
            ,#{approvNo}
             )
     </insert>
+    <select id="selectOpinion" resultType="ApprovOpinDTO">
+        select OPIN_CONTENT, EMP_NAME
+        from tbl_approv_opinion
+        join tbl_employee te on te.EMP_NO = tbl_approv_opinion.EMP_NO
+        join tbl_approval ta on ta.APPROV_NO = tbl_approv_opinion.APPROV_NO
+        where ta.APPROV_NO = #{approvNo}
+    </select>
     <!--    댓글처럼-->
 <!--    최종 상태값을 받아오는 쿼리-->
     <select id="selectLatestStatus" resultType="String">

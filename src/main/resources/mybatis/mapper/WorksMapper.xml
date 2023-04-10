@@ -6,7 +6,7 @@
 
     <select id="selectAllWorksReportForAdmin" resultType="WorksDto">
         SELECT
-            ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+            ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
             ,TW.WORKS_REPORT_CODE
              ,TW.REPORT_WRITE_DATE
              ,TW.START_DATE
@@ -39,7 +39,7 @@
 
     <select id="selectAllWorksReportForEmp" resultType="WorksDto">
         SELECT
-            ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+            ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
             ,TW.WORKS_REPORT_CODE
              ,TW.REPORT_WRITE_DATE
              ,TW.START_DATE
@@ -92,7 +92,53 @@
         FROM
             (
                 SELECT
-                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
+                    ,TW.WORKS_REPORT_CODE
+                     ,TW.REPORT_WRITE_DATE
+                     ,TW.START_DATE
+                     ,TW.END_DATE
+                     ,TW.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TW.WORKS_REPORT_TITLE
+                     ,TW.WORKS_REPORT_CONTENT
+                     ,TW.ISSUES_IMPROVEMENT
+                     ,TW.NEXT_PLAN
+                     ,TW.ETC
+                     ,TW.CONCLUSION
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TW.REPORT_STATUS
+                     ,TW.REPORT_COMMENT
+                FROM tbl_works_report TW
+                 JOIN tbl_report_category TR
+                      ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TW.EMP_NO = TE.EMP_NO) P
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${startRow}, #{endRow}
+    </select>
+
+    <select id="selectAllWorkNStatusForAdmin" resultType="WorksDto">
+        SELECT
+            P.ROW_NUM
+             ,P.WORKS_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,p.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.WORKS_REPORT_TITLE
+             ,P.WORKS_REPORT_CONTENT
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.ETC
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (
+                SELECT
+                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
                     ,TW.WORKS_REPORT_CODE
                      ,TW.REPORT_WRITE_DATE
                      ,TW.START_DATE
@@ -112,18 +158,59 @@
                          JOIN tbl_report_category TR
                               ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
                          JOIN tbl_employee TE
-                              ON TW.EMP_NO = TE.EMP_NO
-                WHERE TW.REPORT_STATUS = 'N' OR TW.REPORT_STATUS = 'Y'
-                ORDER BY
-                    CASE TW.REPORT_STATUS
-                        WHEN 'N' THEN 0
-                        WHEN 'Y' THEN 1
-                        ELSE 2
-                        END,
-                    ROW_NUM DESC) P
+                              ON TW.EMP_NO = TE.EMP_NO) P
+        WHERE P.REPORT_STATUS = 'N'
         ORDER BY P.ROW_NUM DESC
             LIMIT ${startRow}, #{endRow}
     </select>
+
+    <select id="selectAllWorkYStatusForAdmin" resultType="WorksDto">
+        SELECT
+            P.ROW_NUM
+             ,P.WORKS_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,p.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.WORKS_REPORT_TITLE
+             ,P.WORKS_REPORT_CONTENT
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.ETC
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (
+                SELECT
+                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
+                    ,TW.WORKS_REPORT_CODE
+                     ,TW.REPORT_WRITE_DATE
+                     ,TW.START_DATE
+                     ,TW.END_DATE
+                     ,TW.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TW.WORKS_REPORT_TITLE
+                     ,TW.WORKS_REPORT_CONTENT
+                     ,TW.ISSUES_IMPROVEMENT
+                     ,TW.NEXT_PLAN
+                     ,TW.ETC
+                     ,TW.CONCLUSION
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TW.REPORT_STATUS
+                     ,TW.REPORT_COMMENT
+                FROM tbl_works_report TW
+                         JOIN tbl_report_category TR
+                              ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                         JOIN tbl_employee TE
+                              ON TW.EMP_NO = TE.EMP_NO) P
+        WHERE P.REPORT_STATUS = 'Y'
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${startRow}, #{endRow}
+    </select>
+
 
     <select id="selectAllWorksReportForEmpWithPaging" resultType="WorksDto">
         SELECT
@@ -146,7 +233,7 @@
         FROM
             (
                 SELECT
-                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE) AS ROW_NUM
+                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
                     ,TW.WORKS_REPORT_CODE
                      ,TW.REPORT_WRITE_DATE
                      ,TW.START_DATE
@@ -167,15 +254,103 @@
                               ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
                          JOIN tbl_employee TE
                               ON TW.EMP_NO = TE.EMP_NO
-                WHERE TW.REPORT_STATUS = 'N' OR TW.REPORT_STATUS = 'Y'
-                  AND TW.EMP_NO = #{empNo}
-                ORDER BY
-                    CASE TW.REPORT_STATUS
-                        WHEN 'N' THEN 0
-                        WHEN 'Y' THEN 1
-                        ELSE 2
-                        END,
-                    ROW_NUM DESC) P
+                  AND TW.EMP_NO = #{empNo}) P
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
+
+    <select id="selectAllWorkNStatusForEmp" resultType="WorksDto">
+        SELECT
+            P.ROW_NUM
+             ,P.WORKS_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,p.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.WORKS_REPORT_TITLE
+             ,P.WORKS_REPORT_CONTENT
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.ETC
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (
+                SELECT
+                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
+                    ,TW.WORKS_REPORT_CODE
+                     ,TW.REPORT_WRITE_DATE
+                     ,TW.START_DATE
+                     ,TW.END_DATE
+                     ,TW.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TW.WORKS_REPORT_TITLE
+                     ,TW.WORKS_REPORT_CONTENT
+                     ,TW.ISSUES_IMPROVEMENT
+                     ,TW.NEXT_PLAN
+                     ,TW.ETC
+                     ,TW.CONCLUSION
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TW.REPORT_STATUS
+                     ,TW.REPORT_COMMENT
+                FROM tbl_works_report TW
+                         JOIN tbl_report_category TR
+                              ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                         JOIN tbl_employee TE
+                              ON TW.EMP_NO = TE.EMP_NO
+                    AND TW.EMP_NO = #{empNo}) P
+        WHERE P.REPORT_STATUS = 'N'
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
+
+    <select id="selectAllWorkYStatusForEmp" resultType="WorksDto">
+        SELECT
+            P.ROW_NUM
+             ,P.WORKS_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,p.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.WORKS_REPORT_TITLE
+             ,P.WORKS_REPORT_CONTENT
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.ETC
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (
+                SELECT
+                    ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
+                    ,TW.WORKS_REPORT_CODE
+                     ,TW.REPORT_WRITE_DATE
+                     ,TW.START_DATE
+                     ,TW.END_DATE
+                     ,TW.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TW.WORKS_REPORT_TITLE
+                     ,TW.WORKS_REPORT_CONTENT
+                     ,TW.ISSUES_IMPROVEMENT
+                     ,TW.NEXT_PLAN
+                     ,TW.ETC
+                     ,TW.CONCLUSION
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TW.REPORT_STATUS
+                     ,TW.REPORT_COMMENT
+                FROM tbl_works_report TW
+                         JOIN tbl_report_category TR
+                              ON TW.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                         JOIN tbl_employee TE
+                              ON TW.EMP_NO = TE.EMP_NO
+                         AND TW.EMP_NO = #{empNo}) P
+        WHERE P.REPORT_STATUS = 'Y'
         ORDER BY P.ROW_NUM DESC
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
