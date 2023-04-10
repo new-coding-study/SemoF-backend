@@ -28,6 +28,16 @@ public class WorksService {
         return worksDto;
     }
 
+    public Object selectAllWorkNStatusForAdmin(SelectCriteria selectCriteria) {
+        List<WorksDto> worksDto = worksMapper.selectAllWorkNStatusForAdmin(selectCriteria);
+        for(int i = 0; i<worksDto.size(); i++);
+        return worksDto;
+    }
+    public Object selectAllWorkYStatusForAdmin(SelectCriteria selectCriteria) {
+        List<WorksDto> worksDto = worksMapper.selectAllWorkYStatusForAdmin(selectCriteria);
+        for(int i = 0; i<worksDto.size(); i++);
+        return worksDto;
+    }
     public int selectWorksReportTotalForEmp() {
         int result = worksMapper.selectWorksReportTotalForEmp();
         return result;
@@ -35,6 +45,16 @@ public class WorksService {
 
     public Object selectAllWorksReportForEmpWithPaging(SelectCriteria selectCriteria, int empNo) {
         List<WorksDto> worksDto = worksMapper.selectAllWorksReportForEmpWithPaging(selectCriteria, empNo);
+        for(int i = 0; i<worksDto.size(); i++);
+        return worksDto;
+    }
+    public Object selectAllWorkNStatusForEmp(SelectCriteria selectCriteria, int empNo) {
+        List<WorksDto> worksDto = worksMapper.selectAllWorkNStatusForEmp(selectCriteria, empNo);
+        for(int i = 0; i<worksDto.size(); i++);
+        return worksDto;
+    }
+    public Object selectAllWorkYStatusForEmp(SelectCriteria selectCriteria, int empNo) {
+        List<WorksDto> worksDto = worksMapper.selectAllWorkYStatusForEmp(selectCriteria, empNo);
         for(int i = 0; i<worksDto.size(); i++);
         return worksDto;
     }
@@ -79,4 +99,6 @@ public class WorksService {
         int result = worksMapper.deleteWorksReportForEmp(worksReportCode);
         return (result>0)? "보고서 삭제 성공":"삭제실패";
     }
+
+
 }
