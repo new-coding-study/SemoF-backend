@@ -24,10 +24,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -318,6 +315,8 @@ public class HumanResourceService {
         try {
             employeeList = humanResourceMapper.selectEmployeeListWithPaging(startRow, endRow);
 
+            log.info("[HumanResourceService] employeeList : " + employeeList);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -493,5 +492,10 @@ public class HumanResourceService {
             throw new SQLException("휴가자 수를 조회하지 못했습니다.", e);
         }
         return vacationCount ;
+    }
+
+    public List<EmployeeDto> selectAllEmployees() {
+
+        return humanResourceMapper.selectAllEmployees();
     }
 }

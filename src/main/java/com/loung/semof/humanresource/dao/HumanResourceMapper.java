@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @파일이름 : HumanResourceMapper.java
@@ -50,4 +51,8 @@ public interface HumanResourceMapper {
     int selectTodayAttendanceList(LocalDate date);
 
     int selectVacationCount();
+
+    Map<String, Long> selectGender();
+
+    List<EmployeeDto> selectAllEmployees();
 }
