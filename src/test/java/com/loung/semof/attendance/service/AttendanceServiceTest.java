@@ -1,13 +1,15 @@
 package com.loung.semof.attendance.service;
 
 import com.loung.semof.attendance.dto.AttendanceDto;
+import com.loung.semof.common.paging.Pagenation;
+import com.loung.semof.common.paging.ResponseDtoWithPaging;
+import com.loung.semof.common.paging.SelectCriteria;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,17 +52,39 @@ class AttendanceServiceTest {
     }
 
     @Test
-    void 근태기록_조회_성공() throws Exception {
+    void 근태기록_갯수조회_성공() throws Exception {
         //given
         int empNo = 1;
 
         //when
-        List<AttendanceDto> attendanceDtoList = attendanceService.selectAttendanceList(empNo);
+        int totalCount = attendanceService.selectAttendanceTotal(empNo);
 
         //then
-        attendanceDtoList.forEach(attendanceDto -> System.out.println("attendanceDto = " + attendanceDto));  //로그포제이 안 쓰고 그냥 출력문으로 확인
-        // System.out.println(attendanceDtoList);
-        assertNotNull(attendanceDtoList);
+        System.out.println(totalCount);
+        assertNotEquals(0, totalCount);
+    }
+
+    @Test
+    void 근태기록_조회_성공() throws Exception {
+        //given
+        int empNo = 1;
+        String offset = "1";
+
+        //when
+        int totalCount = attendanceService.selectAttendanceTotal(empNo);   //총 갯수 구하기
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(attendanceService.selectAttendanceListWithPaging(selectCriteria.getEndRow(), selectCriteria.getStartRow(), empNo));
+
+        //then
+        // responseDtoWithPaging.forEach(attendanceDto -> System.out.println("attendanceDto = " + attendanceDto));  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        System.out.println(responseDtoWithPaging);
+        assertNotNull(responseDtoWithPaging);
     }
 
     @Test

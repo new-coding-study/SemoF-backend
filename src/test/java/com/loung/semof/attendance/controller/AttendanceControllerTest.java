@@ -35,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 class AttendanceControllerTest {
 
-
     @Autowired
     private AttendanceController attendanceController;
 

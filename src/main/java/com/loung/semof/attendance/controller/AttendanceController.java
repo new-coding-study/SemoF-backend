@@ -2,6 +2,9 @@ package com.loung.semof.attendance.controller;
 
 import com.loung.semof.attendance.service.AttendanceService;
 import com.loung.semof.common.ResponseDto;
+import com.loung.semof.common.paging.Pagenation;
+import com.loung.semof.common.paging.ResponseDtoWithPaging;
+import com.loung.semof.common.paging.SelectCriteria;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,31 @@ public class AttendanceController {
         this.attendanceService = attendanceService;
     }
 
+    /* 총 갯수 구해서 페이징 처리한 근태 기록 전체 조회 */
+    @GetMapping("/status/histories/{empNo}")
+    public ResponseEntity<ResponseDto> selectAttendanceListWithPaging(@RequestParam(name="offset", defaultValue="1") String offset, @PathVariable (name = "empNo") int empNo) {
+        try {
+            log.info("[AttendanceController] selectAttendanceListWithPaging : " + offset);
+
+            int totalCount = attendanceService.selectAttendanceTotal(empNo);   //총 갯수 구하기
+            int limit = 10;
+            int buttonAmount = 5;
+
+            SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+            log.info("[AttendanceController] selectCriteria : " + selectCriteria);
+
+            ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+            responseDtoWithPaging.setPageInfo(selectCriteria);
+            responseDtoWithPaging.setData(attendanceService.selectAttendanceListWithPaging(selectCriteria.getEndRow(), selectCriteria.getStartRow(), empNo));
+
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "전체 조회 성공", responseDtoWithPaging));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+        }
+    }
 
     /**
      * @작성일 : 2023-03-27 027
@@ -43,16 +71,16 @@ public class AttendanceController {
      * @작성자 : sik
      * @메소드설명 : 사원 근태기록 조회
      */
-    @GetMapping("/status/histories/{empNo}")
-    public ResponseEntity<ResponseDto> selectAttendanceList(@PathVariable (name = "empNo") int empNo) {
-        try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태기록 조회 성공", attendanceService.selectAttendanceList(empNo)));
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
-        }
-    }
+    // @GetMapping("/status/histories/{empNo}")
+    // public ResponseEntity<ResponseDto> selectAttendanceList(@PathVariable (name = "empNo") int empNo) {
+    //     try {
+    //         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "사원 근태기록 조회 성공", attendanceService.selectAttendanceList(empNo)));
+    //
+    //     } catch (Exception e) {
+    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+    //                 .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+    //     }
+    // }
 
     /**
      * @작성일 : 2023-03-28 027
@@ -77,4 +105,5 @@ public class AttendanceController {
                     .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
         }
     }
+
 }

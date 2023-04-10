@@ -13,6 +13,7 @@ public class AttendanceDto {
     private int empNo;  //사원번호
     private String empName; //사원이름
     private String statusName;  //상태명
+    private String finalStatus;  //근태 결과
     // @DateTimeFormat(pattern = "yyyy-MM-dd")
     // @JsonSerialize(using = CustomDateSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd")

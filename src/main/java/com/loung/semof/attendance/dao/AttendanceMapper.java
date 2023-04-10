@@ -10,6 +10,12 @@ import java.util.List;
 @Mapper
 public interface AttendanceMapper {
 
+    /* 총 갯수 구하기 */
+    int selectAttendanceTotal(int empNo);
+
+    /* 페이징 처리한 스티커 전체 조회 SelectCriteria selectCriteria */
+    List<AttendanceDto> selectAttendanceListWithPaging(@Param("endRow") int endRow, @Param("startRow") int startRow, @Param("empNo") int empNo);
+
     /* 사원 근태정보 상세 조회 */
     AttendanceDto selectAttendanceDetail(int empNo);
 

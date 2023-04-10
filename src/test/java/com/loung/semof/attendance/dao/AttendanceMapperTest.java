@@ -49,17 +49,58 @@ class AttendanceMapperTest {
         assertNotNull(attendanceDto);
     }
 
+    // @Test
+    // void 근태기록_조회_성공() throws Exception {
+    //     //given
+    //
+    //     //when
+    //     List<AttendanceDto> attendanceDtoList = attendanceMapper.selectAttendanceList(1);
+    //
+    //     //then
+    //     attendanceDtoList.forEach(attendanceDto -> System.out.println("attendanceDto = " + attendanceDto));  //로그포제이 안 쓰고 그냥 출력문으로 확인
+    //     // System.out.println(attendanceDtoList);
+    //     assertNotNull(attendanceDtoList);
+    // }
+
+    @Test
+    void 근태기록_갯수_조회_성공() throws Exception {
+        //given
+        int empNo = 1;
+
+        //when
+        int result = attendanceMapper.selectAttendanceTotal(empNo);
+
+        //then
+        // attendanceDtoList.forEach(attendanceDto -> System.out.println("attendanceDto = " + attendanceDto));  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        System.out.println(result);
+        assertNotEquals(0, result);
+    }
+
     @Test
     void 근태기록_조회_성공() throws Exception {
         //given
+        // SelectCriteria selectCriteria = new SelectCriteria();
+        // selectCriteria.setPageNo(1);
+        // selectCriteria.setTotalCount(5);
+        // selectCriteria.setLimit(10);
+        // selectCriteria.setButtonAmount(5);
+        // selectCriteria.setMaxPage(1);
+        // selectCriteria.setStartPage(1);
+        // selectCriteria.setEndPage(1);
+        // selectCriteria.setStartRow(1);
+        // selectCriteria.setEndRow(10);
+        int endRow = 10;
+        int startRow = 1;
+        int empNo = 1;
 
         //when
-        List<AttendanceDto> attendanceDtoList = attendanceMapper.selectAttendanceList(1);
+        List<AttendanceDto> attendanceList = attendanceMapper.selectAttendanceListWithPaging(endRow, startRow, empNo);
+        // List<AttendanceDto> attendanceDtoList = attendanceMapper.selectAttendanceList(1);
 
         //then
-        attendanceDtoList.forEach(attendanceDto -> System.out.println("attendanceDto = " + attendanceDto));  //로그포제이 안 쓰고 그냥 출력문으로 확인
+        attendanceList.forEach(attendanceDto -> System.out.println("attendanceDto = " + attendanceDto));  //로그포제이 안 쓰고 그냥 출력문으로 확인
         // System.out.println(attendanceDtoList);
-        assertNotNull(attendanceDtoList);
+        assertNotNull(attendanceList);
     }
 
     @Test
