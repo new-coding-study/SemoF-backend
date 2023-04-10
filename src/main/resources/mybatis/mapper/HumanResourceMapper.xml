@@ -270,10 +270,17 @@
         WHERE DATE_FORMAT(ATD_DATE, '%Y-%m-%d') = CURDATE();
     </select>
 
+    <!-- SELECT 쿼리 : 휴가자 수를 조회 -->
     <select id="selectVacationCount" resultType="int">
         SELECT COUNT(*)
         FROM tbl_employee e
                  JOIN tbl_emp_vacation_info v ON e.EMP_NO = v.EMP_NO
     </select>
 
+    <!-- SELECT 쿼리 : 성별 조회 -->
+    <select id="selectAllEmployees" resultType="EmployeeDto">
+        SELECT *
+        FROM tbl_employee
+        ORDER BY EMP_NO
+    </select>
 </mapper>
