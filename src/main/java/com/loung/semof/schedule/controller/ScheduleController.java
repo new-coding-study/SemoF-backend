@@ -1,6 +1,5 @@
 package com.loung.semof.schedule.controller;
 
-import com.loung.semof.common.dto.EmployeeDto;
 import com.loung.semof.schedule.dto.CalendarDto;
 import com.loung.semof.schedule.dto.ScheduleCommentDto;
 import com.loung.semof.schedule.dto.ScheduleDto;
@@ -210,10 +209,10 @@ public class ScheduleController {
      * @메소드설명 : 캘린더를 삭제하는 메소드
      */
     @DeleteMapping(value="/calendar/{calNo}")
-    public ResponseEntity<ResponseDto> deleteCalendar(@PathVariable Long calNo, @RequestBody Long deleteAllMem, @RequestBody Long empNo) {
+    public ResponseEntity<ResponseDto> deleteCalendar(@PathVariable Long calNo) {
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 삭제 성공", scheduleService.deleteCalendar(calNo, deleteAllMem, empNo)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 삭제 성공", scheduleService.deleteCalendar(calNo)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -228,7 +227,7 @@ public class ScheduleController {
     /**
      * @작성일 : 2023/04/08
      * @작성자 : 박지희
-     * @메소드설명 : 캘린더를 전체 조회하는 메소드
+     * @메소드설명 : 캘린더 멤버를 전체 조회하는 메소드
      */
     @GetMapping("/calendar/member/{calNo}")
     public ResponseEntity<ResponseDto> selectCalendarMemberList(@PathVariable Long calNo){
@@ -246,7 +245,7 @@ public class ScheduleController {
     /**
      * @작성일 : 2023/04/08
      * @작성자 : 박지희
-     * @메소드설명 : 새로운 캘린더를 추가하는 메소드
+     * @메소드설명 : 캘린더에 멤버를 추가하는 메소드
      */
     @PostMapping("/calendar/member/{calNo}")
     public ResponseEntity<ResponseDto> insertCalendarMember(@PathVariable Long calNo, @ModelAttribute List<Long> calMemList){
@@ -264,21 +263,23 @@ public class ScheduleController {
     /**
      * @작성일 : 2023/04/08
      * @작성자 : 박지희
-     * @메소드설명 : 캘린더를 삭제하는 메소드
+     * @메소드설명 : 캘린더 멤버 한 명을 삭제하는 메소드
      */
-//    @DeleteMapping(value="/calendar/{calNo}")
-//    public ResponseEntity<ResponseDto> deleteCalendarMember(@PathVariable Long calNo, @RequestBody Long deleteAllMem, @RequestBody Long empNo) {
-//
-//        try {
-//            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 삭제 성공", scheduleService.deleteCalendar(calNo, deleteAllMem, empNo)));
-//
-//        } catch (SQLException e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-//                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
-//
-//        }
-//    }
+    @DeleteMapping(value="/calendar/member/{calNo}/{empNo}")
+    public ResponseEntity<ResponseDto> deleteCalendarOnlyOne(@PathVariable(value = "calNo") Long calNo, @PathVariable(value = "empNo") Long empNo) {
 
+        System.out.println("empNo : " + empNo);
+        System.out.println("calNo : " + calNo);
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 삭제 성공", scheduleService.deleteCalendarOnlyOne(calNo, empNo)));
+
+        } catch (SQLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
 
     /**
      * @작성일 : 2023/04/08

@@ -151,16 +151,6 @@ public class ScheduleService {
     public String updateCalendar(CalendarDto calendarDto) throws SQLException {
 
         int calendarUpdateResult = scheduleMapper.updateCalendar(calendarDto);
-        
-//        int calendarMemUpdateResult = 0;
-//
-//        Long calNo = calendarDto.getCalNo();
-//
-//        if(!calendarMemNoList.isEmpty()) {
-//            for ( Long memNo : calendarMemNoList)
-//            { calendarMemUpdateResult += scheduleMapper.updateCalendarMem(calNo, memNo);
-//            }
-//        }
 
         if (calendarUpdateResult != 1) {
             throw new SQLException("캘린더(일정 그룹) 수정 실패");
@@ -169,18 +159,11 @@ public class ScheduleService {
         return "캘린더(일정 그룹) 수정 성공";
     }
 
-    public String deleteCalendar(Long calNo, Long deleteAllMem, Long empNo) throws SQLException {
+    public String deleteCalendar(Long calNo) throws SQLException {
 
         int result;
-        
-        if (deleteAllMem == 1) {
-            System.out.println("모든 멤버에 대해서 캘린더 삭제");
-            result = scheduleMapper.deleteCalendarAllMem(calNo);
-        } else {
-            System.out.println("나의 캘린더 삭제");
-            result = scheduleMapper.deleteCalendarOnlyMe(calNo, empNo);
-        }
-        
+
+        result = scheduleMapper.deleteCalendarAllMem(calNo);
 
         if (result != 1) {
             throw new SQLException("캘린더(일정 그룹) 삭제 실패");
@@ -188,6 +171,42 @@ public class ScheduleService {
 
         return "캘린더(일정 그룹) 삭제 성공";
     }
+
+    // 캘린더 멤버 관련 Service
+    public List<CalendarDto> selectCalendarMemberList(Long calNo) {
+
+        return scheduleMapper.selectCalendarMemberList(calNo);
+    }
+
+    public String insertCalendarMember(Long calNo, List<Long> calMemList) throws SQLException {
+
+        int result = 0;
+
+        for (Long calMemNo: calMemList) {
+            result += scheduleMapper.insertCalendarMem(calNo, calMemNo);
+        }
+
+        if (result != calMemList.size()) {
+            throw new SQLException("캘린더 그룹원 추가 실패");
+        }
+
+        return "캘린더 그룹원 추가 성공";
+    }
+
+    public String deleteCalendarOnlyOne(Long calNo, Long empNo) throws SQLException {
+
+        int result;
+
+        result = scheduleMapper.deleteCalendarOnlyOne(calNo, empNo);
+
+
+        if (result != 1) {
+            throw new SQLException("캘린더(일정 그룹) 삭제 실패");
+        }
+
+        return "캘린더(일정 그룹) 삭제 성공";
+    }
+
 
 
     // 일정 댓글 관련 Service
@@ -227,25 +246,6 @@ public class ScheduleService {
         }
 
         return "댓글 삭제 성공";
-    }
-
-    public String selectCalendarMemberList(Long calNo) {
-        return scheduleMapper.selectCalendarMemberList(calNo);
-    }
-
-    public String insertCalendarMember(Long calNo, List<Long> calMemList) throws SQLException {
-
-        int result = 0;
-
-        for (Long calMemNo: calMemList) {
-            result += scheduleMapper.insertCalendarMem(calNo, calMemNo);
-        }
-
-        if (result != calMemList.size()) {
-            throw new SQLException("댓글 생성 실패");
-        }
-
-        return "댓글 생성 성공";
     }
 
 //    public String updateStar(Long scheduleNo, Long changeStar) throws SQLException {

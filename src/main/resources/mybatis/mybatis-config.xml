@@ -67,6 +67,7 @@
 
 		<mapper resource="TodoMapper.xml"/>
 		<mapper resource="CalendarMapper.xml"/>
+		<mapper resource="ScheduleMapper.xml"/>
 
 		<mapper resource="ApprovalMapper.xml"/>
 

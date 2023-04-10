@@ -157,7 +157,7 @@
             )
     </insert>
 
-    <select id="selectCalendarNo" parameterType="CalendarDto">
+    <select id="selectCalendarNo" parameterType="CalendarDto" resultType="java.lang.Long">
         SELECT
             CAL_NO
         FROM tbl_calendar
@@ -166,11 +166,37 @@
         AND MADE_EMP_NO = #{madeEmpNo}
     </select>
 
+    <update id="updateCalendar" parameterType="CalendarDto">
+        UPDATE tbl_calendar
+        SET CAL_NAME = #{calName}
+          ,CAL_COLOR = #{calColor}
+        WHERE CAL_NO = #{calNo}
+    </update>
+
+    <delete id="deleteCalendarAllMem" parameterType="java.lang.Long">
+        DELETE FROM tbl_calendar
+        WHERE CAL_NO = #{calNo}
+    </delete>
+
+<!-- 캘린더 멤버 관련 매퍼 -->
+    <select id="selectCalendarMemberList" parameterType="java.lang.Long" resultType="CalendarDto">
+        SELECT
+            A.CAL_NAME
+            ,A.CAL_COLOR
+            ,B.CAL_NO
+            ,B.EMP_NO AS memEmpNo
+            ,C.EMP_NAME AS memEmpName
+        FROM TBL_CALENDAR A
+        LEFT JOIN tbl_calendar_mem B ON A.CAL_NO = B.CAL_NO
+        JOIN TBL_EMPLOYEE C ON B.EMP_NO = C.EMP_NO
+        WHERE A.CAL_NO = #{calNo}
+    </select>
+
     <insert id="insertCalendarMem" parameterType="java.lang.Long">
         INSERT INTO tbl_calendar_mem
         (
-            EMP_NO
-            ,CAL_NO
+        EMP_NO
+        ,CAL_NO
         )
         VALUES
             (
@@ -179,28 +205,10 @@
             )
     </insert>
 
-    <update id="updateCalendar" parameterType="CalendarDto">
-        UPDATE tbl_calendar
-        SET CAL_NAME = #{calName}
-          ,CAL_COLOR = #{calColor}
-        WHERE CAL_NO = #{calNo}
-    </update>
-
-<!--    <update id="updateCalendarMem" parameterType="java.lang.Long">-->
-<!--        UPDATE tbl_calendar_mem-->
-<!--        SET EMP_NO = #{memNo}-->
-<!--          ,CAL_NO = #{calNo}-->
-<!--    </update>-->
-
-    <delete id="deleteCalendarAllMem" parameterType="java.lang.Long">
-        DELETE FROM tbl_calendar
-        WHERE CAL_NO = #{calNo}
-    </delete>
-
-    <delete id="deleteCalendarOnlyMe" parameterType="java.lang.Long">
+    <delete id="deleteCalendarOnlyOne" parameterType="java.lang.Long">
         DELETE FROM tbl_calendar_mem
         WHERE CAL_NO = #{calNo}
-        AND EMP_NO = #{empNo}
+          AND EMP_NO = #{empNo}
     </delete>
 
 <!-- 일정 댓글 관련 매퍼 -->

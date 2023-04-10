@@ -31,26 +31,18 @@ public interface ScheduleMapper {
      List<ScheduleDto> selectCalendarList(Long empNo);
     int insertCalendar(CalendarDto calendarDto);
     Long selectCalendarNo(CalendarDto calendarDto);
-    int insertCalendarMem(Long memNo, Long calNo);
     int updateCalendar(CalendarDto calendarDto);
-    int updateCalendarMem(Long calNo, Long memNo);
+//    int updateCalendarMem(Long calNo, Long memNo);
     int deleteCalendarAllMem(Long calNo);
-    int deleteCalendarOnlyMe(Long calNo, Long empNo);
+
+    // 캘린더 멤버 관련 Mapper
+    List<CalendarDto> selectCalendarMemberList(Long calNo);
+    int insertCalendarMem(Long memNo, Long calNo);
+    int deleteCalendarOnlyOne(Long calNo, Long empNo);
 
     // 일정 댓글 관련 Mapper
     List<ScheduleCommentDto> selectScheduleCommentList(Long scdNo);
     int insertScheduleComment(ScheduleCommentDto scheduleCommentDto);
     int updateScheduleComment(ScheduleCommentDto scheduleCommentDto);
     int deleteScheduleComment(Long comNo);
-
-    // 캘린더 멤버 관련 Mapper
-    String selectCalendarMemberList(Long calNo);
-
-
-//    int checkStar(Long scheduleNo);
-//    int updateStar(Long scheduleNo, Long changeStar);
-//    int checkFinish(Long scheduleNo);
-//
-//    int updateFinish(Long scheduleNo, Long changeFinish);
-
 }

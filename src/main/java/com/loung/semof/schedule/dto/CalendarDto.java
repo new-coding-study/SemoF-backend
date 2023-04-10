@@ -20,5 +20,7 @@ public class CalendarDto {
     private String calColor;
     private Long madeEmpNo;
     private String madeEmpName;
-    private List<EmployeeDto> calendarMem;
+    private List<Long> calendarMem;
+    private Long memEmpNo;
+    private String memEmpName;
 }
