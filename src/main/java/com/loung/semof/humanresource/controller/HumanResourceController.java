@@ -40,6 +40,8 @@ public class HumanResourceController {
     private final TodoService todoService;
     private List<EmployeeDto> totalEmployee;
 
+    private List<HumanResourceDto> total;
+
     public HumanResourceController(HumanResourceService humanResourceService, TodoService todoService) {
         this.humanResourceService = humanResourceService;
         this.todoService = todoService;
@@ -194,6 +196,7 @@ public class HumanResourceController {
                 totalEmployee = humanResourceService.selectAllEmployees();
                 for (EmployeeDto employee : totalEmployee) {
                     log.info("사원 성별 비율 (gender)" + employee.getGender());
+                    log.info("사원 직급 비율 (job)" + employee.getJobCode());
                 }
             }
 

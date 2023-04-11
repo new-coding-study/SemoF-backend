@@ -480,6 +480,11 @@ public class HumanResourceService {
         return todayAttendance ;
     }
 
+    /**
+     * @작성일 : 2023-04-09
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 연차 조회 메소드
+     */
     public int selectVacationCount() throws SQLException {
         int vacationCount  = 0;
 
@@ -494,6 +499,11 @@ public class HumanResourceService {
         return vacationCount ;
     }
 
+    /**
+     * @작성일 : 2023-04-11
+     * @작성자 : 이현도
+     * @메소드설명 : 엘라스틱서치를 위한 사원 전체 조회 메소드
+     */
     public List<EmployeeDto> selectAllEmployees() {
 
         return humanResourceMapper.selectAllEmployees();

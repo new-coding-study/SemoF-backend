@@ -55,4 +55,5 @@ public interface HumanResourceMapper {
     Map<String, Long> selectGender();
 
     List<EmployeeDto> selectAllEmployees();
+
 }
