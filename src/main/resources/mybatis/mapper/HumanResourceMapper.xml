@@ -280,7 +280,8 @@
     <!-- SELECT 쿼리 : 성별 조회 -->
     <select id="selectAllEmployees" resultType="EmployeeDto">
         SELECT *
-        FROM tbl_employee
+        FROM tbl_employee E
         ORDER BY EMP_NO
     </select>
+
 </mapper>
