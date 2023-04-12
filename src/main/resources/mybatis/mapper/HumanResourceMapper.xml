@@ -87,6 +87,8 @@
         <result property="newDeptCode" column="NEW_DEPT_CODE" />
     </resultMap>
 
+    <resultMap id="jobNameMap" type="java.lang.String"/>
+
     <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
     <update id="updateEmployee" parameterType="EmployeeDto">
         UPDATE tbl_employee
@@ -282,6 +284,12 @@
         SELECT *
         FROM tbl_employee E
         ORDER BY EMP_NO
+    </select>
+
+    <select id="selectJobNameByJobCode" parameterType="int" resultMap="jobNameMap">
+        SELECT JOB_NAME
+        FROM tbl_job
+        WHERE JOB_CODE = #{jobCode}
     </select>
 
 </mapper>

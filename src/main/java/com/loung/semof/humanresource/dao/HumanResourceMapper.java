@@ -57,4 +57,5 @@ public interface HumanResourceMapper {
 
     List<EmployeeDto> selectAllEmployees();
 
+    String selectJobNameByJobCode();
 }

@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -39,16 +38,6 @@ public class HumanResourceController {
 
     private final HumanResourceService humanResourceService;
     private final TodoService todoService;
-
-    @PostConstruct
-    public void init() {
-        List<EmployeeDto>totalEmployee = humanResourceService.selectAllEmployees();
-        for (EmployeeDto employee : totalEmployee) {
-            log.info("사원 성별 비율 (gender)" + employee.getGender());
-            log.info("사원 직급 비율 (job)" + employee.getJobCode());
-            log.info("사원 이름 (name)" + employee.getEmpName());
-        }
-    }
 
     public HumanResourceController(HumanResourceService humanResourceService, TodoService todoService) {
         this.humanResourceService = humanResourceService;

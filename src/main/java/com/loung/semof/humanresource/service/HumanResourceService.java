@@ -518,4 +518,13 @@ public class HumanResourceService {
 
         return humanResourceMapper.selectAllEmployees();
     }
+
+    /**
+     * @작성일 : 2023-04-12
+     * @작성자 : 이현도
+     * @메소드설명 : 직업 코드를 직업 이름으로 변경하는 메소드
+     */
+    public String selectJobNameByJobCode(Long jobCode) {
+        return humanResourceMapper.selectJobNameByJobCode();
+    }
 }
