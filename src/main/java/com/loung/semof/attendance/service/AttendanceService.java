@@ -21,6 +21,23 @@ public class AttendanceService {
         this.attendanceMapper = attendanceMapper;
     }
 
+    /* 총 갯수 구하기 */
+    public int selectAttendanceTotal(int empNo) {
+        log.info("[AttendanceService] selectAttendanceTotal Start ===================================");
+        int result = attendanceMapper.selectAttendanceTotal(empNo);
+
+        log.info("[AttendanceService] selectAttendanceTotal End ===================================");
+        return result;
+    }
+
+    /* 페이징 처리 된 전체 조회 SelectCriteria selectCriteria */
+    public Object selectAttendanceListWithPaging(int endRow, int startRow, int empNo) {
+        log.info("[AttendanceService] selectAttendanceListWithPaging Start ===================================");
+        List<AttendanceDto> attendanceList = attendanceMapper.selectAttendanceListWithPaging(endRow, startRow, empNo);
+        log.info("[AttendanceService] selectAttendanceListWithPaging End ===================================");
+        return attendanceList;
+    }
+
     /**
      * @작성일 : 2023-03-27 027
      * @작성자 : sik
@@ -41,6 +58,11 @@ public class AttendanceService {
         return attendanceDto;
     }
 
+    /**
+     * @작성일 : 2023-03-27 027
+     * @작성자 : sik
+     * @메소드설명 : 사원 근태기록 조회
+     */
     public List<AttendanceDto> selectAttendanceList(int empNo) throws Exception {
         log.info("[AttendanceService] selectAttendanceList Start ===================================");
         List<AttendanceDto> attendanceDtoList = attendanceMapper.selectAttendanceList(empNo);
@@ -51,6 +73,11 @@ public class AttendanceService {
         return attendanceDtoList;
     }
 
+    /**
+     * @작성일 : 2023-04-10 027
+     * @작성자 : sik
+     * @메소드설명 : 근태정보 수정
+     */
     @Transactional
     public String updateAttendance(HashMap<String, String> data) throws Exception{
         log.info("[AttendanceService] updateAttendance Start ===================================");

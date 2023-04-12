@@ -24,10 +24,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -318,6 +315,8 @@ public class HumanResourceService {
         try {
             employeeList = humanResourceMapper.selectEmployeeListWithPaging(startRow, endRow);
 
+            log.info("[HumanResourceService] employeeList : " + employeeList);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -481,6 +480,11 @@ public class HumanResourceService {
         return todayAttendance ;
     }
 
+    /**
+     * @작성일 : 2023-04-09
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 연차 조회 메소드
+     */
     public int selectVacationCount() throws SQLException {
         int vacationCount  = 0;
 
@@ -493,5 +497,15 @@ public class HumanResourceService {
             throw new SQLException("휴가자 수를 조회하지 못했습니다.", e);
         }
         return vacationCount ;
+    }
+
+    /**
+     * @작성일 : 2023-04-11
+     * @작성자 : 이현도
+     * @메소드설명 : 엘라스틱서치를 위한 사원 전체 조회 메소드
+     */
+    public List<EmployeeDto> selectAllEmployees() {
+
+        return humanResourceMapper.selectAllEmployees();
     }
 }
