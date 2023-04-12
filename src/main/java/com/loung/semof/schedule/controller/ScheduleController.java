@@ -39,7 +39,7 @@ public class ScheduleController {
      * @작성자 : 박지희
      * @메소드설명 : 일정을 전체 조회하는 메소드
      */
-    @GetMapping("/schedulelist/{empNo}")
+    @GetMapping("/schedule-list/{empNo}")
     public ResponseEntity<ResponseDto> selectScheduleList(@PathVariable Long empNo){
 
         try {
@@ -154,11 +154,29 @@ public class ScheduleController {
      * @작성자 : 박지희
      * @메소드설명 : 캘린더를 전체 조회하는 메소드
      */
-    @GetMapping("/calendar/{empNo}")
+    @GetMapping("/calendar-list/{empNo}")
     public ResponseEntity<ResponseDto> selectCalendarList(@PathVariable Long empNo){
 
         try {
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 조회 성공", scheduleService.selectCalendarList(empNo)));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류 발생", null));
+
+        }
+    }
+
+    /**
+     * @작성일 : 2023/04/08
+     * @작성자 : 박지희
+     * @메소드설명 : 캘린더를 상세 조회하는 메소드
+     */
+    @GetMapping("/calendar/{calNo}")
+    public ResponseEntity<ResponseDto> selectCalendarDetail(@PathVariable Long calNo){
+
+        try {
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 조회 성공", scheduleService.selectCalendarDetail(calNo)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -191,8 +209,9 @@ public class ScheduleController {
      * @메소드설명 : 캘린더에 대한 정보를 수정하는 메소드
      */
     @PutMapping(value="/calendar")
-    public ResponseEntity<ResponseDto> updateCalendar(@ModelAttribute CalendarDto calendarDto, @ModelAttribute List<Long> calendarMemNoList){
+    public ResponseEntity<ResponseDto> updateCalendar(@ModelAttribute CalendarDto calendarDto){
 
+        System.out.println("calendarDto 확인 : " + calendarDto);
         try {
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 수정 성공", scheduleService.updateCalendar(calendarDto)));
 
@@ -233,7 +252,7 @@ public class ScheduleController {
     public ResponseEntity<ResponseDto> selectCalendarMemberList(@PathVariable Long calNo){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 조회 성공", scheduleService.selectCalendarMemberList(calNo)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 멤버 전체 조회 성공", scheduleService.selectCalendarMemberList(calNo)));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -251,7 +270,7 @@ public class ScheduleController {
     public ResponseEntity<ResponseDto> insertCalendarMember(@PathVariable Long calNo, @ModelAttribute List<Long> calMemList){
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 생성 성공", scheduleService.insertCalendarMember(calNo, calMemList)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 멤버 추가 성공", scheduleService.insertCalendarMember(calNo, calMemList)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -272,7 +291,7 @@ public class ScheduleController {
         System.out.println("calNo : " + calNo);
 
         try {
-            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 삭제 성공", scheduleService.deleteCalendarOnlyOne(calNo, empNo)));
+            return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "캘린더 멤버 삭제 성공", scheduleService.deleteCalendarOnlyOne(calNo, empNo)));
 
         } catch (SQLException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

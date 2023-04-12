@@ -28,7 +28,8 @@ public interface ScheduleMapper {
     List<ScheduleDto> selectSearchSchedule(String searchSchedule, String empNo);
 
     // 캘린더 관련 Mapper
-     List<ScheduleDto> selectCalendarList(Long empNo);
+    List<ScheduleDto> selectCalendarList(Long empNo);
+    CalendarDto selectCalendarDetail(Long calNo);
     int insertCalendar(CalendarDto calendarDto);
     Long selectCalendarNo(CalendarDto calendarDto);
     int updateCalendar(CalendarDto calendarDto);

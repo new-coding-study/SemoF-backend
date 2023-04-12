@@ -18,6 +18,7 @@ public class CalendarDto {
     private Long calNo; // 외래키
     private String calName;
     private String calColor;
+    private String calContent;
     private Long madeEmpNo;
     private String madeEmpName;
     private List<Long> calendarMem;

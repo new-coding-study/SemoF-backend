@@ -142,6 +142,15 @@
         OR B.EMP_NO = #{empNo}
     </select>
 
+    <select id="selectCalendarDetail" parameterType="java.lang.Long" resultType="CalendarDto">
+        SELECT
+            A.*
+            ,B.EMP_NAME AS madeEmpName
+        FROM tbl_calendar A
+            JOIN tbl_employee B ON A.MADE_EMP_NO = B.EMP_NO
+        WHERE A.CAL_NO = #{calNo}
+    </select>
+
     <insert id="insertCalendar" parameterType="CalendarDto">
         INSERT INTO tbl_calendar
         (
@@ -169,7 +178,8 @@
     <update id="updateCalendar" parameterType="CalendarDto">
         UPDATE tbl_calendar
         SET CAL_NAME = #{calName}
-          ,CAL_COLOR = #{calColor}
+            ,CAL_COLOR = #{calColor}
+            ,CAL_CONTENT = #{calContent}
         WHERE CAL_NO = #{calNo}
     </update>
 
@@ -179,6 +189,7 @@
     </delete>
 
 <!-- 캘린더 멤버 관련 매퍼 -->
+    <!-- 나중에 사원 이미지 가져올 수 있도록 DB 업데이트하기! -->
     <select id="selectCalendarMemberList" parameterType="java.lang.Long" resultType="CalendarDto">
         SELECT
             A.CAL_NAME
@@ -186,9 +197,9 @@
             ,B.CAL_NO
             ,B.EMP_NO AS memEmpNo
             ,C.EMP_NAME AS memEmpName
-        FROM TBL_CALENDAR A
+        FROM tbl_calendar A
         LEFT JOIN tbl_calendar_mem B ON A.CAL_NO = B.CAL_NO
-        JOIN TBL_EMPLOYEE C ON B.EMP_NO = C.EMP_NO
+        JOIN tbl_employee C ON B.EMP_NO = C.EMP_NO
         WHERE A.CAL_NO = #{calNo}
     </select>
 

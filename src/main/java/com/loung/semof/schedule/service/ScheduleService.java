@@ -112,6 +112,17 @@ public class ScheduleService {
         return calendarList;
     }
 
+    public CalendarDto selectCalendarDetail(Long calNo) {
+
+        CalendarDto calendar = scheduleMapper.selectCalendarDetail(calNo);
+
+        if (calendar == null) {
+            throw new NotFoundException("캘린더(일정 그룹) 조회 실패");
+        }
+
+        return calendar;
+    }
+
     public String insertCalendar(CalendarDto calendarDto) throws SQLException {
 
         int insertCalendarResult = scheduleMapper.insertCalendar(calendarDto);
