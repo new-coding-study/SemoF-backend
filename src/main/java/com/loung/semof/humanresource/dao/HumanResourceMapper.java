@@ -27,7 +27,8 @@ public interface HumanResourceMapper {
     List<HumanResourceDto> selectEmployeeListWithPaging(int startRow, int endRow);
 
     List<HumanResourceDto> selectEmployees(String empName, String deptName, String branchName);
-
+//    List<HumanResourceDto> selectEmployees(int startRow, int endRow, String empName, String deptName, String branchName);
+    
     List<EmployeeDto> selectEmployeeByBirthMonth(int monthValue);
 
     List<EmployeeDto> selectEmployeeByBirthMonthAfter(int monthValue);

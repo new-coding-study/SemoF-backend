@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -38,9 +39,16 @@ public class HumanResourceController {
 
     private final HumanResourceService humanResourceService;
     private final TodoService todoService;
-    private List<EmployeeDto> totalEmployee;
 
-    private List<HumanResourceDto> total;
+    @PostConstruct
+    public void init() {
+        List<EmployeeDto>totalEmployee = humanResourceService.selectAllEmployees();
+        for (EmployeeDto employee : totalEmployee) {
+            log.info("사원 성별 비율 (gender)" + employee.getGender());
+            log.info("사원 직급 비율 (job)" + employee.getJobCode());
+            log.info("사원 이름 (name)" + employee.getEmpName());
+        }
+    }
 
     public HumanResourceController(HumanResourceService humanResourceService, TodoService todoService) {
         this.humanResourceService = humanResourceService;
@@ -187,23 +195,25 @@ public class HumanResourceController {
     public ResponseEntity<ResponseDto> selectEmployeeListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
         try {
             int totalCount = humanResourceService.selectEmployeeTotal();
+
+            log.info("전체 사원 (total)" + totalCount);
+
             int limit = 10;
+
             int buttonAmount = 5;
+
             SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
+
             List<HumanResourceDto> employees = humanResourceService.selectEmployeeListWithPaging(selectCriteria.getStartRow(), selectCriteria.getEndRow());
 
-            if (totalEmployee == null) {
-                totalEmployee = humanResourceService.selectAllEmployees();
-                for (EmployeeDto employee : totalEmployee) {
-                    log.info("사원 성별 비율 (gender)" + employee.getGender());
-                    log.info("사원 직급 비율 (job)" + employee.getJobCode());
-                }
-            }
-
             ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+
             responseDtoWithPaging.setPageInfo(selectCriteria);
+
             responseDtoWithPaging.setData(employees);
+
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
+
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ResponseDto(HttpStatus.INTERNAL_SERVER_ERROR, "조회 실패", null));
