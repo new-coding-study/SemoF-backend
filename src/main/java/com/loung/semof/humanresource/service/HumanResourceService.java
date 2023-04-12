@@ -328,6 +328,16 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 조회 비즈니스 로직을 수행하는 메소드
      */
+//    public List<HumanResourceDto> selectEmployees(int startRow, int endRow, String empName, String deptName, String branchName) throws Exception {
+//
+//        List<HumanResourceDto> employees = humanResourceMapper.selectEmployees(startRow, endRow, empName, deptName, branchName);
+//
+//        if (employees.isEmpty()) {
+//            return null; // 조회된 사원이 없는 경우 null 반환
+//        }
+//
+//        return employees;
+//    }
     public List<HumanResourceDto> selectEmployees(String empName, String deptName, String branchName) throws Exception {
 
         List<HumanResourceDto> employees = humanResourceMapper.selectEmployees(empName, deptName, branchName);
@@ -507,5 +517,14 @@ public class HumanResourceService {
     public List<EmployeeDto> selectAllEmployees() {
 
         return humanResourceMapper.selectAllEmployees();
+    }
+
+    /**
+     * @작성일 : 2023-04-12
+     * @작성자 : 이현도
+     * @메소드설명 : 직업 코드를 직업 이름으로 변경하는 메소드
+     */
+    public String selectJobNameByJobCode(Long jobCode) {
+        return humanResourceMapper.selectJobNameByJobCode();
     }
 }
