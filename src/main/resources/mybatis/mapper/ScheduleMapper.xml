@@ -103,7 +103,6 @@
           ,SCD_CONTENT = #{scdContent}
           ,SCD_PLACE = #{scdPlace}
           ,CAL_NO = #{calNo}
-          ,SCD_WRITER = #{scdWriter}
         WHERE SCD_NO = #{scdNo}
     </update>
 
