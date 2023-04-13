@@ -13,8 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ApprovStatusDTO {
-    private char statusCode;
-    private String statusName;
+    private char statusNo;
+    private String status;
     private Integer statusOrder;
     private Integer approvNo;
 }

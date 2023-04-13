@@ -8,7 +8,6 @@ import com.loung.semof.approval.dto.*;
 import com.loung.semof.common.dto.BranchDto;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.util.FileUploadUtils;
-import com.sun.tools.jconsole.JConsoleContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,42 +77,46 @@ public class ApprovService {
     }
 
     public String insertApproval(ApprovalDTO approval, List<MultipartFile> files) {
-
-//        approval.setCategory(category);
+        if (files == null) {
+            files = new ArrayList<>();
+        }
 
         List<ApprovFileDTO> fileDTOs = new ArrayList<>();
         System.out.println("결재등록 서비스 호출");
         System.out.println("files = " + files);
-        for(int i = 0; i < files.size(); i++) {
-            MultipartFile file = files.get(i);
-            ApprovFileDTO fileDTO = new ApprovFileDTO();
+        if (!files.isEmpty()) {
+            for (int i = 0; i < files.size(); i++) {
+                MultipartFile file = files.get(i);
+                System.out.println("file = " + file);
+                ApprovFileDTO fileDTO = new ApprovFileDTO();
 
-            fileDTO.setOriginName(file.getOriginalFilename());
+                fileDTO.setOriginName(file.getOriginalFilename());
 
-            String fileName = UUID.randomUUID().toString().replace("-","");
-            fileDTO.setNewName(fileName);
-            try {
-                String savedFileName = FileUploadUtils.saveFile(FILE_DIR, fileName, file);
-                fileDTO.setFilePath(savedFileName);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                String fileName = UUID.randomUUID().toString().replace("-", "");
+                fileDTO.setNewName(fileName);
+                try {
+                    String savedFileName = FileUploadUtils.saveFile(FILE_DIR, fileName, file);
+                    fileDTO.setFilePath(savedFileName);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                fileDTOs.add(fileDTO);
             }
-            fileDTOs.add(fileDTO);
         }
-
 
         int approvResult = approvMapper.insertApproval(approval);
         int fileResult = 0;
         int contentResult = 0;
-        for(int i = 0; i < fileDTOs.size(); i++){
-            fileResult += approvMapper.insertApprovFile(fileDTOs.get(i));
+        if (!fileDTOs.isEmpty()) {
+            for (int i = 0; i < fileDTOs.size(); i++) {
+                fileResult += approvMapper.insertApprovFile(fileDTOs.get(i));
+            }
         }
-
-        for(int i = 0; i < approval.getApprovContentDTOList().size(); i++){
+        for (int i = 0; i < approval.getApprovContentDTOList().size(); i++) {
             contentResult += approvMapper.insertApprovContent(approval.getApprovContentDTOList().get(i));
         }
 
-        if (approvResult > 0 && fileResult == files.size() && contentResult == approval.getApprovContentDTOList().size()) {
+        if (approvResult > 0 && fileResult == fileDTOs.size() && contentResult == approval.getApprovContentDTOList().size()) {
             return "결재상신성공";
         } else {
             return "결재상신실패";
@@ -159,11 +162,12 @@ public class ApprovService {
 //        return(result>0)? "결재상신성공" : "결재상신실패";
 //    }
 
-    public Object selectApprovalInWithPaging(SelectCriteria selectCriteria) {
-        List<ApprovalDTO> approvalList = approvMapper.selectApprovalInWithPaging(selectCriteria);
+    public Object selectApprovalInWithPaging(Integer empNo, SelectCriteria selectCriteria) {
+        List<ApprovalDTO> approvalList = approvMapper.selectApprovalInWithPaging(empNo, selectCriteria);
         for(int i=0 ; i<approvalList.size();i++){
             approvalList.get(i).setCategory(approvMapper.selectCategory(approvalList.get(i).getApprovNo()));
             approvalList.get(i).setStatus(approvMapper.selectLatestStatus(approvalList.get(i).getApprovNo()));
+            approvalList.get(i).setEmpNo(empNo);
             System.out.println(approvalList.get(i).getCategory());
             System.out.println(approvalList.get(i).getStatus());
         }
@@ -175,8 +179,8 @@ public class ApprovService {
         return approvalList;
     }
 
-    public int selectApprovalTotal() {
-        int result = approvMapper.selectApprovalTotal();
+    public int selectApprovalTotal(Integer empNo) {
+        int result = approvMapper.selectApprovalTotal(empNo);
 
         return result;
     }
@@ -215,86 +219,72 @@ public class ApprovService {
         System.out.println("approvalDTO = " + approvalDTO);
 
 
-        for(int i =0 ; i<approvMapper.selectStatus(approvNo).size();i++){
-            System.out.println("approvMapper.selectStatus(approvNo).get(i)) = " + approvMapper.selectStatus(approvNo).get(i));
-
-        }
-        System.out.println("매퍼의 값 : "+approvMapper.selectStatus(approvNo));
-            System.out.println("approvalDTO.getStatuses() = " + approvalDTO.getStatuses());
+//        for(int i =0 ; i<approvMapper.selectStatus(approvNo).size();i++){
+//            System.out.println("approvMapper.selectStatus(approvNo).get(i)) = " + approvMapper.selectStatus(approvNo).get(i));
+//
 //        }
+//        System.out.println("매퍼의 값 : "+approvMapper.selectStatus(approvNo));
+//            System.out.println("approvalDTO.getStatuses() = " + approvalDTO.getStatuses());
+////        }
         return approvalDTO;
     }
 
-//    public Object updateApproval(ApprovalDTO approval, List<MultipartFile> file, List<ApprovContentDTO> contents) {
-//        List<ApprovFileDTO> files = new ArrayList<>();
-//
-//        String otherFileName = null;
-//
-//        for(int i =0; i<file.size();i++){
-//            try {
-//            String originPath = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getFilePath();
-//
-//            String originName = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getOriginName();
-//
-//            String originNewName = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getNewName();
-//
-//            MultipartFile originFile = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getApprovFile();
-//
-//            Integer originNo = approvMapper.selectApproval(approval.getApprovNo()).getApprovFileDTOList().get(i).getFileNo();
-//
-//            ApprovFileDTO fileDTO = new ApprovFileDTO();
-//
-//            fileDTO.setOriginName(file.get(i).getOriginalFilename());
-//
-//            if(approval.getApprovFileDTOList().get(i).getApprovFile() != null){
-//
-//                String fileName = UUID.randomUUID().toString().replace("-","");
-//
-//                fileDTO.setNewName(fileName);
-//
-//                otherFileName = FileUploadUtils.saveFile(FILE_DIR, fileName,fileDTO.getApprovFile());
-//
-//                fileDTO.setFilePath(otherFileName);
-//
-//                boolean isDelete = FileUploadUtils.deleteFile(FILE_DIR, originPath);
-//
-//                files.add(fileDTO);
-//            }else{
-//                fileDTO.setFilePath(originPath);
-//                fileDTO.setApprovFile(originFile);
-//                fileDTO.setFileNo(originNo);
-//                fileDTO.setOriginName(originName);
-//                fileDTO.setNewName(originNewName);
-//                files.add(fileDTO);
-//            }
-//        } catch (IOException e) {
-//                FileUploadUtils.deleteFile(FILE_DIR, otherFileName);
-//                throw new RuntimeException(e);
-//            }
-//        }
-//        approval.setApprovFileDTOList(files);
-//        approval.setApprovContentDTOList(contents);
-//        int result = 0;
-//        int approvResult = approvMapper.updateApproval(approval);
-//        int fileResult = 0;
-//        int contentResult = 0;
-//        for(int i =0; i<file.size();i++){
-//            fileResult += approvMapper.updateApprovFile(approval.getApprovFileDTOList().get(i));
-//        }
-//        for(int i =0; i<contents.size();i++){
-//            contentResult += approvMapper.updateContent(approval.getApprovContentDTOList().get(i));
-//        }
-//        if(approvResult>0 && fileResult == file.size() && contentResult == contents.size()){
-//            result = 1;
-//        }
-//
-//        return(result>0)? "결재서류 업데이트 성공" : "결재서류 업데이트 실패";
-//    }
+    public Object updateApproval(ApprovalDTO approval, List<MultipartFile> files) {
+        List<ApprovFileDTO> fileList = new ArrayList<>();
+        String otherFileName = null;
+        System.out.println("fileOrigin = " + approvMapper.selectFiles(approval.getApprovNo()));
 
-    public Object updateStatus(ApprovStatusDTO status) {
+        if(files != null && files.size() > 0) {
+            for(int i = 0; i < files.size(); i++) {
+                MultipartFile file = files.get(i);
+                ApprovFileDTO fileDTO = new ApprovFileDTO();
+
+                System.out.println("file = " + file);
+                fileDTO.setOriginName(file.getOriginalFilename());
+                String fileName = UUID.randomUUID().toString().replace("-", "");
+                fileDTO.setNewName(fileName);
+
+                try {
+                    String savedFileName = FileUploadUtils.saveFile(FILE_DIR, fileName, file);
+                    fileDTO.setFilePath(savedFileName);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+
+                fileList.add(fileDTO);
+            }
+        } else {
+            List<ApprovFileDTO> approvFiles = approvMapper.selectFiles(approval.getApprovNo());
+            fileList.addAll(approvFiles);
+        }
+
+        int result = 0;
+        int approvResult = approvMapper.updateApproval(approval);
+        int fileResult = 0;
+        int contentResult = 0;
+
+        for(int i = 0; i < fileList.size(); i++){
+            fileResult += approvMapper.updateApprovFile(fileList.get(i));
+        }
+
+        for(int i = 0; i < approval.getApprovContentDTOList().size(); i++){
+            contentResult += approvMapper.updateContent(approval.getApprovContentDTOList().get(i));
+        }
+
+        if(approvResult > 0 && fileResult == fileList.size() && contentResult == approval.getApprovContentDTOList().size()){
+            result = 1;
+        }
+
+        return (result > 0)? "결재서류 업데이트 성공" : "결재서류 업데이트 실패";
+    }
+
+    public Object updateStatus(Integer approvNo, Integer lineNo, Long empNo, String status) {
+        int rowNum = approvMapper.selectStatusOrder(lineNo, empNo);
+        System.out.println("rowNum = " + rowNum);
         int result = 0;
 
-        result = approvMapper.updateStatus(status);
+
+        result = approvMapper.updateStatus(status, approvNo, rowNum);
 
         return(result>0)? "결재처리완료":"결재처리실패";
     }
@@ -405,8 +395,8 @@ public class ApprovService {
         return lineDTO;
     }
 
-    public Object selectApprovalOutWithPaging(SelectCriteria selectCriteria) {
-        List<ApprovalDTO> approvalList = approvMapper.selectApprovalOutWithPaging(selectCriteria);
+    public Object selectApprovalOutWithPaging(Integer empNo, SelectCriteria selectCriteria) {
+        List<ApprovalDTO> approvalList = approvMapper.selectApprovalOutWithPaging(empNo, selectCriteria);
         System.out.println("approvalList = " + approvalList);
         for(int i=0 ; i<approvalList.size();i++){
             approvalList.get(i).setCategory(approvMapper.selectCategory(approvalList.get(i).getApprovNo()));
@@ -417,8 +407,8 @@ public class ApprovService {
         return approvalList;
     }
 
-    public int selectApprovOutTotal() {
-        int result = approvMapper.selectApprovOutTotal();
+    public int selectApprovOutTotal(Integer empNo) {
+        int result = approvMapper.selectApprovOutTotal(empNo);
 
         return result;
     }
@@ -465,4 +455,53 @@ public class ApprovService {
 //        return (result>2) ? "결재서류 삭제성공": "결재서류 삭제 실패";
 //    }
 
+    public List<ApprovStatusDTO> selectStatus(Integer approvNo){
+        System.out.println("approvNo = " + approvNo);
+        List<ApprovStatusDTO> statuses = approvMapper.selectStatus(approvNo);
+//        List<String> statuses = new ArrayList<>();
+//        statuses = approvMapper.selectStatus(approvNo);
+//        return dept;
+        return statuses;
+    }
+
+    public Object selectFiles(Integer approvNo) {
+        List<ApprovFileDTO> files = approvMapper.selectFiles(approvNo);
+        return files;
+    }
+
+    public Object selectFinApprovalInWithPaging(Integer empNo, SelectCriteria selectCriteria) {
+        List<ApprovalDTO> approvalList = approvMapper.selectFinApprovalInWithPaging(empNo, selectCriteria);
+        System.out.println("approvalList = " + approvalList);
+        for(int i=0 ; i<approvalList.size();i++){
+            approvalList.get(i).setCategory(approvMapper.selectCategory(approvalList.get(i).getApprovNo()));
+            approvalList.get(i).setStatus(approvMapper.selectLatestStatus(approvalList.get(i).getApprovNo()));
+            System.out.println(approvalList.get(i).getCategory());
+            System.out.println(approvalList.get(i).getStatus());
+        }
+        return approvalList;
+    }
+
+    public int selectFinApprovalTotal(Integer empNo) {
+        int result = approvMapper.selectFinApprovalTotal(empNo);
+
+        return result;
+    }
+
+    public Object selectFinApprovalOutWithPaging(Integer empNo, SelectCriteria selectCriteria) {
+        List<ApprovalDTO> approvalList = approvMapper.selectFinApprovalOutWithPaging(empNo, selectCriteria);
+        System.out.println("approvalList = " + approvalList);
+        for(int i=0 ; i<approvalList.size();i++){
+            approvalList.get(i).setCategory(approvMapper.selectCategory(approvalList.get(i).getApprovNo()));
+            approvalList.get(i).setStatus(approvMapper.selectLatestStatus(approvalList.get(i).getApprovNo()));
+            System.out.println(approvalList.get(i).getCategory());
+            System.out.println(approvalList.get(i).getStatus());
+        }
+        return approvalList;
+    }
+
+    public int selectFinApprovOutTotal(Integer empNo) {
+        int result = approvMapper.selectFinApprovOutTotal(empNo);
+
+        return result;
+    }
 }
