@@ -5,4 +5,4 @@
 ------
 ElasticComponent에서 에러가 발생 했을 때
 
-C:/var에 flag 폴더 하나 생성하면 해결!
+C:/var에 flag 폴더 하나 생성하면 해결 가능 혹은 페이지 전체 주석 처리
