@@ -123,8 +123,11 @@ public class HumanResourceService {
         }
 
         BranchOrderDto branchOrder = new BranchOrderDto();
+
         branchOrder.setEmpNo(employee.getEmpNo());
+
         branchOrder.setOrderDate(LocalDateTime.now());
+
         branchOrder.setBranchCode(employee.getBranchCode());
 
         BranchDto branch = branchMapper.selectBranchByBCode(branchCode);
@@ -143,8 +146,6 @@ public class HumanResourceService {
 
         return employee;
     }
-
-
 
     /**
      * @작성일 : 2023-03-21
@@ -258,7 +259,6 @@ public class HumanResourceService {
         return employee;
     }
 
-
     /**
      * @작성일 : 2023-03-21
      * @작성자 : 이현도
@@ -328,16 +328,6 @@ public class HumanResourceService {
      * @작성자 : 이현도
      * @메소드설명 : 사원 조회 비즈니스 로직을 수행하는 메소드
      */
-//    public List<HumanResourceDto> selectEmployees(int startRow, int endRow, String empName, String deptName, String branchName) throws Exception {
-//
-//        List<HumanResourceDto> employees = humanResourceMapper.selectEmployees(startRow, endRow, empName, deptName, branchName);
-//
-//        if (employees.isEmpty()) {
-//            return null; // 조회된 사원이 없는 경우 null 반환
-//        }
-//
-//        return employees;
-//    }
     public List<HumanResourceDto> selectEmployees(String empName, String deptName, String branchName) throws Exception {
 
         List<HumanResourceDto> employees = humanResourceMapper.selectEmployees(empName, deptName, branchName);
@@ -415,6 +405,11 @@ public class HumanResourceService {
         }
 
 
+        /**
+         * @작성일 : 2023-04-01
+         * @작성자 : 이현도
+         * @메소드설명 : 부서를 출력하는 비즈니스 로직
+         */
     public List<DepartmentDto> selectDepartments() {
 
         List<DepartmentOrderDto> deptOrders = humanResourceMapper.selectDepartmentsOrders();
@@ -425,6 +420,11 @@ public class HumanResourceService {
         return dept;
     }
 
+    /**
+     * @작성일 : 2023-04-01
+     * @작성자 : 이현도
+     * @메소드설명 : 지점을 출력하는 비즈니스 로직
+     */
     public List<BranchDto> selectBranches() {
         List<BranchOrderDto> branchOrders = humanResourceMapper.selectBranchesOrders();
         List<BranchDto> branch = branchOrders.stream()
@@ -433,6 +433,11 @@ public class HumanResourceService {
         return branch;
     }
 
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 번호로 사원 사진을 조회하는 메소드
+     */
     public EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo) {
 
         return humanResourceMapper.selectEmployeePhotoByEmpNo(empNo);
@@ -519,12 +524,4 @@ public class HumanResourceService {
         return humanResourceMapper.selectAllEmployees();
     }
 
-    /**
-     * @작성일 : 2023-04-12
-     * @작성자 : 이현도
-     * @메소드설명 : 직업 코드를 직업 이름으로 변경하는 메소드
-     */
-    public String selectJobNameByJobCode(Long jobCode) {
-        return humanResourceMapper.selectJobNameByJobCode();
-    }
 }

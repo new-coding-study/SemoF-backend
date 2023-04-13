@@ -361,6 +361,11 @@ public class HumanResourceController {
         return ResponseEntity.ok(branches);
     }
 
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 번호로 사원의 사진 조회 비즈니스 로직을 수행하는 메소드
+     */
     @GetMapping("/present/photo/{empNo}")
     public ResponseEntity<ResponseDto> selectEmpPhotoByEmpNo(@PathVariable("empNo") Long empNo) {
 

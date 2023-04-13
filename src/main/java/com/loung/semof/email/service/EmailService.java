@@ -598,6 +598,11 @@ public class EmailService {
         return totalCount;
     }
 
+    /**
+     * @작성일 : 2023-04-09
+     * @작성자 : 이현도
+     * @메소드설명 : 제목에 따라서 이메일을 검색하는 비즈니스 로직
+     */
     public List<EmailDto> searchEmailByTitle(String searchKeyword, int startRow, int endRow) {
 
         List<EmailDto> searchList = Collections.emptyList();

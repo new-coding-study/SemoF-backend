@@ -13,6 +13,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @파일이름 : EmployeeEvaluationService.java
+ * @프로젝트 : SemoF
+ * @버전관리 : 1.0.0
+ * @작성일 : 2023-03-26
+ * @작성자 : 이현도
+ * @클래스설명 : 사원 평가에 관련된 비즈니스 로직을 수행하는 클래스
+ */
 @Slf4j
 @Service
 public class EmployeeEvaluationService {
