@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.report.dao.MeetingMapper">
 
+    <!--회의보고서 전체조회(관리자)-->
     <select id="selectAllMeetingReportForAdmin" resultType="MeetingDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE) AS ROW_NUM
@@ -36,6 +37,7 @@
             ROW_NUM DESC;
     </select>
 
+    <!--회의보고서 전체조회(직원)-->
     <select id="selectAllMeetingReportForEmp" resultType="MeetingDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE) AS ROW_NUM
@@ -69,6 +71,7 @@
             ROW_NUM DESC;
     </select>
 
+    <!--회의보고서 전체 리스트 조회withPaging(관리자)-->
     <select id="selectAllMeetingReportForAdminWithPaging" resultType="MeetingDto">
         SELECT
             P.ROW_NUM
@@ -113,6 +116,7 @@
         LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--회의보고서 'N'상태 리스트 조회withPaging(관리자)-->
     <select id="selectAllMeetingNStatusForAdmin" resultType="MeetingDto">
         SELECT
             P.ROW_NUM
@@ -157,6 +161,7 @@
         LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--회의보고서 'Y'상태 리스트 조회withPaging(관리자)-->
     <select id="selectAllMeetingYStatusForAdmin" resultType="MeetingDto">
         SELECT
             P.ROW_NUM
@@ -201,6 +206,7 @@
         LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--회의보고서 전체 리스트 조회withPaging(직원)-->
     <select id="selectAllMeetingReportForEmpWithPaging" resultType="MeetingDto">
         SELECT
             P.ROW_NUM
@@ -245,6 +251,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--회의보고서 'N'상태 리스트 조회withPaging(직원)-->
     <select id="selectAllMeetingNStatusForEmp" resultType="MeetingDto">
         SELECT
             P.ROW_NUM
@@ -290,6 +297,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--회의보고서 'Y'상태 리스트 조회withPaging(직원)-->
     <select id="selectAllMeetingYStatusForEmp" resultType="MeetingDto">
         SELECT
             P.ROW_NUM
@@ -335,6 +343,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--회의보고서 상세조회(관리자)-->
     <select id="selectDetailMeetingForAdmin" resultType="MeetingDto">
         SELECT
             TM.MEETING_REPORT_CODE
@@ -359,6 +368,7 @@
         WHERE TM.MEETING_REPORT_CODE = #{meetingReportCode}
     </select>
 
+    <!--회의보고서 상세조회(직원)-->
     <select id="selectDetailMeetingForEmp" resultType="MeetingDto">
         SELECT
             TM.MEETING_REPORT_CODE
@@ -383,6 +393,7 @@
         WHERE TM.MEETING_REPORT_CODE = #{meetingReportCode}
     </select>
 
+    <!--관리자 전체리스트 갯수 조회-->
     <select id="selectMeetingReportTotalForAdmin" resultType="int">
         SELECT
             COUNT(*)
@@ -391,6 +402,7 @@
      JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TM.REPORT_CATEGORY_CODE
     </select>
 
+    <!--직원 전체리스트 갯수 조회-->
     <select id="selectMeetingReportTotalForEmp" resultType="int">
         SELECT
             COUNT(*)
@@ -400,6 +412,7 @@
         WHERE TM.EMP_NO = #{empNo}
     </select>
 
+    <!--회의보고서 등록-->
     <insert id="insertMeetingReport" parameterType="meetingDto">
         INSERT INTO tbl_meeting_report
             (
@@ -427,6 +440,7 @@
             )
     </insert>
 
+    <!--회의보고서 comment 작성(관리자)-->
     <update id="updateMeetingReportForAdmin" parameterType="meetingDto">
         UPDATE tbl_meeting_report
         SET
@@ -435,6 +449,7 @@
         WHERE MEETING_REPORT_CODE = #{meetingReportCode}
     </update>
 
+    <!--회의보고서 수정(직원)-->
     <update id="updateMeetingReportForEmp" parameterType="meetingDto">
         UPDATE tbl_meeting_report
         SET
@@ -447,11 +462,13 @@
         WHERE MEETING_REPORT_CODE = #{meetingReportCode}
     </update>
 
+    <!--회의보고서 삭제(관리자)-->
     <delete id="deleteMeetingReportForAdmin" parameterType="meetingDto">
         DELETE FROM tbl_meeting_report
         WHERE MEETING_REPORT_CODE = #{meetingReportCode}
     </delete>
 
+    <!--회의보고서 삭제(직원)-->
     <delete id="deleteMeetingReportForEmp" parameterType="meetingDto">
         DELETE  FROM tbl_meeting_report
         WHERE MEETING_REPORT_CODE = #{meetingReportCode}

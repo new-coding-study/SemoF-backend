@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.report.dao.SalesMapper">
 
+    <!--관리자용 보고서 전체조회-->
     <select id="selectAllSalesReportForAdmin" resultType="SalesDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
@@ -38,6 +39,7 @@
             ROW_NUM DESC;
     </select>
 
+    <!--회원용 보고서 조회-->
     <select id="selectAllSalesReportForEmp" resultType="SalesDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
@@ -73,6 +75,7 @@
             ROW_NUM DESC;
     </select>
 
+    <!--영업보고서 전체 리스트 조회withPaging(관리자)-->
     <select id="selectAllSalesReportForAdminWithPaging" resultType="SalesDto">
         SELECT
             P.ROW_NUM
@@ -120,6 +123,7 @@
         LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--영업보고서 'N' 리스트 조회withPaging(관리자)-->
     <select id="selectAllSalesNStatusForAdmin" resultType="SalesDto">
         SELECT
             P.ROW_NUM
@@ -168,6 +172,7 @@
             LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--영업보고서 'Y' 리스트 조회withPaging(관리자)-->
     <select id="selectAllSalesYStatusForAdmin" resultType="SalesDto">
         SELECT
             P.ROW_NUM
@@ -216,6 +221,7 @@
             LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--영업보고서 전체 리스트 조회withPaging(직원)-->
     <select id="selectAllSalesReportForEmpWithPaging" resultType="SalesDto">
         SELECT
             P.ROW_NUM
@@ -264,6 +270,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--영업보고서 'N'상태 리스트 조회withPaging(직원)-->
     <select id="selectAllSalesNStatusForEmp" resultType="SalesDto">
         SELECT
             P.ROW_NUM
@@ -313,6 +320,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--영업보고서 'Y'상태 리스트 조회withPaging(직원)-->
     <select id="selectAllSalesYStatusForEmp" resultType="SalesDto">
         SELECT
             P.ROW_NUM
@@ -361,6 +369,8 @@
         ORDER BY P.ROW_NUM DESC
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
+
+    <!--영업보고서 상세조회(관리자)-->
     <select id="detailSalesReportForAdmin" resultType="SalesDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
@@ -388,6 +398,7 @@
         WHERE TS.SALES_REPORT_CODE = #{salesReportCode}
     </select>
 
+    <!--영업보고서 상세조회(직원)-->
     <select id="detailSalesReportForEmp" resultType="SalesDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
@@ -415,6 +426,7 @@
         WHERE TS.SALES_REPORT_CODE = #{salesReportCode}
     </select>
 
+    <!--영업보고서 전체 갯수(관리자)-->
     <select id="selectSalesReportTotalForAdmin" resultType="int">
         SELECT
             COUNT(*)
@@ -423,6 +435,7 @@
         JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TS.REPORT_CATEGORY_CODE
     </select>
 
+    <!--영업보고서 전체 갯수(직원)-->
     <select id="selectSalesReportTotalForEmp" resultType="int">
         SELECT
             COUNT(*)
@@ -432,6 +445,7 @@
         WHERE TS.EMP_NO = #{empNo}
     </select>
 
+    <!--영업보고서 등록-->
     <insert id="insertSalesReport" parameterType="salesDto">
         INSERT INTO tbl_sales_report
             (
@@ -463,6 +477,7 @@
                 )
     </insert>
 
+    <!--COMMEMT 작성(관리자)-->
     <update id="updateSalesReportForAdmin" parameterType="salesDto">
         UPDATE tbl_sales_report
         SET
@@ -471,6 +486,7 @@
         WHERE SALES_REPORT_CODE = #{salesReportCode}
     </update>
 
+    <!--보고서 수정(직원)-->
     <update id="updateSalesReportForEmp" parameterType="salesDto">
         UPDATE tbl_sales_report TS
         SET
@@ -484,11 +500,13 @@
         WHERE TS.SALES_REPORT_CODE = #{salesReportCode}
     </update>
 
+    <!--보고서 삭제(관리자)-->
     <delete id="deleteSalesReportForAdmin" parameterType="salesDto">
         DELETE FROM tbl_sales_report
         WHERE SALES_REPORT_CODE = #{salesReportCode}
     </delete>
 
+    <!--보고서 삭제(직원)-->
     <delete id="deleteSalesReportForEmp" parameterType="salesDto">
         DELETE FROM tbl_sales_report
         WHERE SALES_REPORT_CODE = #{salesReportCode}
