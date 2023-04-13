@@ -94,6 +94,7 @@
         WHERE TB.EMP_NO = #{empNo}
     </select>
 
+    <!--출장보고서 전체 리스트 조회withPaging(관리자)-->
     <select id="selectAllTripReportForAdminWithPaging" resultType="TripDto">
         SELECT
             T.ROW_NUM
@@ -137,6 +138,7 @@
         LIMIT #{startRow}, #{endRow}
     </select>
 
+    <!--출장보고서 'Y' 리스트 조회withPaging(관리자)-->
     <select id="selectAllTripYStatusForAdmin" resultType="TripDto">
     SELECT
         T.ROW_NUM
@@ -178,8 +180,9 @@
          WHERE TB.REPORT_STATUS = 'Y') T
     ORDER BY T.ROW_NUM DESC
         LIMIT ${startRow}, #{endRow}
-</select>
+    </select>
 
+    <!--출장보고서 'N' 리스트 조회withPaging(관리자)-->
     <select id="selectAllTripNStatusForAdmin" resultType="TripDto">
         SELECT
             T.ROW_NUM
@@ -223,6 +226,7 @@
             LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--출장보고서 전체 리스트 조회withPaging(직원)-->
     <select id="selectAllTripReportForEmpWithPaging" resultType="TripDto">
         SELECT
             T.ROW_NUM
@@ -266,6 +270,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--출장보고서 'N'상태 리스트 조회withPaging(직원)-->
     <select id="selectAllTripNStatusForEmp" resultType="TripDto">
         SELECT
             T.ROW_NUM
@@ -309,6 +314,8 @@
         ORDER BY T.ROW_NUM DESC
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
+
+    <!--출장보고서 'Y'상태 리스트 조회withPaging(직원)-->
     <select id="selectAllTripYStatusForEmp" resultType="TripDto">
         SELECT
             T.ROW_NUM
@@ -353,6 +360,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--출장보고서 상세조회(관리자)-->
     <select id="detailTripReportForAdmin" resultType="TripDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TB.REPORT_WRITE_DATE DESC) AS ROW_NUM,
@@ -378,6 +386,7 @@
         WHERE TB.TRIP_REPORT_CODE = #{tripReportCode}
     </select>
 
+    <!--출장보고서 상세조회(직원)-->
     <select id="detailTripReportForEmp" resultType="TripDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TB.REPORT_WRITE_DATE DESC) AS ROW_NUM,
@@ -403,6 +412,7 @@
         WHERE TB.TRIP_REPORT_CODE = #{tripReportCode}
     </select>
 
+    <!--출장보고서 등록-->
     <insert id="insertTripReport" parameterType="tripDto">
         INSERT INTO tbl_business_trip_report
             (
@@ -429,7 +439,8 @@
                 ,(SELECT REPORT_CATEGORY_CODE FROM tbl_report_category WHERE tbl_report_category.REPORT_CATEGORY_CODE = 3)
             )
     </insert>
-    
+
+    <!--출장보고서 comment 작성(관리자)-->
     <update id="updateTripReportForAdmin" parameterType="tripDto">
         UPDATE tbl_business_trip_report
            SET
@@ -438,6 +449,7 @@
         WHERE TRIP_REPORT_CODE = #{tripReportCode}
     </update>
 
+    <!--출장보고서 수정(직원)-->
     <update id="updateTripReportForEmp" parameterType="tripDto">
         UPDATE tbl_business_trip_report TB
            SET
@@ -451,11 +463,13 @@
         WHERE TB.TRIP_REPORT_CODE = #{tripReportCode}
     </update>
 
+    <!--출장보고서 삭제(관리자)-->
     <delete id="deleteTripReportForAdmin" parameterType="tripDto">
         DELETE FROM tbl_business_trip_report
         WHERE TRIP_REPORT_CODE = #{tripReportCode}
     </delete>
 
+    <!--출장보고서 삭제(직원)-->
     <delete id="deleteTripReportForEmp" parameterType="tripDto">
         DELETE  FROM tbl_business_trip_report
         WHERE TRIP_REPORT_CODE = #{tripReportCode}

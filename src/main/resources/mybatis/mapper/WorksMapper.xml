@@ -4,6 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.report.dao.WorksMapper">
 
+    <!--업무보고서 전체조회(관리자)-->
     <select id="selectAllWorksReportForAdmin" resultType="WorksDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
@@ -37,6 +38,7 @@
             ROW_NUM DESC;
     </select>
 
+    <!--업무보고서 전체조회(직원)-->
     <select id="selectAllWorksReportForEmp" resultType="WorksDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE DESC) AS ROW_NUM
@@ -71,6 +73,7 @@
             ROW_NUM DESC;
     </select>
 
+    <!--업무보고서 전체 리스트 조회withPaging(관리자)-->
     <select id="selectAllWorksReportForAdminWithPaging" resultType="WorksDto">
         SELECT
             P.ROW_NUM
@@ -117,6 +120,7 @@
             LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--업무보고서 'N'상태 리스트 조회withPaging(관리자)-->
     <select id="selectAllWorkNStatusForAdmin" resultType="WorksDto">
         SELECT
             P.ROW_NUM
@@ -164,6 +168,7 @@
             LIMIT ${startRow}, #{endRow}
     </select>
 
+    <!--업무보고서 'Y'상태 리스트 조회withPaging(관리자)-->
     <select id="selectAllWorkYStatusForAdmin" resultType="WorksDto">
         SELECT
             P.ROW_NUM
@@ -211,7 +216,7 @@
             LIMIT ${startRow}, #{endRow}
     </select>
 
-
+    <!--업무보고서 전체 리스트 조회withPaging(직원)-->
     <select id="selectAllWorksReportForEmpWithPaging" resultType="WorksDto">
         SELECT
             P.ROW_NUM
@@ -259,6 +264,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--업무보고서 'N'상태 리스트 조회withPaging(직원)-->
     <select id="selectAllWorkNStatusForEmp" resultType="WorksDto">
         SELECT
             P.ROW_NUM
@@ -307,6 +313,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--업무보고서 'Y'상태 리스트 조회withPaging(직원)-->
     <select id="selectAllWorkYStatusForEmp" resultType="WorksDto">
         SELECT
             P.ROW_NUM
@@ -355,6 +362,7 @@
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <!--업무보고서 상세조회(관리자)-->
     <select id="selectDetailWorksForAdmin" resultType="WorksDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE ASC) AS ROW_NUM
@@ -381,6 +389,7 @@
         WHERE TW.WORKS_REPORT_CODE = #{worksReportCode}
     </select>
 
+    <!--업무보고서 상세조회(직원)-->
     <select id="selectDetailWorksForEmp" resultType="WorksDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TW.REPORT_WRITE_DATE ASC) AS ROW_NUM
@@ -407,6 +416,7 @@
         WHERE TW.WORKS_REPORT_CODE = #{worksReportCode}
     </select>
 
+    <!--관리자 전체리스트 갯수 조회-->
     <select id="selectWorksReportTotalForAdmin" resultType="int">
         SELECT
             COUNT(*)
@@ -415,6 +425,7 @@
                  JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TW.REPORT_CATEGORY_CODE
     </select>
 
+    <!--직원 전체리스트 갯수 조회-->
     <select id="selectWorksReportTotalForEmp" resultType="int">
         SELECT
             COUNT(*)
@@ -424,6 +435,7 @@
         WHERE TW.EMP_NO = #{empNo}
     </select>
 
+    <!--업무보고서 등록-->
     <insert id="insertWorksReport" parameterType="worksDto">
        INSERT INTO tbl_works_report
         (
@@ -453,6 +465,7 @@
             )
     </insert>
 
+    <!--업무보고서 comment 작성(관리자)-->
     <update id="updateWorksReportForAdmin" parameterType="worksDto">
         UPDATE tbl_works_report
         SET
@@ -462,6 +475,7 @@
         WHERE WORKS_REPORT_CODE = #{worksReportCode}
     </update>
 
+    <!--업무보고서 수정(직원)-->
     <update id="updateWorksReportForEmp" parameterType="worksDto">
         UPDATE tbl_works_report
         SET
@@ -474,11 +488,13 @@
         WHERE WORKS_REPORT_CODE = #{worksReportCode}
     </update>
 
+    <!--업무보고서 삭제(관리자)-->
     <delete id="deleteWorksReportForAdmin" parameterType="worksDto">
         DELETE FROM tbl_works_report
         WHERE WORKS_REPORT_CODE = #{worksReportCode}
     </delete>
 
+    <!--업무보고서 삭제(직원)-->
     <delete id="deleteWorksReportForEmp" parameterType="worksDto">
         DELETE FROM tbl_works_report
         WHERE WORKS_REPORT_CODE = #{worksReportCode}
