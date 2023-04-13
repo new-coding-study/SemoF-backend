@@ -27,7 +27,7 @@
 <!--    ,-->
     <!--    &#45;&#45;         ON A.EMP_NO = B.EMP_NO-->
 <!--    &#45;&#45;         FROM tbl_login_info A-->
-    <select id="selectById" resultType="string">
+    <select id="selectById" resultType="String">
         SELECT
             LOGIN_ID
         FROM tbl_login_info
