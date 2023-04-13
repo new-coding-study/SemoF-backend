@@ -77,4 +77,26 @@ public class MeetingService {
         int result = meetingMapper.deleteMeetingReportForEmp(meetingReportCode);
         return (result > 0)? "삭제성공":"삭제실패";
     }
+
+    public Object selectAllMeetingNStatusForAdmin(SelectCriteria selectCriteria) {
+        List<MeetingDto> meetingDto = meetingMapper.selectAllMeetingNStatusForAdmin(selectCriteria);
+        for(int i = 0; i<meetingDto.size(); i++);
+        return meetingDto;
+    }
+    public Object selectAllMeetingYStatusForAdmin(SelectCriteria selectCriteria) {
+        List<MeetingDto> meetingDto = meetingMapper.selectAllMeetingYStatusForAdmin(selectCriteria);
+        for(int i = 0; i<meetingDto.size(); i++);
+        return meetingDto;
+    }
+
+    public Object selectAllMeetingNStatusForEmp(SelectCriteria selectCriteria, int empNo) {
+        List<MeetingDto> meetingDto = meetingMapper.selectAllMeetingNStatusForEmp(selectCriteria, empNo);
+        for(int i = 0; i<meetingDto.size(); i++);
+        return meetingDto;
+    }
+    public Object selectAllMeetingYStatusForEmp(SelectCriteria selectCriteria, int empNo) {
+        List<MeetingDto> meetingDto = meetingMapper.selectAllMeetingYStatusForEmp(selectCriteria, empNo);
+        for(int i = 0; i<meetingDto.size(); i++);
+        return meetingDto;
+    }
 }

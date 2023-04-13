@@ -71,7 +71,9 @@ public class WorksService {
 
     @Transactional
     public Object insertWorksReport(WorksDto worksDto) {
+        System.out.println("worksDto = " + worksDto);
         int result = worksMapper.insertWorksReport(worksDto);
+        System.out.println("result = " + result);
         return (result > 0)? "등록성공":"등록실패";
     }
 

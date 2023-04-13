@@ -21,7 +21,7 @@ public class MeetingController {
     }
 
     @GetMapping("/meeting-lists-admin")
-    public ResponseEntity<ResponseDto> selectAllTripReportForAdminWithPaging(@RequestParam(name="offset", defaultValue = "1") String offset){
+    public ResponseEntity<ResponseDto> selectAllMeetingReportForAdminWithPaging(@RequestParam(name="offset", defaultValue = "1") String offset){
 
         int totalCount = meetingService.selectMeetingReportTotalForAdmin();
         int limit = 10;
@@ -36,8 +36,39 @@ public class MeetingController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
     }
 
-    @GetMapping("/meeting-lists-emp")
-    public ResponseEntity<ResponseDto> selectAllMeetingReportForEmpWithPaging(@RequestParam(name="offset", defaultValue = "1") String offset, @RequestParam int empNo){
+    @GetMapping("/meeting-n-lists-admin")
+    public ResponseEntity<ResponseDto> selectAllMeetingNStatusForAdmin(@RequestParam(name="offset", defaultValue = "1") String offset){
+
+        int totalCount = meetingService.selectMeetingReportTotalForAdmin();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(meetingService.selectAllMeetingNStatusForAdmin(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
+    }
+
+    @GetMapping("/meeting-y-lists-admin")
+    public ResponseEntity<ResponseDto> selectAllMeetingYStatusForAdmin(@RequestParam(name="offset", defaultValue = "1") String offset){
+
+        int totalCount = meetingService.selectMeetingReportTotalForAdmin();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(meetingService.selectAllMeetingYStatusForAdmin(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
+    }
+    @GetMapping("/meeting-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllMeetingReportForEmpWithPaging(@RequestParam(name="offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
         int totalCount = meetingService.selectMeetingReportTotalForEmp();
         int limit = 10;
@@ -51,13 +82,44 @@ public class MeetingController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
     }
+    @GetMapping("/meeting-n-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllMeetingNStatusForEmp(
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-    @GetMapping("/meeting-lists-admin/{meetingReportCode}")
+        int totalCount = meetingService.selectMeetingReportTotalForEmp();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(meetingService.selectAllMeetingNStatusForEmp(selectCriteria, empNo));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 회의보고서 조회", responseDtoWithPaging));
+    }
+    @GetMapping("/meeting-y-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllMeetingYStatusForEmp(
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
+
+        int totalCount = meetingService.selectMeetingReportTotalForEmp();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(meetingService.selectAllMeetingYStatusForEmp(selectCriteria, empNo));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 회의보고서 조회", responseDtoWithPaging));
+    }
+    @GetMapping("/meeting-detail-admin/{meetingReportCode}")
     public ResponseEntity<ResponseDto> detailMeetingReportForAdmin(@PathVariable Integer meetingReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "관리자 회의보고서 조회", meetingService.selectDetailMeetingForAdmin(meetingReportCode)));
     }
 
-    @GetMapping("/meeting-lists-emp/{meetingReportCode}")
+    @GetMapping("/meeting-detail-emp/{meetingReportCode}")
     public ResponseEntity<ResponseDto> detailMeetingReportForEmp(@PathVariable Integer meetingReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 회의보고서 조회", meetingService.selectDetailMeetingForEmp(meetingReportCode)));
     }

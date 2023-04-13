@@ -20,4 +20,12 @@ public interface MeetingMapper {
     int updateMeetingReportForEmp(MeetingDto meetingDto);
     int deleteMeetingReportForAdmin(Integer meetingReportCode);
     int deleteMeetingReportForEmp(Integer meetingReportCode);
+
+    List<MeetingDto> selectAllMeetingNStatusForAdmin(SelectCriteria selectCriteria);
+
+    List<MeetingDto> selectAllMeetingYStatusForAdmin(SelectCriteria selectCriteria);
+
+    List<MeetingDto> selectAllMeetingNStatusForEmp(SelectCriteria selectCriteria, int empNo);
+
+    List<MeetingDto> selectAllMeetingYStatusForEmp(SelectCriteria selectCriteria, int empNo);
 }

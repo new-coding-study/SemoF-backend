@@ -94,7 +94,7 @@
             ,P.REPORT_COMMENT
         FROM
         (SELECT
-            ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
+            ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE ASC) AS ROW_NUM
            ,TS.SALES_REPORT_CODE
              ,TS.REPORT_WRITE_DATE
              ,TS.START_DATE
@@ -115,17 +115,105 @@
                  JOIN tbl_report_category TR
                       ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
                  JOIN tbl_employee TE
-                      ON TS.EMP_NO = TE.EMP_NO
-        WHERE TS.REPORT_STATUS = 'N' OR TS.REPORT_STATUS = 'Y'
-        ORDER BY
-            CASE TS.REPORT_STATUS
-                WHEN 'N' THEN 0
-                WHEN 'Y' THEN 1
-                ELSE 2
-                END,
-            ROW_NUM DESC) P
+                      ON TS.EMP_NO = TE.EMP_NO) P
         ORDER BY P.ROW_NUM DESC
         LIMIT ${startRow}, #{endRow}
+    </select>
+
+    <select id="selectAllSalesNStatusForAdmin" resultType="SalesDto">
+        SELECT
+            P.ROW_NUM
+             ,P.SALES_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.SALES_REPORT_TITLE
+             ,P.SALES_REPORT_CONTENT
+             ,P.CUSTOMER_COMMENT
+             ,P.COMPETITION_ANALYSIS
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+                 ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE ASC) AS ROW_NUM
+           ,TS.SALES_REPORT_CODE
+                  ,TS.REPORT_WRITE_DATE
+                  ,TS.START_DATE
+                  ,TS.END_DATE
+                  ,TS.EMP_NO
+                  ,TE.EMP_NAME
+                  ,TS.SALES_REPORT_TITLE
+                  ,TS.SALES_REPORT_CONTENT
+                  ,TS.CUSTOMER_COMMENT
+                  ,TS.COMPETITION_ANALYSIS
+                  ,TS.ISSUES_IMPROVEMENT
+                  ,TS.NEXT_PLAN
+                  ,TS.CONCLUSION
+                  ,TR.REPORT_CATEGORY_NAME
+                  ,TS.REPORT_STATUS
+                  ,TS.REPORT_COMMENT
+             FROM tbl_sales_report TS
+                      JOIN tbl_report_category TR
+                           ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                      JOIN tbl_employee TE
+                           ON TS.EMP_NO = TE.EMP_NO) P
+        WHERE P.REPORT_STATUS = 'N'
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${startRow}, #{endRow}
+    </select>
+
+    <select id="selectAllSalesYStatusForAdmin" resultType="SalesDto">
+        SELECT
+            P.ROW_NUM
+             ,P.SALES_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.SALES_REPORT_TITLE
+             ,P.SALES_REPORT_CONTENT
+             ,P.CUSTOMER_COMMENT
+             ,P.COMPETITION_ANALYSIS
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+                 ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE ASC) AS ROW_NUM
+           ,TS.SALES_REPORT_CODE
+                  ,TS.REPORT_WRITE_DATE
+                  ,TS.START_DATE
+                  ,TS.END_DATE
+                  ,TS.EMP_NO
+                  ,TE.EMP_NAME
+                  ,TS.SALES_REPORT_TITLE
+                  ,TS.SALES_REPORT_CONTENT
+                  ,TS.CUSTOMER_COMMENT
+                  ,TS.COMPETITION_ANALYSIS
+                  ,TS.ISSUES_IMPROVEMENT
+                  ,TS.NEXT_PLAN
+                  ,TS.CONCLUSION
+                  ,TR.REPORT_CATEGORY_NAME
+                  ,TS.REPORT_STATUS
+                  ,TS.REPORT_COMMENT
+             FROM tbl_sales_report TS
+                      JOIN tbl_report_category TR
+                           ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                      JOIN tbl_employee TE
+                           ON TS.EMP_NO = TE.EMP_NO) P
+        WHERE P.REPORT_STATUS = 'Y'
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${startRow}, #{endRow}
     </select>
 
     <select id="selectAllSalesReportForEmpWithPaging" resultType="SalesDto">
@@ -149,7 +237,7 @@
              ,P.REPORT_COMMENT
         FROM
             (SELECT
-                 ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
+                 ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE ASC) AS ROW_NUM
            ,TS.SALES_REPORT_CODE
                   ,TS.REPORT_WRITE_DATE
                   ,TS.START_DATE
@@ -171,19 +259,108 @@
                            ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
                       JOIN tbl_employee TE
                            ON TS.EMP_NO = TE.EMP_NO
-             WHERE TS.REPORT_STATUS = 'N' OR TS.REPORT_STATUS = 'Y'
-               AND TS.EMP_NO = #{empNo}
-             ORDER BY
-                 CASE TS.REPORT_STATUS
-                     WHEN 'N' THEN 0
-                     WHEN 'Y' THEN 1
-                     ELSE 2
-                     END,
-                 ROW_NUM DESC) P
+               WHERE TS.EMP_NO = #{empNo}) P
         ORDER BY P.ROW_NUM DESC
             LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
     </select>
 
+    <select id="selectAllSalesNStatusForEmp" resultType="SalesDto">
+        SELECT
+            P.ROW_NUM
+             ,P.SALES_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.SALES_REPORT_TITLE
+             ,P.SALES_REPORT_CONTENT
+             ,P.CUSTOMER_COMMENT
+             ,P.COMPETITION_ANALYSIS
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+                 ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE ASC) AS ROW_NUM
+           ,TS.SALES_REPORT_CODE
+                  ,TS.REPORT_WRITE_DATE
+                  ,TS.START_DATE
+                  ,TS.END_DATE
+                  ,TS.EMP_NO
+                  ,TE.EMP_NAME
+                  ,TS.SALES_REPORT_TITLE
+                  ,TS.SALES_REPORT_CONTENT
+                  ,TS.CUSTOMER_COMMENT
+                  ,TS.COMPETITION_ANALYSIS
+                  ,TS.ISSUES_IMPROVEMENT
+                  ,TS.NEXT_PLAN
+                  ,TS.CONCLUSION
+                  ,TR.REPORT_CATEGORY_NAME
+                  ,TS.REPORT_STATUS
+                  ,TS.REPORT_COMMENT
+             FROM tbl_sales_report TS
+                      JOIN tbl_report_category TR
+                           ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                      JOIN tbl_employee TE
+                           ON TS.EMP_NO = TE.EMP_NO
+               WHERE TS.EMP_NO = #{empNo}) P
+        WHERE P.REPORT_STATUS = 'N'
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
+
+    <select id="selectAllSalesYStatusForEmp" resultType="SalesDto">
+        SELECT
+            P.ROW_NUM
+             ,P.SALES_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.START_DATE
+             ,P.END_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.SALES_REPORT_TITLE
+             ,P.SALES_REPORT_CONTENT
+             ,P.CUSTOMER_COMMENT
+             ,P.COMPETITION_ANALYSIS
+             ,P.ISSUES_IMPROVEMENT
+             ,P.NEXT_PLAN
+             ,P.CONCLUSION
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+                 ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE ASC) AS ROW_NUM
+           ,TS.SALES_REPORT_CODE
+                  ,TS.REPORT_WRITE_DATE
+                  ,TS.START_DATE
+                  ,TS.END_DATE
+                  ,TS.EMP_NO
+                  ,TE.EMP_NAME
+                  ,TS.SALES_REPORT_TITLE
+                  ,TS.SALES_REPORT_CONTENT
+                  ,TS.CUSTOMER_COMMENT
+                  ,TS.COMPETITION_ANALYSIS
+                  ,TS.ISSUES_IMPROVEMENT
+                  ,TS.NEXT_PLAN
+                  ,TS.CONCLUSION
+                  ,TR.REPORT_CATEGORY_NAME
+                  ,TS.REPORT_STATUS
+                  ,TS.REPORT_COMMENT
+             FROM tbl_sales_report TS
+                      JOIN tbl_report_category TR
+                           ON TS.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                      JOIN tbl_employee TE
+                           ON TS.EMP_NO = TE.EMP_NO
+             WHERE TS.EMP_NO = #{empNo}) P
+        WHERE P.REPORT_STATUS = 'Y'
+        ORDER BY P.ROW_NUM DESC
+            LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
     <select id="detailSalesReportForAdmin" resultType="SalesDto">
         SELECT
             ROW_NUMBER() OVER(ORDER BY TS.REPORT_WRITE_DATE DESC) AS ROW_NUM
@@ -297,10 +474,8 @@
     <update id="updateSalesReportForEmp" parameterType="salesDto">
         UPDATE tbl_sales_report TS
         SET
-            TS.START_DATE = #{startDate}
-            ,TS.END_DATE = #{endDate}
-            ,TS.SALES_REPORT_TITLE = #{salesReportTitle}
-            ,TS.SALES_REPORT_CONTENT = #{salesReportContent}
+            TS.SALES_REPORT_TITLE = #{salesReportTitle}
+            ,TS.SALES_REPORT_CONTENT = #{salesReportTitle}
             ,TS.CUSTOMER_COMMENT = #{customerComment}
             ,TS.COMPETITION_ANALYSIS = #{competitionAnalysis}
             ,TS.ISSUES_IMPROVEMENT = #{issuesImprovement}

@@ -3,6 +3,7 @@ package com.loung.semof.report.service;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.report.dao.SalesMapper;
 import com.loung.semof.report.dto.SalesDto;
+import com.loung.semof.report.dto.WorksDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,5 +79,27 @@ public class SalesService {
     public Object deleteSalesReportForEmp(Integer salesReportCode) {
         int result = salesMapper.deleteSalesReportForEmp(salesReportCode);
         return (result>0)? "보고서 삭제 성공":"삭제실패";
+    }
+
+    public Object selectAllSalesNStatusForAdmin(SelectCriteria selectCriteria) {
+        List<SalesDto> salesDto = salesMapper.selectAllSalesNStatusForAdmin(selectCriteria);
+        for(int i = 0; i<salesDto.size(); i++);
+        return salesDto;
+    }
+    public Object selectAllSalesYStatusForAdmin(SelectCriteria selectCriteria) {
+        List<SalesDto> salesDto = salesMapper.selectAllSalesYStatusForAdmin(selectCriteria);
+        for(int i = 0; i<salesDto.size(); i++);
+        return salesDto;
+    }
+
+    public Object selectAllSalesNStatusForEmp(SelectCriteria selectCriteria, int empNo) {
+        List<SalesDto> salesDto = salesMapper.selectAllSalesNStatusForEmp(selectCriteria, empNo);
+        for(int i = 0; i<salesDto.size(); i++);
+        return salesDto;
+    }
+    public Object selectAllSalesYStatusForEmp(SelectCriteria selectCriteria, int empNo) {
+        List<SalesDto> salesDto = salesMapper.selectAllSalesYStatusForEmp(selectCriteria, empNo);
+        for(int i = 0; i<salesDto.size(); i++);
+        return salesDto;
     }
 }
