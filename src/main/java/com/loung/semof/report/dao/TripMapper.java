@@ -21,4 +21,11 @@ public interface TripMapper {
     int deleteTripReportForAdmin(Integer tripReportCode);
     int deleteTripReportForEmp(Integer tripReportCode);
 
+    List<TripDto> selectAllTripNStatusForAdmin(SelectCriteria selectCriteria);
+
+    List<TripDto> selectAllTripYStatusForAdmin(SelectCriteria selectCriteria);
+
+    List<TripDto> selectAllTripNStatusForEmp(SelectCriteria selectCriteria, int empNo);
+
+    List<TripDto> selectAllTripYStatusForEmp(SelectCriteria selectCriteria, int empNo);
 }

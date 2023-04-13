@@ -20,4 +20,12 @@ public interface SalesMapper {
     int updateSalesReportForEmp(SalesDto salesDto);
     int deleteSalesReportForAdmin(Integer salesReportCode);
     int deleteSalesReportForEmp(Integer salesReportCode);
+
+    List<SalesDto> selectAllSalesNStatusForAdmin(SelectCriteria selectCriteria);
+
+    List<SalesDto> selectAllSalesYStatusForAdmin(SelectCriteria selectCriteria);
+
+    List<SalesDto> selectAllSalesNStatusForEmp(SelectCriteria selectCriteria, int empNo);
+
+    List<SalesDto> selectAllSalesYStatusForEmp(SelectCriteria selectCriteria, int empNo);
 }

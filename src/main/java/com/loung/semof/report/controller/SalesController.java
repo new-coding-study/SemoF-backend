@@ -36,8 +36,40 @@ public class SalesController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
     }
 
-    @GetMapping("/sales-lists-emp")
-    public ResponseEntity<ResponseDto> selectAllSalesReportForEmpWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
+    @GetMapping("/sales-n-lists-admin")
+    public ResponseEntity<ResponseDto> selectAllSalesNStatusForAdmin(@RequestParam(name="offset", defaultValue = "1") String offset){
+
+        int totalCount = salesService.selectSalesReportTotalForAdmin();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(salesService.selectAllSalesNStatusForAdmin(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
+    }
+
+    @GetMapping("/sales-y-lists-admin")
+    public ResponseEntity<ResponseDto> selectAllSalesYStatusForAdmin(@RequestParam(name="offset", defaultValue = "1") String offset){
+
+        int totalCount = salesService.selectSalesReportTotalForAdmin();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(salesService.selectAllSalesYStatusForAdmin(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
+    }
+
+    @GetMapping("/sales-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllSalesReportForEmpWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
         int totalCount = salesService.selectSalesReportTotalForEmp();
         int limit = 10;
@@ -52,12 +84,44 @@ public class SalesController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
     }
 
-    @GetMapping("/sales-lists-admin/{salesReportCode}")
+    @GetMapping("/sales-n-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllSalesNStatusForEmp(
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
+
+        int totalCount = salesService.selectSalesReportTotalForEmp();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(salesService.selectAllSalesNStatusForEmp(selectCriteria, empNo));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 영업보고서 조회", responseDtoWithPaging));
+    }
+    @GetMapping("/sales-y-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllSalesYStatusForEmp(
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
+
+        int totalCount = salesService.selectSalesReportTotalForEmp();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(salesService.selectAllSalesYStatusForEmp(selectCriteria, empNo));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 영업보고서 조회", responseDtoWithPaging));
+    }
+    @GetMapping("/sales-detail-admin/{salesReportCode}")
     public ResponseEntity<ResponseDto> detailSalesReportForAdmin(@PathVariable Integer salesReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "관리자 영업보고서 조회", salesService.detailSalesReportForAdmin(salesReportCode)));
     }
 
-    @GetMapping("/sales-lists-emp/{salesReportCode}")
+    @GetMapping("/sales-detail-emp/{salesReportCode}")
     public ResponseEntity<ResponseDto> detailSalesReportForEmp(@PathVariable Integer salesReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 영업보고서 조회", salesService.detailSalesReportForEmp(salesReportCode)));
     }
