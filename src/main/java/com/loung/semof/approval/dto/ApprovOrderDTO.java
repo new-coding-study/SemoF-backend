@@ -24,5 +24,7 @@ public class ApprovOrderDTO {
   private String empName;
 
   private String jobName;
+
+  private Integer rowNum;
 //  private ApprovStatusDTO approvStatusDTO;
 }
