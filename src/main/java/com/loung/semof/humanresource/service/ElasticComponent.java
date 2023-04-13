@@ -2,16 +2,30 @@ package com.loung.semof.humanresource.service;
 
 import com.loung.semof.common.dto.EmployeeDto;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * @파일이름 : ElasticComponent.java
+ * @프로젝트 : SemoF
+ * @버전관리 : 1.0.0
+ * @작성일 : 2023-04-13
+ * @작성자 : 이현도
+ * @클래스설명 : 엘라스틱 서치에 그래프를 작성하기 위한 비즈니스 로직을 수행하는 클래스
+ */
 @Slf4j
 @Component
 public class ElasticComponent {
+
+    private static final String FLAG_FILE_PATH = "C:/var/flag/flag.txt";
 
     private final HumanResourceService humanResourceService;
 
@@ -19,43 +33,60 @@ public class ElasticComponent {
         this.humanResourceService = humanResourceService;
     }
 
+    /**
+     * @작성일 : 2023-04-13
+     * @작성자 : 이현도
+     * @메소드설명 : 서버가 시작 될 때, 로그에 한번 출력해주는 메소드
+     */
     @PostConstruct
-    public void init() {
-        List<EmployeeDto> totalEmployee = humanResourceService.selectAllEmployees();
+    public void init() throws IOException {
+        if (!hasAlreadySentLogs()) {
+            List<EmployeeDto> totalEmployee = humanResourceService.selectAllEmployees();
 
-        Map<String, Integer> genderMap = new HashMap<>();
+            for (EmployeeDto employee : totalEmployee) {
 
-        Map<Long, Integer> jobMap = new HashMap<>();
+                // 사원 성별 그래프를 출력하기 위해 사원 개인을 조회
+                String genderMessage = "사원 성별 비율 (gender)" + employee.getGender();
 
-        int totalEmployeeCount = 0;
+                logstashLog(genderMessage);
 
-        for (EmployeeDto employee : totalEmployee) {
-            String gender = employee.getGender();
+                // 사원 직급 그래프를 출력하기 위해 사원 개인을 조회
+                String jobMessage = "사원 직급 비율 (jobCode)" + employee.getJobCode();
 
-            Long jobCode = employee.getJobCode();
+                logstashLog(jobMessage);
 
-            genderMap.put(gender, genderMap.getOrDefault(gender, 0) + 1);
+            }
 
-            jobMap.put(jobCode, jobMap.getOrDefault(jobCode, 0) + 1);
-
-            totalEmployeeCount++;
+            setFlagFile();
         }
-
-        log.info("사원 성별 비율 (gender)M: " + (genderMap.containsKey("M") ? String.format("%.2f", (double) genderMap.get("M") / totalEmployeeCount * 100) + "%" : "0%"));
-        log.info("사원 성별 비율 (gender)F: " + (genderMap.containsKey("F") ? String.format("%.2f", (double) genderMap.get("F") / totalEmployeeCount * 100) + "%" : "0%"));
-
-        for (Map.Entry<Long, Integer> entry : jobMap.entrySet()) {
-
-            Long jobCode = entry.getKey();
-
-            int count = entry.getValue();
-
-            String jobCodeString = String.valueOf(jobCode);
-
-            log.info("사원 직급 비율 (job)" + jobCodeString + ": " + String.format("%.2f", (double) count / totalEmployeeCount * 100) + "%");
-        }
-
-        log.info("총 사원 수: " + totalEmployeeCount);
     }
 
+    /**
+     * @작성일 : 2023-04-13
+     * @작성자 : 이현도
+     * @메소드설명 : 이미 출력되어 있는 로그인지 확인하는 메소드
+     */
+    private boolean hasAlreadySentLogs() {
+        File flagFile = new File(FLAG_FILE_PATH);
+        return flagFile.exists();
+    }
+
+    /**
+     * @작성일 : 2023-04-13
+     * @작성자 : 이현도
+     * @메소드설명 : Flag 파일을 셋팅하는 메소드
+     */
+    private void setFlagFile() throws IOException {
+        Files.createFile(Paths.get(FLAG_FILE_PATH));
+    }
+
+    /**
+     * @작성일 : 2023-04-13
+     * @작성자 : 이현도
+     * @메소드설명 : 로그메세지를 위한 메소드
+     */
+    private void logstashLog(String message) {
+        Logger logger = LoggerFactory.getLogger("ROOT");
+        logger.info(message);
+    }
 }

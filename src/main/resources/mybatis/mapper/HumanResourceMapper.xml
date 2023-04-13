@@ -286,10 +286,4 @@
         ORDER BY EMP_NO
     </select>
 
-    <select id="selectJobNameByJobCode" parameterType="int" resultMap="jobNameMap">
-        SELECT JOB_NAME
-        FROM tbl_job
-        WHERE JOB_CODE = #{jobCode}
-    </select>
-
 </mapper>
