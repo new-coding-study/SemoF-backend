@@ -40,7 +40,7 @@ public class AttendanceController {
 
             ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
             responseDtoWithPaging.setPageInfo(selectCriteria);
-            responseDtoWithPaging.setData(attendanceService.selectAttendanceListWithPaging(selectCriteria.getEndRow(), selectCriteria.getStartRow(), empNo));
+            responseDtoWithPaging.setData(attendanceService.selectAttendanceListWithPaging(selectCriteria.getStartRow(), empNo));
 
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "전체 조회 성공", responseDtoWithPaging));
 
