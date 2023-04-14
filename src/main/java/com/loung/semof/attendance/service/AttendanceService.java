@@ -31,8 +31,11 @@ public class AttendanceService {
     }
 
     /* 페이징 처리 된 전체 조회 SelectCriteria selectCriteria */
-    public Object selectAttendanceListWithPaging(int endRow, int startRow, int empNo) {
+    public Object selectAttendanceListWithPaging(int startRow, int empNo) {
         log.info("[AttendanceService] selectAttendanceListWithPaging Start ===================================");
+        // 다른 파일과 구현 방식의 차이가 있어서 공통코드는 보존하고 근태 처리 로직에서 맞는 방식으로 재할당 (누적되서 행 카운팅 되는 방식)
+        startRow += 1;
+        int endRow = startRow + 10 - 1;
         List<AttendanceDto> attendanceList = attendanceMapper.selectAttendanceListWithPaging(endRow, startRow, empNo);
         log.info("[AttendanceService] selectAttendanceListWithPaging End ===================================");
         return attendanceList;

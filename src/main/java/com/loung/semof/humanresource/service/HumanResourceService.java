@@ -123,8 +123,11 @@ public class HumanResourceService {
         }
 
         BranchOrderDto branchOrder = new BranchOrderDto();
+
         branchOrder.setEmpNo(employee.getEmpNo());
+
         branchOrder.setOrderDate(LocalDateTime.now());
+
         branchOrder.setBranchCode(employee.getBranchCode());
 
         BranchDto branch = branchMapper.selectBranchByBCode(branchCode);
@@ -143,8 +146,6 @@ public class HumanResourceService {
 
         return employee;
     }
-
-
 
     /**
      * @작성일 : 2023-03-21
@@ -257,7 +258,6 @@ public class HumanResourceService {
 
         return employee;
     }
-
 
     /**
      * @작성일 : 2023-03-21
@@ -405,6 +405,11 @@ public class HumanResourceService {
         }
 
 
+        /**
+         * @작성일 : 2023-04-01
+         * @작성자 : 이현도
+         * @메소드설명 : 부서를 출력하는 비즈니스 로직
+         */
     public List<DepartmentDto> selectDepartments() {
 
         List<DepartmentOrderDto> deptOrders = humanResourceMapper.selectDepartmentsOrders();
@@ -415,6 +420,11 @@ public class HumanResourceService {
         return dept;
     }
 
+    /**
+     * @작성일 : 2023-04-01
+     * @작성자 : 이현도
+     * @메소드설명 : 지점을 출력하는 비즈니스 로직
+     */
     public List<BranchDto> selectBranches() {
         List<BranchOrderDto> branchOrders = humanResourceMapper.selectBranchesOrders();
         List<BranchDto> branch = branchOrders.stream()
@@ -423,6 +433,11 @@ public class HumanResourceService {
         return branch;
     }
 
+    /**
+     * @작성일 : 2023-04-08
+     * @작성자 : 이현도
+     * @메소드설명 : 사원 번호로 사원 사진을 조회하는 메소드
+     */
     public EmployeePhotoDto selectEmployeePhotoByEmpNo(Long empNo) {
 
         return humanResourceMapper.selectEmployeePhotoByEmpNo(empNo);

@@ -79,7 +79,7 @@ class AttendanceServiceTest {
 
         ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
         responseDtoWithPaging.setPageInfo(selectCriteria);
-        responseDtoWithPaging.setData(attendanceService.selectAttendanceListWithPaging(selectCriteria.getEndRow(), selectCriteria.getStartRow(), empNo));
+        responseDtoWithPaging.setData(attendanceService.selectAttendanceListWithPaging(selectCriteria.getStartRow(), empNo));
 
         //then
         // responseDtoWithPaging.forEach(attendanceDto -> System.out.println("attendanceDto = " + attendanceDto));  //로그포제이 안 쓰고 그냥 출력문으로 확인

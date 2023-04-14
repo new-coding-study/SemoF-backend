@@ -11,7 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${image.add-resource-locations}")
     private String imageResourceLocations;
 
-    @Value("${image.add-resource-handler}")
+    @Value("${image.add-resource-handler}**")
     private String imageResourceHandler;
 
     @Value("${file.add-resource-locations}")
@@ -22,9 +22,12 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
         registry.addResourceHandler(fileResourceHandler)
-                .addResourceLocations("file://" + fileResourceLocations);
+                .addResourceLocations("file:" + fileResourceLocations);
+
         registry.addResourceHandler(imageResourceHandler)
-                .addResourceLocations("file://" + imageResourceLocations);
+                .addResourceLocations("file:" + imageResourceLocations);
+
     }
 }

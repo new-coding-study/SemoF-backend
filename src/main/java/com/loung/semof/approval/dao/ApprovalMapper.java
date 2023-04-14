@@ -33,7 +33,7 @@ public interface ApprovalMapper {
 
 //    int deleteApprovOrder(int orderNo);
 
-    List<ApprovalDTO> selectApprovalInWithPaging(SelectCriteria selectCriteria);
+    List<ApprovalDTO> selectApprovalInWithPaging(Integer empNo, SelectCriteria selectCriteria);
 
     ApprovalDTO selectApproval(Integer approvNo);
 
@@ -61,10 +61,10 @@ public interface ApprovalMapper {
 
     int insertOpinion(ApprovOpinDTO opinion);
 
-    int updateStatus(ApprovStatusDTO status);
+    int updateStatus(String status, Integer approvNo, int rowNum);
 
-    int selectApprovalTotal();
-    int selectApprovOutTotal();
+    int selectApprovalTotal(Integer empNo);
+    int selectApprovOutTotal(Integer empNo);
     int selectApprovLineTotal();
 
     String selectLatestStatus(Integer approvNo);
@@ -82,13 +82,25 @@ public interface ApprovalMapper {
 
     ApprovLineDTO selectLineDetail(Integer lineNo);
 
-    List<ApprovalDTO> selectApprovalOutWithPaging(SelectCriteria selectCriteria);
+    List<ApprovalDTO> selectApprovalOutWithPaging(Integer empNo, SelectCriteria selectCriteria);
 
-    List<String> selectStatus(Integer approvNo);
+    List<ApprovStatusDTO> selectStatus(Integer approvNo);
 
 //    int insertApprovOrders(List<ApprovOrderDTO> orders);
 
 //    int insertLine(ApprovLineDTO line);
 
     List<ApprovOpinDTO> selectOpinion(Integer approvNo);
+
+    Integer selectStatusOrder(Integer lineNo, Long empNo);
+
+    List<ApprovFileDTO> selectFiles(Integer approvNo);
+
+    List<ApprovalDTO> selectFinApprovalInWithPaging(Integer empNo, SelectCriteria selectCriteria);
+
+    int selectFinApprovalTotal(Integer empNo);
+
+    List<ApprovalDTO> selectFinApprovalOutWithPaging(Integer empNo, SelectCriteria selectCriteria);
+
+    int selectFinApprovOutTotal(Integer empNo);
 }

@@ -3,6 +3,7 @@ package com.loung.semof.report.service;
 import com.loung.semof.common.paging.SelectCriteria;
 import com.loung.semof.report.dao.TripMapper;
 import com.loung.semof.report.dto.TripDto;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,5 +78,29 @@ public class TripService {
     public Object deleteTripReportForEmp(Integer tripReportCode) {
         int result = tripMapper.deleteTripReportForEmp(tripReportCode);
         return (result>0)? "보고서 삭제 성공":"삭제실패";
+    }
+
+    public Object selectAllTripNStatusForAdmin(SelectCriteria selectCriteria) {
+        List<TripDto> tripDto = tripMapper.selectAllTripNStatusForAdmin(selectCriteria);
+        for(int i = 0; i<tripDto.size(); i++);
+        return tripDto;
+    }
+
+    public Object selectAllTripYStatusForAdmin(SelectCriteria selectCriteria) {
+        List<TripDto> tripDto = tripMapper.selectAllTripYStatusForAdmin(selectCriteria);
+        for(int i = 0; i<tripDto.size(); i++);
+        return tripDto;
+    }
+
+    public Object selectAllTripNStatusForEmp(SelectCriteria selectCriteria, int empNo) {
+        List<TripDto> tripDto = tripMapper.selectAllTripNStatusForEmp(selectCriteria, empNo);
+        for(int i = 0; i<tripDto.size(); i++);
+        return tripDto;
+    }
+
+    public Object selectAllTripYStatusForEmp(SelectCriteria selectCriteria, int empNo) {
+        List<TripDto> tripDto = tripMapper.selectAllTripYStatusForEmp(selectCriteria, empNo);
+        for(int i = 0; i<tripDto.size(); i++);
+        return tripDto;
     }
 }

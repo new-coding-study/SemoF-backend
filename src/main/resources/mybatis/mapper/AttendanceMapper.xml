@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.loung.semof.attendance.dao.AttendanceMapper">
 
-    <!-- 스티커 총 갯수 구하기 -->
+    <!-- 총 갯수 구하기 -->
     <select id="selectAttendanceTotal" resultType="int" >
         SELECT
             count(*)

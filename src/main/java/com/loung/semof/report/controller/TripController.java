@@ -36,9 +36,39 @@ public class TripController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
     }
+    @GetMapping("/trip-n-lists-admin")
+    public ResponseEntity<ResponseDto> selectAllTripNStatusForAdmin(@RequestParam(name="offset", defaultValue = "1") String offset){
 
-    @GetMapping("/trip-lists-emp")
-    public ResponseEntity<ResponseDto> selectAllTripReportForEmpWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
+        int totalCount = tripService.selectTripReportTotalForAdmin();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(tripService.selectAllTripNStatusForAdmin(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
+    }
+
+    @GetMapping("/trip-y-lists-admin")
+    public ResponseEntity<ResponseDto> selectAllTripYStatusForAdmin(@RequestParam(name="offset", defaultValue = "1") String offset){
+
+        int totalCount = tripService.selectTripReportTotalForAdmin();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(tripService.selectAllTripYStatusForAdmin(selectCriteria));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
+    }
+    @GetMapping("/trip-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllTripReportForEmpWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
         int totalCount = tripService.selectTripReportTotalForEmp();
         int limit = 10;
@@ -52,13 +82,44 @@ public class TripController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 출장보고서 조회", responseDtoWithPaging));
     }
+    @GetMapping("/trip-n-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllTripNStatusForEmp(
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-    @GetMapping("/trip-lists-admin/{tripReportCode}")
+        int totalCount = tripService.selectTripReportTotalForEmp();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(tripService.selectAllTripNStatusForEmp(selectCriteria, empNo));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 출장보고서 조회", responseDtoWithPaging));
+    }
+    @GetMapping("/trip-y-lists-emp/{empNo}")
+    public ResponseEntity<ResponseDto> selectAllTripYStatusForEmp(
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
+
+        int totalCount = tripService.selectTripReportTotalForEmp();
+        int limit = 10;
+        int buttonAmount = 5;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(tripService.selectAllTripYStatusForEmp(selectCriteria, empNo));
+
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 출장보고서 조회", responseDtoWithPaging));
+    }
+    @GetMapping("/trip-detail-admin/{tripReportCode}")
     public ResponseEntity<ResponseDto> detailTripReportForAdmin(@PathVariable Integer tripReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "관리자 출장보고서 조회", tripService.detailTripReportForAdmin(tripReportCode)));
     }
 
-    @GetMapping("/trip-lists-emp/{tripReportCode}")
+    @GetMapping("/trip-detail-emp/{tripReportCode}")
     public ResponseEntity<ResponseDto> detailTripReportForEmp(@PathVariable Integer tripReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 출장보고서 조회", tripService.detailTripReportForEmp(tripReportCode)));
     }

@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.survey.dao.SurveyMapper">
+
+<!--    <resultMap type="com.loung.semof.survey.dto.SurveyDTO" id="surveyResultMap">-->
+<!--        <id property="surveyCode" column="SURVEY_CODE"/>-->
+<!--        <result property="surveyTitle" column="SURVEY_TITLE"/>-->
+<!--        <result property="surveyDesc" column="SURVEY_DESCRIPT"/>-->
+<!--        <result property="startDate" column="START_DATE"/>-->
+<!--        <result property="endDate" column="END_DATE"/>-->
+<!--        <result property="authorCode" column="AUTHOR_CODE"/>-->
+<!--        <result property="surveyStatus" column="SURVEY_STATUS"/>-->
+<!--        <collection property="questionDTOList" resultMap="questionResultMap"/>-->
+<!--    </resultMap>-->
+<!--    <resultMap id="questionResultMap" type="com.loung.semof.survey.dto.QuestionDTO">-->
+<!--        <id property="qCode" column="SURVEY_QUESTION_CODE"/>-->
+<!--        <result property="question" column="SURVEY_QUESTION"/>-->
+<!--        <result property="qType" column="question_type"/>-->
+<!--        <result property="surveyCode" column="SURVEY_CODE"/>-->
+<!--    </resultMap>-->
+
+<!--&lt;!&ndash;    설문 전체 조회&ndash;&gt;-->
+<!--    <select id="selectAllSurvey" resultMap="surveyResultMap">-->
+<!--        SELECT *-->
+<!--            FROM tbl_survey-->
+
+<!--    </select>-->
+<!--    <select id="selectSurvey" resultMap="surveyResultMap">-->
+<!--        SELECT A.*-->
+<!--            , B.*-->
+<!--            , C.*-->
+<!--        FROM tbl_survey A-->
+<!--        JOIN tbl_survey_question B-->
+<!--        ON A.SURVEY_CODE = B.SURVEY_CODE-->
+<!--        JOIN tbl_multiple_answer C-->
+<!--        ON B.SURVEY_QUESTION_CODE = C.SURVEY_QUESTION_CODE-->
+<!--        WHERE A.SURVEY_CODE = #{surveyCode}-->
+<!--    </select>-->
+<!--&lt;!&ndash;   설문등록 &ndash;&gt;-->
+<!--    <insert id="insertSurvey" parameterType="SurveyDTO">-->
+<!--        insert into tbl_survey-->
+<!--        (-->
+<!--         SURVEY_TITLE-->
+<!--         , SURVEY_DESCRIPT-->
+<!--         , START_DATE-->
+<!--         , END_DATE-->
+<!--         , AUTHOR_CODE-->
+<!--        )-->
+<!--        VALUES(-->
+<!--            #{surveyTitle}-->
+<!--        , #{surveyDesc}-->
+<!--        , #{startDate}-->
+<!--        , #{endDate}-->
+<!--        , #{authorCode}-->
+<!--            )-->
+<!--    </insert>-->
+<!--    <insert id="insertQuestion" parameterType="SurveyQuestionDTO">-->
+<!--        insert into tbl_survey_question-->
+<!--        (-->
+<!--            SURVEY_QUESTION-->
+<!--            , question_type-->
+<!--            , SURVEY_CODE-->
+<!--        )-->
+<!--        VALUES(-->
+<!--                  #{question}-->
+<!--                  , #{qType}-->
+<!--              , (SELECT SURVEY_CODE FROM tbl_survey ORDER BY SURVEY_CODE DESC LIMIT 1)-->
+<!--              )-->
+<!--    </insert>-->
+<!--    <insert id="insertMultiple" parameterType="MultipleDTO">-->
+<!--        insert into tbl_multiple_answer-->
+<!--        (-->
+<!--            option_1, option_2, option_3, option_4, option_5, survey_question_code-->
+<!--        )-->
+<!--        VALUES(-->
+<!--                #{op1}, #{op2}, #{op3}, #{op4}, #{op5}, (SELECT SURVEY_QUESTION_CODE FROM tbl_survey_question WHERE question_type = 'm' ORDER BY SURVEY_QUESTION_CODE DESC LIMIT 1));-->
+<!--            )-->
+<!--    </insert>-->
+<!--&lt;!&ndash;    답변등록&ndash;&gt;-->
+<!--    <insert id="insertResponse" parameterType="ResponseDTO">-->
+<!--        insert into tbl_survey_response-->
+<!--        (-->
+<!--            PARTICIPANT_CODE-->
+<!--        , SURVEY_QUESTION_CODE-->
+<!--        , RESPONSE-->
+
+<!--        )-->
+<!--        VALUES(-->
+<!--                  #{empNo}-->
+<!--              , #{qCode}-->
+<!--              , #{response}-->
+
+<!--              )-->
+<!--    </insert>-->
+
+<!--    <update id="updateQuestion" parameterType=""></update>-->
+
+</mapper>

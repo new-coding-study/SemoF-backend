@@ -87,6 +87,8 @@
         <result property="newDeptCode" column="NEW_DEPT_CODE" />
     </resultMap>
 
+    <resultMap id="jobNameMap" type="java.lang.String"/>
+
     <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
     <update id="updateEmployee" parameterType="EmployeeDto">
         UPDATE tbl_employee
@@ -130,13 +132,13 @@
     <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
     <select id="selectEmployees"  resultMap="employeesResultExtend">
         SELECT DISTINCT
-            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
-            ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
-            ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
-            ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+        ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+        ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+        ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
         FROM  (SELECT *
-               FROM tbl_employee
-               WHERE WORK_STATUS = 'Y'
+        FROM tbl_employee
+        WHERE WORK_STATUS = 'Y'
         ) AS E
         LEFT JOIN tbl_job J ON E.job_code = J.job_code
         LEFT JOIN tbl_department D ON E.dept_code = D.dept_code

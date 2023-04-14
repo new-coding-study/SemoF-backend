@@ -6,14 +6,11 @@ import com.loung.semof.exception.LoginFailedException;
 import com.loung.semof.jwt.TokenProvider;
 import com.loung.semof.loginInfo.dao.LoginInfoMapper;
 import com.loung.semof.loginInfo.dto.LoginInfoDto;
-
 import com.loung.semof.loginInfo.dto.TokenDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -164,6 +161,8 @@ public class AuthService {
 //        }
 //    }
     public Object checkId(String loginId) {
+        System.out.println("loginId = " + loginId);
+        System.out.println("checkId" +loginInfoMapper.selectById(loginId));
         if (loginInfoMapper.selectById(loginId) != null) {
             log.info("[AuthService] 아이디가 중복됩니다.");
             throw new DuplicatedUsernameException("아이디가 중복됩니다.");

@@ -67,9 +67,9 @@ public class WorksController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 실행", responseDtoWithPaging));
     }
-    @GetMapping("/works-lists-emp")
+    @GetMapping("/works-lists-emp/{empNo}")
     public ResponseEntity<ResponseDto> selectAllWorksReportForEmpWithPaging(
-            @RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
         int totalCount = worksService.selectWorksReportTotalForEmp();
         int limit = 10;
@@ -84,9 +84,9 @@ public class WorksController {
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 업무보고서 조회", responseDtoWithPaging));
     }
 
-    @GetMapping("/works-n-lists-emp")
+    @GetMapping("/works-n-lists-emp/{empNo}")
     public ResponseEntity<ResponseDto> selectAllWorkNStatusForEmp(
-            @RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
         int totalCount = worksService.selectWorksReportTotalForEmp();
         int limit = 10;
@@ -100,9 +100,9 @@ public class WorksController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 업무보고서 조회", responseDtoWithPaging));
     }
-    @GetMapping("/works-y-lists-emp")
+    @GetMapping("/works-y-lists-emp/{empNo}")
     public ResponseEntity<ResponseDto> selectAllWorkYStatusForEmp(
-            @RequestParam(name = "offset", defaultValue = "1") String offset, @RequestParam int empNo){
+            @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
         int totalCount = worksService.selectWorksReportTotalForEmp();
         int limit = 10;
@@ -116,18 +116,19 @@ public class WorksController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 업무보고서 조회", responseDtoWithPaging));
     }
-    @GetMapping("/works-lists-admin/{worksReportCode}")
+    @GetMapping("/works-detail-admin/{worksReportCode}")
     public ResponseEntity<ResponseDto> detailWorksReportForAdmin(@PathVariable Integer worksReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "관리자 업무보고서 조회", worksService.detailWorksReportForAdmin(worksReportCode)));
     }
 
-    @GetMapping("/works-lists-emp/{worksReportCode}")
+    @GetMapping("/works-detail-emp/{worksReportCode}")
     public ResponseEntity<ResponseDto> detailWorksReportForEmp(@PathVariable Integer worksReportCode){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "직원 업무보고서 조회", worksService.detailWorksReportForEmp(worksReportCode)));
     }
 
     @PostMapping("/works-lists-emp")
     public ResponseEntity<ResponseDto> insertWorksReport(@RequestBody WorksDto worksDto){
+        System.out.println("worksDto = " + worksDto);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "업무보고서 작성", worksService.insertWorksReport(worksDto)));
     }
 

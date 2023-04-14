@@ -50,6 +50,9 @@ public class ApprovController {
      */
     @PostMapping(value = "/opinion")
     public ResponseEntity<ResponseDto> insertOpinion(@ModelAttribute ApprovOpinDTO opinion){
+        log.info(String.valueOf(opinion));
+
+        System.out.println("opinion = " + opinion);
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "의견등록", approvService.insertOpinion(opinion)));
     }
 
@@ -68,9 +71,9 @@ public class ApprovController {
      * @작성자 : 박유리
      * @메소드설명 : 결재 문서 목록을 조회(상신, 수신, 완료 나누기)
      */
-    @GetMapping("/approv-in")
-    public ResponseEntity<ResponseDto> selectApprovalInWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
-        int totalCount = approvService.selectApprovalTotal();
+    @GetMapping("/approv-in/{empNo}")
+    public ResponseEntity<ResponseDto> selectApprovalInWithPaging(@PathVariable Integer empNo, @RequestParam(name = "offset", defaultValue = "1") String offset){
+        int totalCount = approvService.selectApprovalTotal(empNo);
         int limit = 10;
         int buttonAmount = 10;
 
@@ -78,7 +81,7 @@ public class ApprovController {
 
         ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
         responseDtoWithPaging.setPageInfo(selectCriteria);
-        responseDtoWithPaging.setData(approvService.selectApprovalInWithPaging(selectCriteria));
+        responseDtoWithPaging.setData(approvService.selectApprovalInWithPaging(empNo, selectCriteria));
 //        responseDtoWithPaging.setData(approvService.selectLatestStatus());
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
     }
@@ -116,9 +119,9 @@ public class ApprovController {
 
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
     }
-    @GetMapping("/approv-out")
-    public ResponseEntity<ResponseDto> selectApprovalOutWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset){
-        int totalCount = approvService.selectApprovOutTotal();
+    @GetMapping("/approv-out/{empNo}")
+    public ResponseEntity<ResponseDto> selectApprovalOutWithPaging(@PathVariable Integer empNo, @RequestParam(name = "offset", defaultValue = "1") String offset){
+        int totalCount = approvService.selectApprovOutTotal(empNo);
         System.out.println("totalCount = " + totalCount);
         int limit = 10;
         int buttonAmount = 10;
@@ -127,11 +130,40 @@ public class ApprovController {
 
         ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
         responseDtoWithPaging.setPageInfo(selectCriteria);
-        responseDtoWithPaging.setData(approvService.selectApprovalOutWithPaging(selectCriteria));
+        responseDtoWithPaging.setData(approvService.selectApprovalOutWithPaging(empNo, selectCriteria));
 //        responseDtoWithPaging.setData(approvService.selectLatestStatus());
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
     }
+    @GetMapping("/fin-approv/{empNo}")
+    public ResponseEntity<ResponseDto> selectFinApprovalInWithPaging(@PathVariable Integer empNo, @RequestParam(name = "offset", defaultValue = "1") String offset){
+        int totalCount = approvService.selectFinApprovalTotal(empNo);
+        System.out.println("totalCount = " + totalCount);
+        int limit = 10;
+        int buttonAmount = 10;
 
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(approvService.selectFinApprovalInWithPaging(empNo, selectCriteria));
+//        responseDtoWithPaging.setData(approvService.selectLatestStatus());
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
+    }
+    @GetMapping("/fin-approv-out/{empNo}")
+    public ResponseEntity<ResponseDto> selectFinApprovalOutWithPaging(@PathVariable Integer empNo, @RequestParam(name = "offset", defaultValue = "1") String offset){
+        int totalCount = approvService.selectFinApprovOutTotal(empNo);
+        System.out.println("totalCount = " + totalCount);
+        int limit = 10;
+        int buttonAmount = 10;
+
+        SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
+
+        ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
+        responseDtoWithPaging.setPageInfo(selectCriteria);
+        responseDtoWithPaging.setData(approvService.selectFinApprovalOutWithPaging(empNo, selectCriteria));
+//        responseDtoWithPaging.setData(approvService.selectLatestStatus());
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재목록조회", responseDtoWithPaging));
+    }
     /**
      * @작성일 : 2023-04-07
      * @작성자 : 박유리
@@ -163,13 +195,13 @@ public class ApprovController {
 //        log.info("컨트롤러의 line : "+ line);
 //        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 업데이트", approvService.updateApprovLine(line)));
 //    }
-    @PutMapping(value = "/line/{lineNo}")
-    public ResponseEntity<ResponseDto> updateApprovLine(@RequestBody ApprovLineDTO line, @PathVariable Integer lineNo){
-        log.info("컨트롤러의 lineNo : "+ lineNo);
-        line.setLineNo(lineNo);
-        log.info("컨트롤러의 line : "+ line);
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 업데이트", approvService.updateApprovLine(line)));
-    }
+//    @PutMapping(value = "/line/{lineNo}")
+//    public ResponseEntity<ResponseDto> updateApprovLine(@RequestBody ApprovLineDTO line, @PathVariable Integer lineNo){
+//        log.info("컨트롤러의 lineNo : "+ lineNo);
+//        line.setLineNo(lineNo);
+//        log.info("컨트롤러의 line : "+ line);
+//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재라인 업데이트", approvService.updateApprovLine(line)));
+//    }
     /**
      * @작성일 : 2023-04-07
      * @작성자 : 박유리
@@ -181,19 +213,22 @@ public class ApprovController {
 
     }
 
-//    @PutMapping(value = "/approval", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-//    public ResponseEntity<ResponseDto> updateApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @RequestPart List<ApprovContentDTO> contents){
-//
-//        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재서류 업데이트", approvService.updateApproval(approval, file, contents)));
-//    }
+    @PutMapping(value = "/approval/{approvNo}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<ResponseDto> updateApproval(@RequestPart ApprovalDTO approval, @RequestPart(name = "fileList", required = false) List<MultipartFile> file, @PathVariable Integer approvNo){
+        approval.setApprovNo(approvNo);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재서류 업데이트", approvService.updateApproval(approval, file)));
+    }
     /**
      * @작성일 : 2023.03.23
      * @작성자 : 박유리
      * @메소드설명 : 결재처리(결재 상태를 업데이트)ROLE_ADMIN
      */
-    @PutMapping(value="/status")
-    public ResponseEntity<ResponseDto> updateStatus(@ModelAttribute ApprovStatusDTO status){
-        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재처리", approvService.updateStatus(status)));
+    @PutMapping(value="/state/{lineNo}/{approvNo}/{empNo}")
+    public ResponseEntity<ResponseDto> updateStatus(@PathVariable Integer lineNo, @PathVariable Integer approvNo, @PathVariable Long empNo, @RequestParam(name ="this") String status ){
+        System.out.println("lineNo = " + lineNo);
+        System.out.println("approvNo = " + approvNo);
+        System.out.println("empNo = " + empNo);
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "결재처리", approvService.updateStatus(approvNo, lineNo, empNo, status)));
     }
     /**
      * @작성일 : 2023.03.23
@@ -204,7 +239,7 @@ public class ApprovController {
 //    public ResponseEntity<ResponseDto> deleteApprovLine(ApprovLineDTO line){
 //        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재라인 삭제", approvService.deleteApprovLine(line)));
 //    }
-    @DeleteMapping(value = "/line/{lineNo}")
+    @PutMapping(value = "/line/{lineNo}")
     public ResponseEntity<ResponseDto> deleteApprovLine(@PathVariable Integer lineNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재라인 삭제", approvService.deleteApprovLine(lineNo)));
     }
@@ -219,7 +254,7 @@ public class ApprovController {
 //    }
 
     @DeleteMapping(value = "/approval/{approvNo}")
-    public ResponseEntity<ResponseDto> deleteApproval(Integer approvNo){
+    public ResponseEntity<ResponseDto> deleteApproval(@PathVariable Integer approvNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "결재서류 삭제", approvService.deleteApproval(approvNo)));
     }
 
@@ -257,8 +292,18 @@ public class ApprovController {
 
     }
 
-    @GetMapping("/opinions")
-    public ResponseEntity<ResponseDto> selectOpinion(Integer approvNo){
+    @GetMapping("/opinions/{approvNo}")
+    public ResponseEntity<ResponseDto> selectOpinion(@PathVariable  Integer approvNo){
         return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "의견조회", approvService.selectOpinion(approvNo)));
+    }
+
+    @GetMapping("/statuses/{approvNo}")
+    public ResponseEntity<ResponseDto> selectStatus(@PathVariable Integer approvNo){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "상태값 목록", approvService.selectStatus(approvNo)));
+    }
+
+    @GetMapping("/files/{approvNo}")
+    public ResponseEntity<ResponseDto> selectFiles(@PathVariable Integer approvNo){
+        return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "파일 목록 조회", approvService.selectFiles(approvNo)));
     }
 }
