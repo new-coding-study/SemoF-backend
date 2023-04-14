@@ -48,7 +48,9 @@
 		<typeAlias alias="EmailAttachDto" type="com.loung.semof.email.dto.EmailAttachDto"/>
 
 		<typeAlias alias="TodoDto" type="com.loung.semof.todo.dto.TodoDto"/>
-		<typeAlias alias="CalendarDto" type="com.loung.semof.calendar.dto.CalendarDto"/>
+		<typeAlias alias="ScheduleDto" type="com.loung.semof.schedule.dto.ScheduleDto"/>
+		<typeAlias alias="ScheduleCommentDto" type="com.loung.semof.schedule.dto.ScheduleCommentDto"/>
+		<typeAlias alias="CalendarDto" type="com.loung.semof.schedule.dto.CalendarDto"/>
 	</typeAliases>
 
 	<mappers>
@@ -64,6 +66,8 @@
 		<mapper resource="DepartmentOrderMapper.xml" />
 
 		<mapper resource="TodoMapper.xml"/>
+		<mapper resource="CalendarMapper.xml"/>
+		<mapper resource="ScheduleMapper.xml"/>
 
 		<mapper resource="ApprovalMapper.xml"/>
 

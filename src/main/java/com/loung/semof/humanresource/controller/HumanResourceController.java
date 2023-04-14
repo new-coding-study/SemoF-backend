@@ -110,6 +110,15 @@ public class HumanResourceController {
 
             humanResourceService.insertEmployeePhoto(employeePhoto, employee);
 
+            // 사원 등록하면서 기본 캘린더 생성
+            humanResourceService.insertDefaultCalendar(employee);
+
+            // 사원 등록하면서 기본 카테고리 (할 일) 생성
+            humanResourceService.insertDefaultCategory(employee);
+
+            humanResourceService.insertStarCategory(employee);
+
+
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.CREATED, "사원등록 성공", employee));
         } catch (SQLException | IOException e) {
             e.printStackTrace();

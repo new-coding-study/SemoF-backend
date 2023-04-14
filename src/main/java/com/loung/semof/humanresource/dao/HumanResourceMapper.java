@@ -57,5 +57,10 @@ public interface HumanResourceMapper {
 
     List<EmployeeDto> selectAllEmployees();
 
-    String selectJobNameByJobCode();
+    void insertDefaultCalendar(String calName, String calColor, String madeEmpNo);
+
+    void insertDefaultCategory(String cateName, String cateColor, String empNo);
+
+//    void insertStarCategory(String cateName, String cateColor, String empNo);
+
 }
