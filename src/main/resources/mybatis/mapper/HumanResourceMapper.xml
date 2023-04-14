@@ -284,4 +284,28 @@
         ORDER BY EMP_NO
     </select>
 
+    <!-- INSERT 쿼리 : 사원 기본 캘린더 등록  -->
+    <insert id="insertDefaultCalendar" parameterType="String">
+        INSERT INTO tbl_calendar
+            (
+             CAL_NAME,
+             CAL_COLOR,
+             MADE_EMP_NO
+            )
+        VALUES
+            (#{calName}, #{calColor}, #{madeEmpNo})
+    </insert>
+
+    <!-- INSERT 쿼리 : 사원 기본 카테고리(기본, 중요표시) 등록  -->
+    <insert id="insertDefaultCategory" parameterType="String">
+        INSERT INTO tbl_todo_category
+        (
+            CATE_NAME,
+            CATE_COLOR,
+            EMP_NO
+        )
+        VALUES
+            (#{cateName}, #{cateColor}, #{empNo})
+    </insert>
+
 </mapper>

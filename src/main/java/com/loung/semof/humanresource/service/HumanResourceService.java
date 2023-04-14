@@ -508,4 +508,29 @@ public class HumanResourceService {
 
         return humanResourceMapper.selectAllEmployees();
     }
+
+    public void insertDefaultCalendar(EmployeeDto employee) {
+
+        String calName = "기본 캘린더";
+        String calColor = "#0177AA";
+        String madeEmpNo = String.valueOf(employee.getEmpNo());
+
+        humanResourceMapper.insertDefaultCalendar(calName, calColor, madeEmpNo);
+    }
+
+    public void insertDefaultCategory(EmployeeDto employee) {
+        String cateName = "기본 카테고리";
+        String cateColor = "#38A8F9";
+        String empNo = String.valueOf(employee.getEmpNo());
+
+        humanResourceMapper.insertDefaultCategory(cateName, cateColor, empNo);
+    }
+
+    public void insertStarCategory(EmployeeDto employee) {
+        String cateName = "중요 표시한 할 일";
+        String cateColor = "#F5F938";
+        String empNo = String.valueOf(employee.getEmpNo());
+
+        humanResourceMapper.insertDefaultCategory(cateName, cateColor, empNo);
+    }
 }
