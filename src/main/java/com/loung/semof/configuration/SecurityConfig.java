@@ -81,6 +81,9 @@ public class SecurityConfig  {
                 .and()
                 .authorizeRequests()// http servletRequest 를 사용하는 요청들에 대한 접근제한을 설정
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                 .antMatchers("/**").permitAll() // 임시 전체 접근 허용
+                 .antMatchers("/email").hasAnyRole("USER", "ADMIN")
+                 .antMatchers("/email/**").hasAnyRole("USER", "ADMIN")
 //                 .antMatchers("/api/v1/products-management").hasRole("ADMIN")  // 나머지 API 는 전부 인증 필요
 //
 //                 .antMatchers("/auth/**").permitAll()// 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
@@ -88,7 +91,7 @@ public class SecurityConfig  {
 //                .antMatchers("/api/v1/reviews/**").permitAll()// 리뷰도 누구나 접근가능
 //                .antMatchers("/api/**").hasAnyRole("USER", "ADMIN")  // 나머지 API 는 전부 인증 필요
 
-                 .antMatchers("/**").permitAll() // 임시 전체 접근 허용
+
 
 
                  .and() // 여기서 정의를 해줬기 때문에 corsConfigurationSource가 작동
