@@ -17,6 +17,7 @@ import com.loung.semof.humanresource.dto.HumanResourceDto;
 import com.loung.semof.util.FileUploadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,7 +25,10 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -47,12 +51,15 @@ public class HumanResourceService {
     private final BranchOrderMapper branchOrderMapper;
 
     private final DepartmentOrderMapper departmentOrderMapper;
+
+    private final ElasticComponent elasticComponent;
+
     @Value("${image.image-dir}")
     private String IMAGE_DIR;
     @Value("${image.image-url}")
     private String IMAGE_URL;
 
-    public HumanResourceService(EmployeeMapper employeeMapper, DepartmentMapper departmentMapper, BranchMapper branchMapper, HumanResourceMapper humanResourceMapper, BranchOrderMapper branchOrderMapper, DepartmentOrderMapper departmentOrderMapper) {
+    public HumanResourceService(EmployeeMapper employeeMapper, DepartmentMapper departmentMapper, BranchMapper branchMapper, HumanResourceMapper humanResourceMapper, BranchOrderMapper branchOrderMapper, DepartmentOrderMapper departmentOrderMapper, @Lazy ElasticComponent elasticComponent) {
         this.employeeMapper = employeeMapper;
 
         this.departmentMapper = departmentMapper;
@@ -64,6 +71,7 @@ public class HumanResourceService {
         this.branchOrderMapper = branchOrderMapper;
 
         this.departmentOrderMapper = departmentOrderMapper;
+        this.elasticComponent = elasticComponent;
     }
 
     /**
@@ -159,6 +167,9 @@ public class HumanResourceService {
             employeeMapper.insertEmployee(employeeDto);
 
             log.info("[EmployeeService] employeeDto : " + employeeDto);
+
+            elasticComponent.addEmployee(employeeDto);
+
             return employeeDto;
 
         } catch (Exception e) {

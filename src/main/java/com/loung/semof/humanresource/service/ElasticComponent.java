@@ -62,6 +62,21 @@ public class ElasticComponent {
     }
 
     /**
+     * @작성일 : 2023-04-14
+     * @작성자 : 이현도
+     * @메소드설명 : 새로운 사원이 추가될 때마다 해당 사원의 성별 및 직급 로그를 출력하는 메소드
+     */
+    public void addEmployee(EmployeeDto employee) {
+        // 사원 성별 그래프를 출력하기 위해 사원 개인을 조회
+        String genderMessage = "사원 성별 비율 (gender)" + employee.getGender();
+        logstashLog(genderMessage);
+
+        // 사원 직급 그래프를 출력하기 위해 사원 개인을 조회
+        String jobMessage = "사원 직급 비율 (jobCode)" + employee.getJobCode();
+        logstashLog(jobMessage);
+    }
+
+    /**
      * @작성일 : 2023-04-13
      * @작성자 : 이현도
      * @메소드설명 : 이미 출력되어 있는 로그인지 확인하는 메소드
