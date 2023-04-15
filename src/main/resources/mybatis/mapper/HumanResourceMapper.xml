@@ -156,11 +156,12 @@
     </select>
 
     <!-- SELECT 쿼리 : 이번달에 생일이 있는 사원 조회 -->
-    <select id="selectEmployeeByBirthMonth" resultMap="employeeResult">
-        SELECT *
-        FROM tbl_employee
-        WHERE WORK_STATUS = 'Y'
-        AND MONTH(STR_TO_DATE(CONCAT('19', SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%Y-%m-%d')) = #{monthValue}
+    <select id="selectEmployeeByBirthMonth" resultType="HumanResourceDto">
+        SELECT E.*, A.DEPT_NAME
+        FROM tbl_employee E
+        LEFT JOIN tbl_department A ON E.DEPT_CODE = A.DEPT_CODE
+        WHERE E.WORK_STATUS = 'Y'
+        AND MONTH(STR_TO_DATE(CONCAT('19', SUBSTR(E.EMP_REG, 1, 2), '-', SUBSTR(E.EMP_REG, 3, 2), '-', SUBSTR(E.EMP_REG, 5, 2)), '%Y-%m-%d')) = #{monthValue}
     </select>
 
     <!-- SELECT 쿼리 : 다음달에 생일이 있는 사원 조회 -->
