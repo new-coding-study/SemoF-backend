@@ -1,0 +1,476 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.report.dao.MeetingMapper">
+
+    <!--회의보고서 전체조회(관리자)-->
+    <select id="selectAllMeetingReportForAdmin" resultType="MeetingDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE) AS ROW_NUM
+            ,TM.MEETING_REPORT_CODE
+            ,TM.REPORT_WRITE_DATE
+            ,TM.EMP_NO
+            ,TE.EMP_NAME
+            ,TM.MEETING_DATE
+            ,TM.LOCATION
+            ,TM.PARTICIPANTS
+            ,TM.MEETING_REPORT_TITLE
+            ,TM.MEETING_REPORT_CONTENT
+            ,TM.CONCLUSION
+            ,TM.NEXT_MEETING_PLAN
+            ,TR.REPORT_CATEGORY_CODE
+            ,TM.REPORT_STATUS
+            ,TM.REPORT_COMMENT
+        FROM tbl_meeting_report TM
+         JOIN tbl_report_category TR
+              ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+         JOIN tbl_employee TE
+              ON TM.EMP_NO = TE.EMP_NO
+        WHERE TM.REPORT_STATUS = 'N' OR TM.REPORT_STATUS = 'Y'
+        ORDER BY
+            CASE TM.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC;
+    </select>
+
+    <!--회의보고서 전체조회(직원)-->
+    <select id="selectAllMeetingReportForEmp" resultType="MeetingDto">
+        SELECT
+            ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE) AS ROW_NUM
+            ,TM.MEETING_REPORT_CODE
+             ,TM.REPORT_WRITE_DATE
+             ,TM.EMP_NO
+             ,TE.EMP_NAME
+             ,TM.MEETING_DATE
+             ,TM.LOCATION
+             ,TM.PARTICIPANTS
+             ,TM.MEETING_REPORT_TITLE
+             ,TM.MEETING_REPORT_CONTENT
+             ,TM.CONCLUSION
+             ,TM.NEXT_MEETING_PLAN
+             ,TR.REPORT_CATEGORY_CODE
+             ,TM.REPORT_STATUS
+             ,TM.REPORT_COMMENT
+        FROM tbl_meeting_report TM
+                 JOIN tbl_report_category TR
+                      ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TM.EMP_NO = TE.EMP_NO
+        WHERE TM.REPORT_STATUS = 'N' OR TM.REPORT_STATUS = 'Y'
+          AND TM.EMP_NO = #{empNo}
+        ORDER BY
+            CASE TM.REPORT_STATUS
+                WHEN 'N' THEN 0
+                WHEN 'Y' THEN 1
+                ELSE 2
+                END,
+            ROW_NUM DESC;
+    </select>
+
+    <!--회의보고서 전체 리스트 조회withPaging(관리자)-->
+    <select id="selectAllMeetingReportForAdminWithPaging" resultType="MeetingDto">
+        SELECT
+            P.ROW_NUM
+            ,P.MEETING_REPORT_CODE
+            ,P.REPORT_WRITE_DATE
+            ,P.EMP_NO
+            ,P.EMP_NAME
+            ,P.MEETING_DATE
+            ,P.LOCATION
+            ,P.PARTICIPANTS
+            ,P.MEETING_REPORT_TITLE
+            ,P.MEETING_REPORT_CONTENT
+            ,P.CONCLUSION
+            ,P.NEXT_MEETING_PLAN
+            ,P.REPORT_CATEGORY_NAME
+            ,P.REPORT_STATUS
+            ,P.REPORT_COMMENT
+        FROM
+            (
+            SELECT
+            ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE ASC) AS ROW_NUM
+            ,TM.MEETING_REPORT_CODE
+             ,TM.REPORT_WRITE_DATE
+             ,TM.EMP_NO
+             ,TE.EMP_NAME
+             ,TM.MEETING_DATE
+             ,TM.LOCATION
+             ,TM.PARTICIPANTS
+             ,TM.MEETING_REPORT_TITLE
+             ,TM.MEETING_REPORT_CONTENT
+             ,TM.CONCLUSION
+             ,TM.NEXT_MEETING_PLAN
+             ,TR.REPORT_CATEGORY_NAME
+             ,TM.REPORT_STATUS
+             ,TM.REPORT_COMMENT
+        FROM tbl_meeting_report TM
+         JOIN tbl_report_category TR
+              ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+         JOIN tbl_employee TE
+              ON TM.EMP_NO = TE.EMP_NO) P
+        ORDER BY P.ROW_NUM DESC
+        LIMIT ${startRow}, #{endRow}
+    </select>
+
+    <!--회의보고서 'N'상태 리스트 조회withPaging(관리자)-->
+    <select id="selectAllMeetingNStatusForAdmin" resultType="MeetingDto">
+        SELECT
+            P.ROW_NUM
+             ,P.MEETING_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.MEETING_DATE
+             ,P.LOCATION
+             ,P.PARTICIPANTS
+             ,P.MEETING_REPORT_TITLE
+             ,P.MEETING_REPORT_CONTENT
+             ,P.CONCLUSION
+             ,P.NEXT_MEETING_PLAN
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+            ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE ASC) AS ROW_NUM
+                     ,TM.MEETING_REPORT_CODE
+                     ,TM.REPORT_WRITE_DATE
+                     ,TM.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TM.MEETING_DATE
+                     ,TM.LOCATION
+                     ,TM.PARTICIPANTS
+                     ,TM.MEETING_REPORT_TITLE
+                     ,TM.MEETING_REPORT_CONTENT
+                     ,TM.CONCLUSION
+                     ,TM.NEXT_MEETING_PLAN
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TM.REPORT_STATUS
+                     ,TM.REPORT_COMMENT
+                FROM tbl_meeting_report TM
+                 JOIN tbl_report_category TR
+                      ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TM.EMP_NO = TE.EMP_NO) P
+        WHERE P.REPORT_STATUS = 'N'
+        ORDER BY P.ROW_NUM DESC
+        LIMIT ${startRow}, #{endRow}
+    </select>
+
+    <!--회의보고서 'Y'상태 리스트 조회withPaging(관리자)-->
+    <select id="selectAllMeetingYStatusForAdmin" resultType="MeetingDto">
+        SELECT
+            P.ROW_NUM
+             ,P.MEETING_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.MEETING_DATE
+             ,P.LOCATION
+             ,P.PARTICIPANTS
+             ,P.MEETING_REPORT_TITLE
+             ,P.MEETING_REPORT_CONTENT
+             ,P.CONCLUSION
+             ,P.NEXT_MEETING_PLAN
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+            ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE ASC) AS ROW_NUM
+                     ,TM.MEETING_REPORT_CODE
+                     ,TM.REPORT_WRITE_DATE
+                     ,TM.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TM.MEETING_DATE
+                     ,TM.LOCATION
+                     ,TM.PARTICIPANTS
+                     ,TM.MEETING_REPORT_TITLE
+                     ,TM.MEETING_REPORT_CONTENT
+                     ,TM.CONCLUSION
+                     ,TM.NEXT_MEETING_PLAN
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TM.REPORT_STATUS
+                     ,TM.REPORT_COMMENT
+                FROM tbl_meeting_report TM
+                 JOIN tbl_report_category TR
+                      ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TM.EMP_NO = TE.EMP_NO) P
+        WHERE P.REPORT_STATUS = 'Y'
+        ORDER BY P.ROW_NUM DESC
+        LIMIT ${startRow}, #{endRow}
+    </select>
+
+    <!--회의보고서 전체 리스트 조회withPaging(직원)-->
+    <select id="selectAllMeetingReportForEmpWithPaging" resultType="MeetingDto">
+        SELECT
+            P.ROW_NUM
+             ,P.MEETING_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.MEETING_DATE
+             ,P.LOCATION
+             ,P.PARTICIPANTS
+             ,P.MEETING_REPORT_TITLE
+             ,P.MEETING_REPORT_CONTENT
+             ,P.CONCLUSION
+             ,P.NEXT_MEETING_PLAN
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+            ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE ASC) AS ROW_NUM
+                     ,TM.MEETING_REPORT_CODE
+                     ,TM.REPORT_WRITE_DATE
+                     ,TM.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TM.MEETING_DATE
+                     ,TM.LOCATION
+                     ,TM.PARTICIPANTS
+                     ,TM.MEETING_REPORT_TITLE
+                     ,TM.MEETING_REPORT_CONTENT
+                     ,TM.CONCLUSION
+                     ,TM.NEXT_MEETING_PLAN
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TM.REPORT_STATUS
+                     ,TM.REPORT_COMMENT
+                FROM tbl_meeting_report TM
+                 JOIN tbl_report_category TR
+                      ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                      ON TM.EMP_NO = TE.EMP_NO
+            WHERE TM.EMP_NO = #{empNo}) P
+            ORDER BY P.ROW_NUM DESC
+            LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
+
+    <!--회의보고서 'N'상태 리스트 조회withPaging(직원)-->
+    <select id="selectAllMeetingNStatusForEmp" resultType="MeetingDto">
+        SELECT
+            P.ROW_NUM
+             ,P.MEETING_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.MEETING_DATE
+             ,P.LOCATION
+             ,P.PARTICIPANTS
+             ,P.MEETING_REPORT_TITLE
+             ,P.MEETING_REPORT_CONTENT
+             ,P.CONCLUSION
+             ,P.NEXT_MEETING_PLAN
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+            ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE ASC) AS ROW_NUM
+                     ,TM.MEETING_REPORT_CODE
+                     ,TM.REPORT_WRITE_DATE
+                     ,TM.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TM.MEETING_DATE
+                     ,TM.LOCATION
+                     ,TM.PARTICIPANTS
+                     ,TM.MEETING_REPORT_TITLE
+                     ,TM.MEETING_REPORT_CONTENT
+                     ,TM.CONCLUSION
+                     ,TM.NEXT_MEETING_PLAN
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TM.REPORT_STATUS
+                     ,TM.REPORT_COMMENT
+                FROM tbl_meeting_report TM
+                 JOIN tbl_report_category TR
+                  ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                  ON TM.EMP_NO = TE.EMP_NO
+                WHERE TM.EMP_NO=#{empNo}) P
+                WHERE P.REPORT_STATUS = 'N'
+            ORDER BY P.ROW_NUM DESC
+            LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
+
+    <!--회의보고서 'Y'상태 리스트 조회withPaging(직원)-->
+    <select id="selectAllMeetingYStatusForEmp" resultType="MeetingDto">
+        SELECT
+            P.ROW_NUM
+             ,P.MEETING_REPORT_CODE
+             ,P.REPORT_WRITE_DATE
+             ,P.EMP_NO
+             ,P.EMP_NAME
+             ,P.MEETING_DATE
+             ,P.LOCATION
+             ,P.PARTICIPANTS
+             ,P.MEETING_REPORT_TITLE
+             ,P.MEETING_REPORT_CONTENT
+             ,P.CONCLUSION
+             ,P.NEXT_MEETING_PLAN
+             ,P.REPORT_CATEGORY_NAME
+             ,P.REPORT_STATUS
+             ,P.REPORT_COMMENT
+        FROM
+            (SELECT
+            ROW_NUMBER() OVER(ORDER BY TM.REPORT_WRITE_DATE ASC) AS ROW_NUM
+                     ,TM.MEETING_REPORT_CODE
+                     ,TM.REPORT_WRITE_DATE
+                     ,TM.EMP_NO
+                     ,TE.EMP_NAME
+                     ,TM.MEETING_DATE
+                     ,TM.LOCATION
+                     ,TM.PARTICIPANTS
+                     ,TM.MEETING_REPORT_TITLE
+                     ,TM.MEETING_REPORT_CONTENT
+                     ,TM.CONCLUSION
+                     ,TM.NEXT_MEETING_PLAN
+                     ,TR.REPORT_CATEGORY_NAME
+                     ,TM.REPORT_STATUS
+                     ,TM.REPORT_COMMENT
+                FROM tbl_meeting_report TM
+                 JOIN tbl_report_category TR
+                  ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+                 JOIN tbl_employee TE
+                  ON TM.EMP_NO = TE.EMP_NO
+                WHERE TM.EMP_NO=#{empNo}) P
+                WHERE P.REPORT_STATUS = 'Y'
+                ORDER BY P.ROW_NUM DESC
+            LIMIT ${selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
+
+    <!--회의보고서 상세조회(관리자)-->
+    <select id="selectDetailMeetingForAdmin" resultType="MeetingDto">
+        SELECT
+            TM.MEETING_REPORT_CODE
+             ,TM.REPORT_WRITE_DATE
+             ,TM.EMP_NO
+             ,TE.EMP_NAME
+             ,TM.MEETING_DATE
+             ,TM.LOCATION
+             ,TM.PARTICIPANTS
+             ,TM.MEETING_REPORT_TITLE
+             ,TM.MEETING_REPORT_CONTENT
+             ,TM.CONCLUSION
+             ,TM.NEXT_MEETING_PLAN
+             ,TR.REPORT_CATEGORY_NAME
+             ,TM.REPORT_STATUS
+             ,TM.REPORT_COMMENT
+        FROM tbl_meeting_report TM
+         JOIN tbl_report_category TR
+              ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+         JOIN tbl_employee TE
+              ON TM.EMP_NO = TE.EMP_NO
+        WHERE TM.MEETING_REPORT_CODE = #{meetingReportCode}
+    </select>
+
+    <!--회의보고서 상세조회(직원)-->
+    <select id="selectDetailMeetingForEmp" resultType="MeetingDto">
+        SELECT
+            TM.MEETING_REPORT_CODE
+             ,TM.REPORT_WRITE_DATE
+             ,TM.EMP_NO
+             ,TE.EMP_NAME
+             ,TM.MEETING_DATE
+             ,TM.LOCATION
+             ,TM.PARTICIPANTS
+             ,TM.MEETING_REPORT_TITLE
+             ,TM.MEETING_REPORT_CONTENT
+             ,TM.CONCLUSION
+             ,TM.NEXT_MEETING_PLAN
+             ,TR.REPORT_CATEGORY_NAME
+             ,TM.REPORT_STATUS
+             ,TM.REPORT_COMMENT
+        FROM tbl_meeting_report TM
+         JOIN tbl_report_category TR
+              ON TM.REPORT_CATEGORY_CODE = TR.REPORT_CATEGORY_CODE
+         JOIN tbl_employee TE
+              ON TM.EMP_NO = TE.EMP_NO
+        WHERE TM.MEETING_REPORT_CODE = #{meetingReportCode}
+    </select>
+
+    <!--관리자 전체리스트 갯수 조회-->
+    <select id="selectMeetingReportTotalForAdmin" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_meeting_report TM
+     JOIN tbl_employee te on te.EMP_NO = TM.EMP_NO
+     JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TM.REPORT_CATEGORY_CODE
+    </select>
+
+    <!--직원 전체리스트 갯수 조회-->
+    <select id="selectMeetingReportTotalForEmp" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_meeting_report TM
+         JOIN tbl_employee TE on TE.EMP_NO = TM.EMP_NO
+         JOIN tbl_report_category trc on trc.REPORT_CATEGORY_CODE = TM.REPORT_CATEGORY_CODE
+        WHERE TM.EMP_NO = #{empNo}
+    </select>
+
+    <!--회의보고서 등록-->
+    <insert id="insertMeetingReport" parameterType="meetingDto">
+        INSERT INTO tbl_meeting_report
+            (
+            EMP_NO
+            ,MEETING_DATE
+            ,LOCATION
+            ,PARTICIPANTS
+            ,MEETING_REPORT_TITLE
+            ,MEETING_REPORT_CONTENT
+            ,CONCLUSION
+            ,NEXT_MEETING_PLAN
+            ,REPORT_CATEGORY_CODE
+        )
+        VALUES
+            (
+            (SELECT EMP_NO FROM tbl_employee WHERE tbl_employee.EMP_NO = #{empNo})
+            ,#{meetingDate}
+            ,#{location}
+            ,#{participants}
+            ,#{meetingReportTitle}
+            ,#{meetingReportContent}
+            ,#{conclusion}
+            ,#{nextMeetingPlan}
+            ,(SELECT REPORT_CATEGORY_CODE FROM tbl_report_category WHERE tbl_report_category.REPORT_CATEGORY_CODE = 4)
+            )
+    </insert>
+
+    <!--회의보고서 comment 작성(관리자)-->
+    <update id="updateMeetingReportForAdmin" parameterType="meetingDto">
+        UPDATE tbl_meeting_report
+        SET
+            REPORT_COMMENT = #{reportComment}
+          ,REPORT_STATUS = 'Y'
+        WHERE MEETING_REPORT_CODE = #{meetingReportCode}
+    </update>
+
+    <!--회의보고서 수정(직원)-->
+    <update id="updateMeetingReportForEmp" parameterType="meetingDto">
+        UPDATE tbl_meeting_report
+        SET
+            MEETING_DATE = #{meetingDate}
+            ,LOCATION = #{location}
+            ,MEETING_REPORT_TITLE = #{meetingReportTitle}
+            ,MEETING_REPORT_CONTENT = #{meetingReportContent}
+            ,CONCLUSION = #{conclusion}
+            ,NEXT_MEETING_PLAN = #{nextMeetingPlan}
+        WHERE MEETING_REPORT_CODE = #{meetingReportCode}
+    </update>
+
+    <!--회의보고서 삭제(관리자)-->
+    <delete id="deleteMeetingReportForAdmin" parameterType="meetingDto">
+        DELETE FROM tbl_meeting_report
+        WHERE MEETING_REPORT_CODE = #{meetingReportCode}
+    </delete>
+
+    <!--회의보고서 삭제(직원)-->
+    <delete id="deleteMeetingReportForEmp" parameterType="meetingDto">
+        DELETE  FROM tbl_meeting_report
+        WHERE MEETING_REPORT_CODE = #{meetingReportCode}
+    </delete>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.humanresource.dao.BranchOrderMapper">
+
+    <resultMap id="branchOrderResultMap" type="BranchOrderDto">
+        <id property="branchOrderNo" column="BRANCH_ORDER_NO"/>
+        <result property="empNo" column="EMP_NO"/>
+        <result property="branchCode" column="BRANCH_CODE"/>
+        <result property="orderDate" column="ORDER_DATE"/>
+    </resultMap>
+
+    <select id="selectBranchOrderById" resultMap="branchOrderResultMap">
+        SELECT
+            bo.BRANCH_ORDER_NO,
+            bo.EMP_NO,
+            bo.ORDER_DATE,
+            b.BRANCH_CODE,
+            b.BRANCH_NAME
+        FROM tbl_branch_order bo
+                 JOIN tbl_branch b ON bo.BRANCH_CODE = b.BRANCH_CODE
+        WHERE bo.EMP_NO = #{empNo}
+    </select>
+
+    <insert id="insertBranchOrder" parameterType="BranchOrderDto">
+        INSERT INTO tbl_branch_order (EMP_NO, ORDER_DATE, BRANCH_CODE)
+        VALUES (#{empNo}, #{orderDate}, #{branchCode})
+    </insert>
+
+    <update id="updateBranchOrder">
+        UPDATE tbl_branch_order
+        SET BRANCH_CODE = #{newBCode}
+        WHERE BRANCH_ORDER_NO = #{branchOrderNo}
+    </update>
+
+</mapper>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.loginInfo.dao.LoginInfoMapper">
+
+    <select id="selectByMemberId" resultType="LoginInfoDto">
+        SELECT
+            MEMBER_CODE
+             ,  MEMBER_ID
+             ,  MEMBER_NAME
+             ,  MEMBER_PASSWORD
+             ,  MEMBER_ROLE
+             ,  MEMBER_EMAIL
+        FROM TBL_MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+<!--    <select id="selectByEmpReg" resultType="EmployeeDto">-->
+<!--        SELECT-->
+<!--        EMP_NO-->
+<!--        , EMP_REG-->
+<!--        FROM tbl_employee-->
+
+<!--        WHERE EMP_REG= ${empReg}-->
+<!--    </select>-->
+
+    <!-- 지히 수정 -->
+    <select id="selectByEmpReg" resultType="java.lang.Long">
+        SELECT
+            EMP_NO
+        FROM tbl_employee
+        WHERE EMP_REG= ${empReg}
+    </select>
+
+    <select id="selectByEmpRegFromLoginInfo" resultType="java.lang.Long">
+        SELECT
+            EMP_NO
+        FROM tbl_login_info
+        WHERE EMP_NO= #{empNo}
+    </select>
+
+<!--    EMP_REG-->
+<!--    ,-->
+    <!--    &#45;&#45;         ON A.EMP_NO = B.EMP_NO-->
+<!--    &#45;&#45;         FROM tbl_login_info A-->
+    <select id="selectById" resultType="String">
+        SELECT
+            LOGIN_ID
+        FROM tbl_login_info
+        WHERE LOGIN_ID= #{loginId}
+    </select>
+    <select id="selectByEmail" resultType="LoginInfoDto">
+        SELECT
+                MEMBER_CODE
+             ,  MEMBER_ID
+             ,  MEMBER_NAME
+             ,  MEMBER_PASSWORD
+             ,  MEMBER_ROLE
+             ,  MEMBER_EMAIL
+        FROM TBL_MEMBER
+        WHERE MEMBER_EMAIL = #{email}
+    </select>
+
+    <select id="findByEmail" resultType="LoginInfoDto">
+        SELECT
+                MEMBER_CODE
+             ,  MEMBER_ID
+             ,  MEMBER_NAME
+             ,  MEMBER_PASSWORD
+             ,  MEMBER_ROLE
+             ,  MEMBER_EMAIL
+        FROM TBL_MEMBER
+        WHERE MEMBER_EMAIL = #{email}
+    </select>
+
+    <select id="findByMemberId" resultType="LoginInfoDto">
+        SELECT
+                *
+        FROM TBL_login_info
+        WHERE login_ID = #{loginId}
+    </select>
+
+    <insert id="insertMember" parameterType="LoginInfoDto">
+        INSERT INTO tbl_login_info
+        (
+            EMP_NO
+            , LOGIN_ID
+            , LOGIN_PWD
+        )
+        VALUES
+        (
+           #{empNo}
+           , #{loginId}
+           , #{loginPwd}
+        )
+    </insert>
+    <select id="selectUserRole" resultType="String">
+        SELECT
+            MEMBER_ROLE
+        FROM tbl_employee
+        JOIN tbl_login_info tli on tbl_employee.EMP_NO = tli.EMP_NO
+        WHERE tli.LOGIN_ID=#{loginId}
+    </select>
+</mapper>
+<!--        -->

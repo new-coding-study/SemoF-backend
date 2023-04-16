@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.reply.dao.ReplyMapper">
+
+    <resultMap id="replyResultMap" type="ReplyDto">
+        <result column="REPLY_CODE" property="replyCode"/>
+        <result column="REPLY_CONTENT" property="replyContent"/>
+        <result column="BOARD_NO" property="boardNo"/>
+        <result column="REPLY_WRITE_DATE" property="replyWriteDate" />
+        <result column="EMP_NAME" property="empName" />
+        <result column="EMP_NO" property="empNo"/>
+    </resultMap>
+
+    <!--댓글 전체조회-->
+    <select id="selectReply" resultType="ReplyDto">
+        SELECT
+            TR.REPLY_CODE
+           ,TR.REPLY_CONTENT
+           ,TR.BOARD_NO
+           ,TE.EMP_NAME
+        FROM tbl_reply TR
+        JOIN tbl_board TB
+        ON (TR.BOARD_NO = TB.BOARD_NO)
+        JOIN tbl_employee TE
+        ON (TR.EMP_NO = TE.EMP_NO)
+        WHERE TR.BOARD_NO = #{boardNo}
+        ORDER BY TR.REPLY_WRITE_DATE ASC
+    </select>
+
+    <!--댓글 전체 갯수 조회-->
+    <select id="selectReplyTotal" resultType="int">
+        SELECT
+            count(*)
+        FROM tbl_reply
+        WHERE BOARD_NO =#{boardNo}
+    </select>
+
+    <!--댓글 페이징 처리-->
+    <select id="selectReplyWithPaging" resultType="ReplyDto">
+        SELECT
+            R.rowNum
+           ,R.BOARD_NO
+           ,R.EMP_NAME
+           ,R.REPLY_CODE
+           ,R.REPLY_CONTENT
+           ,R.REPLY_WRITE_DATE
+           ,R.EMP_NO
+        FROM (SELECT
+                     ROW_NUMBER()OVER(ORDER BY TR.REPLY_WRITE_DATE DESC) AS rowNum
+                  ,TR.REPLY_CODE
+                  ,TR.REPLY_CONTENT
+                  ,TR.EMP_NO
+                  ,TR.BOARD_NO
+                  ,TE.EMP_NAME
+                  ,TR.REPLY_WRITE_DATE
+             FROM tbl_reply TR
+            JOIN tbl_board TB
+             ON TR.BOARD_NO = TB.BOARD_NO
+            JOIN tbl_employee TE
+             ON TR.EMP_NO = TE.EMP_NO
+             WHERE TR.BOARD_NO = #{boardNo}) R
+        ORDER BY R.rowNum ASC
+        LIMIT #{selectCriteria.startRow}, #{selectCriteria.endRow}
+    </select>
+
+    <!--댓글 등록-->
+    <insert id="insertReply" parameterType="ReplyDto">
+        INSERT INTO tbl_reply
+            (
+            BOARD_NO
+            , REPLY_CONTENT
+            , EMP_NO
+            )
+        VALUES
+            (
+            (SELECT BOARD_NO FROM tbl_board WHERE tbl_board.BOARD_NO = #{boardNo})
+             ,#{replyContent}
+             ,(SELECT EMP_NO FROM tbl_employee WHERE tbl_employee.EMP_NO= #{empNo})
+            )
+    </insert>
+
+    <!--관리자용 댓글 삭제-->
+    <delete id="deleteForAdmin" parameterType="boardDto">
+        DELETE FROM tbl_reply
+         WHERE REPLY_CODE = #{replyCode}
+    </delete>
+
+    <!--직원용 댓글 삭제-->
+    <delete id="deleteForEmp" parameterType="boardDto">
+        DELETE FROM tbl_reply
+        WHERE EMP_NO = #{empNo}
+          AND REPLY_CODE = #{replyCode}
+    </delete>
+
+    <!--댓글 수정-->
+    <!--    <update id="updateReply" parameterType="ReplyDto">-->
+    <!--        UPDATE tbl_reply-->
+    <!--        SET-->
+    <!--            REPLY_CONTENT = #{replyContent}-->
+    <!--        WHERE BOARD_NO = #{boardNo}-->
+    <!--          AND EMP_NO = #{empNo}-->
+    <!--          AND REPLY_CODE = #{replyCode}-->
+    <!--    </update>-->
+
+</mapper>
