@@ -6,6 +6,14 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
+/**
+ * @파일이름 : TripMapper.java
+ * @프로젝트 : Semof
+ * @버전관리 : 1.0.0
+ * @작성일 : 2023-04-13
+ * @작성자 : 이지형
+ * @클래스설명 : 출장보고서 crud를 위한 mapper.
+ */
 @Mapper
 public interface TripMapper {
 

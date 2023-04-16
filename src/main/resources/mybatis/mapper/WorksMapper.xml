@@ -470,7 +470,6 @@
         UPDATE tbl_works_report
         SET
             REPORT_COMMENT = #{reportComment}
-          ,EMP_NO = #{empNo}
           ,REPORT_STATUS = 'Y'
         WHERE WORKS_REPORT_CODE = #{worksReportCode}
     </update>
