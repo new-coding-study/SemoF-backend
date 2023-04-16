@@ -43,19 +43,31 @@ public class EmployeeEvaluationService {
         Map<String, Object> summary = new HashMap<>();
 
         int year = LocalDate.now().getYear();
+
         int month = LocalDate.now().getMonthValue();
 
         summary.put("year", year);
+
         summary.put("month", month);
+
         List<EmployeeEvaluationDto> list = employeeEvaluationMapper.selectAttendanceSummary(year, month, empNo);
+
         summary.put("attendance", list);
+
         double totalDays = YearMonth.of(year, month).lengthOfMonth();
+
         double totalWorkingDays = list.stream().mapToDouble(EmployeeEvaluationDto::getWorkingDays).sum();
+
         double absenceDays = totalDays - totalWorkingDays;
+
         double attendanceRate = totalWorkingDays / totalDays * 100;
+
         double absenceRate = absenceDays / totalDays * 100;
+
         summary.put("attendanceRate", attendanceRate);
+
         summary.put("absenceRate", absenceRate);
+
         return summary;
     }
 
@@ -241,8 +253,11 @@ public class EmployeeEvaluationService {
 
         for (EmployeeEvaluationDto evaluation : employeeEvaluationList) {
             Long targetNumber = evaluation.getEmpNo();
+
             log.info("[EmployeeEvaluationService] targetNumber: {}", targetNumber);
+
             result += employeeEvaluationMapper.deleteAttendanceGradeByEmpNo(targetNumber);
+
             log.info("[EmployeeEvaluationService] result: {}", result);
         }
 

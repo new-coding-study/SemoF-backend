@@ -281,9 +281,13 @@ public class EmailController {
     public ResponseEntity<ResponseDto> selectTrashEmailListWithPaging(@RequestParam(name = "pageNo", defaultValue = "1") int pageNo) throws SQLException {
         try {
             int sendCount = emailService.selectTrashSendListTotal();
+
             int receiveCount = emailService.selectTrashReceiveListTotal();
+
             int totalCount = sendCount + receiveCount;
+
             int limit = 10;
+
             int buttonAmount = 5;
 
             SelectCriteria selectCriteria = Pagenation.getSelectCriteria(pageNo, totalCount, limit, buttonAmount);
@@ -347,6 +351,7 @@ public class EmailController {
             responseDtoWithPaging.setData(searchEmails);
 
             return ResponseEntity.ok().body(new ResponseDto(HttpStatus.OK, "조회 성공", responseDtoWithPaging));
+
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

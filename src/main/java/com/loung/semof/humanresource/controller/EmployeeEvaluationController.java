@@ -13,6 +13,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @파일이름 : EmployeeEvaluationController.java
+ * @프로젝트 : SemoF
+ * @버전관리 : 1.0.0
+ * @작성일 : 2023-03-26
+ * @작성자 : 이현도
+ * @클래스설명 : 사원평가와 관련된 뷰의 명령을 실행하는 클래스
+ */
 @Slf4j
 @RestController
 @RequestMapping("/employees")
@@ -76,8 +84,10 @@ public class EmployeeEvaluationController {
 
             if (employeeEvaluationDto.getCategoryNo() == 1) {
                 insertedCategory = employeeEvaluationService.insertAttendanceGrade(employeeEvaluationDto);
+
             } else if (employeeEvaluationDto.getCategoryNo() == 2) {
                 insertedCategory = employeeEvaluationService.insertContributionGrade(employeeEvaluationDto);
+
             } else {
                 return ResponseEntity.badRequest().body(new ResponseDto(HttpStatus.BAD_REQUEST, "카테고리 번호를 다시 확인해주세요.", null));
             }

@@ -144,28 +144,6 @@ public class EmailService {
     }
 
     /**
-     * @작성일 : 2023-03-24
-     * @작성자 : 이현도
-     * @메소드설명 : 임시 저장 여부의 갱신 기능을 구현하는 메소드
-     */
-//    private void updateTempStatus(String tempStatus, Long mailNo) {
-//        Optional<SendEmailDto> optionalEmail = emailMapper.selectByEmailNo(mailNo);
-//
-//        log.info("[EmailService] optionalEmail" + optionalEmail);
-//
-//        if (optionalEmail.isPresent()) {
-//            SendEmailDto email = optionalEmail.get();
-//
-//            log.info("[EmailService] email : " + email);
-//
-//            email.setTempStatus(tempStatus != null ? tempStatus : "N");
-//
-//            log.info("[EmailService] email : " + email);
-//            emailMapper.insertSendEmail(email);
-//        }
-//    }
-
-    /**
      * @작성일 : 2023-04-05
      * @작성자 : 이현도
      * @메소드설명 : 이메일 수신함과 관련된 기능을 수행하는 메소드
@@ -232,8 +210,6 @@ public class EmailService {
 
             Message[] messages = searchTerm != null ? inbox.search(searchTerm) : inbox.getMessages();
 
-//            Message[] messages = inbox.getMessages();
-
             System.out.println("Fetched messages count: " + messages.length);
 
             for (Message message : messages) {
@@ -246,9 +222,6 @@ public class EmailService {
                 receiveEmailDto.setTitle(message.getSubject());
 
                 Object content = message.getContent();
-
-                System.out.println("Content Type: " + message.getContentType());
-                System.out.println("Raw Content: " + content);
 
                 if (content instanceof MimeMultipart) {
                     MimeMultipart mimeMultipart = (MimeMultipart) content;
@@ -271,8 +244,6 @@ public class EmailService {
 
             List<ReceiveEmailDto> emailList = selectEmailList();
 
-            System.out.println("Email list from database: " + emailList);
-
         } catch (MessagingException | IOException e) {
             e.printStackTrace();
         }
@@ -286,7 +257,9 @@ public class EmailService {
      */
     private String getTextFromMimeMultipart(MimeMultipart mimeMultipart) throws MessagingException, IOException {
         StringBuilder result = new StringBuilder();
+
         int count = mimeMultipart.getCount();
+
         String htmlContent = null;
 
         for (int i = 0; i < count; i++) {
@@ -294,8 +267,10 @@ public class EmailService {
 
             if (bodyPart.isMimeType("text/plain")) {
                 result.append("\n").append(bodyPart.getContent());
+
             } else if (bodyPart.isMimeType("text/html")) {
                 htmlContent = (String) bodyPart.getContent();
+
             } else if (bodyPart.getContent() instanceof MimeMultipart) {
                 result.append(getTextFromMimeMultipart((MimeMultipart) bodyPart.getContent()));
             }
@@ -336,8 +311,6 @@ public class EmailService {
 
         Date lastEmailDate = Date.from(lastEmailInstant);
 
-        // Create a search term for all emails received after the lastEmailDate
-//        SearchTerm newerThan = new ReceivedDateTerm(ComparisonTerm.GT, lastEmailDate);
         SearchTerm newerThan = new FlagTerm(new Flags(Flags.Flag.RECENT), true);
 
         return newerThan;
@@ -363,6 +336,7 @@ public class EmailService {
                 // 중복 체크
                 ReceiveEmailDto existingEmail = emailMapper
                         .selectEmailByTitleAndSenderName(receiveEmailDto.getTitle(), receiveEmailDto.getSenderName());
+
                 if (existingEmail != null) {
                     // 이미 해당 제목과 동일한 수신자가 존재하면, 저장하지 않음
                     skippedEmails++;
@@ -374,6 +348,7 @@ public class EmailService {
 
             } catch (Exception e) {
                 log.error("이메일을 저장하는 중 예외가 발생했습니다.", e);
+
                 throw new RuntimeException("이메일을 저장하는 중 예외가 발생했습니다.");
             }
 
