@@ -18,7 +18,7 @@ import java.util.List;
 public interface WorksMapper {
 
     int selectWorksReportTotalForAdmin();
-    int selectWorksReportTotalForEmp();
+    int selectWorksReportTotalForEmp(int empNo);
     List<WorksDto> selectAllWorksReportForAdminWithPaging(SelectCriteria selectCriteria);
     List<WorksDto> selectAllWorkNStatusForAdmin(SelectCriteria selectCriteria);
     List<WorksDto> selectAllWorkYStatusForAdmin(SelectCriteria selectCriteria);

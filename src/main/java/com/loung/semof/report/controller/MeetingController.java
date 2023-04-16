@@ -40,7 +40,7 @@ public class MeetingController {
         int totalCount = meetingService.selectMeetingReportTotalForAdmin();
         int limit = 10;
         int buttonAmount = 5;
-
+        System.out.println("totalCount = " + totalCount);
         SelectCriteria selectCriteria = Pagenation.getSelectCriteria(Integer.parseInt(offset), totalCount, limit, buttonAmount);
 
         ResponseDtoWithPaging responseDtoWithPaging = new ResponseDtoWithPaging();
@@ -100,7 +100,7 @@ public class MeetingController {
     @GetMapping("/meeting-lists-emp/{empNo}")
     public ResponseEntity<ResponseDto> selectAllMeetingReportForEmpWithPaging(@RequestParam(name="offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = meetingService.selectMeetingReportTotalForEmp();
+        int totalCount = meetingService.selectMeetingReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
@@ -122,7 +122,7 @@ public class MeetingController {
     public ResponseEntity<ResponseDto> selectAllMeetingNStatusForEmp(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = meetingService.selectMeetingReportTotalForEmp();
+        int totalCount = meetingService.selectMeetingReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
@@ -144,7 +144,7 @@ public class MeetingController {
     public ResponseEntity<ResponseDto> selectAllMeetingYStatusForEmp(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = meetingService.selectMeetingReportTotalForEmp();
+        int totalCount = meetingService.selectMeetingReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 

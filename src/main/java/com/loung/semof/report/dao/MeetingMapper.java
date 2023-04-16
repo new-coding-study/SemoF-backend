@@ -18,7 +18,7 @@ import java.util.List;
 public interface MeetingMapper {
 
     int selectMeetingReportTotalForAdmin();
-    int selectMeetingReportTotalForEmp();
+    int selectMeetingReportTotalForEmp(int empNo);
     List<MeetingDto> selectAllMeetingReportForAdminWithPaging(SelectCriteria selectCriteria);
     List<MeetingDto> selectAllMeetingReportForEmpWithPaging(SelectCriteria selectCriteria, int empNo);
     MeetingDto selectDetailMeetingForAdmin(Integer meetingReportCode);

@@ -100,7 +100,7 @@ public class TripController {
     @GetMapping("/trip-lists-emp/{empNo}")
     public ResponseEntity<ResponseDto> selectAllTripReportForEmpWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = tripService.selectTripReportTotalForEmp();
+        int totalCount = tripService.selectTripReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
@@ -122,7 +122,7 @@ public class TripController {
     public ResponseEntity<ResponseDto> selectAllTripNStatusForEmp(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = tripService.selectTripReportTotalForEmp();
+        int totalCount = tripService.selectTripReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
@@ -144,7 +144,7 @@ public class TripController {
     public ResponseEntity<ResponseDto> selectAllTripYStatusForEmp(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = tripService.selectTripReportTotalForEmp();
+        int totalCount = tripService.selectTripReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 

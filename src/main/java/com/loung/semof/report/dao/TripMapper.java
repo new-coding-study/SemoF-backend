@@ -18,7 +18,7 @@ import java.util.List;
 public interface TripMapper {
 
     int selectTripReportTotalForAdmin();
-    int selectTripReportTotalForEmp();
+    int selectTripReportTotalForEmp(int empNo);
     List<TripDto> selectAllTripReportForAdminWithPaging(SelectCriteria selectCriteria);
     List<TripDto> selectAllTripReportForEmpWithPaging(SelectCriteria selectCriteria, int empNo);
     TripDto detailTripReportForAdmin(Integer tripReportCode);
