@@ -78,6 +78,5 @@
 		<mapper resource="MeetingMapper.xml"/>
 		<mapper resource="WorksMapper.xml"/>
 
-		<mapper resource="SurveyMapper.xml"/>
 	</mappers>
 </configuration>
