@@ -15,14 +15,30 @@
         FROM TBL_MEMBER
         WHERE MEMBER_ID = #{memberId}
     </select>
-    <select id="selectByEmpReg" resultType="EmployeeDto">
-        SELECT
-        EMP_NO
-        , EMP_REG
-        FROM tbl_employee
+<!--    <select id="selectByEmpReg" resultType="EmployeeDto">-->
+<!--        SELECT-->
+<!--        EMP_NO-->
+<!--        , EMP_REG-->
+<!--        FROM tbl_employee-->
 
+<!--        WHERE EMP_REG= ${empReg}-->
+<!--    </select>-->
+
+    <!-- 지히 수정 -->
+    <select id="selectByEmpReg" resultType="java.lang.Long">
+        SELECT
+            EMP_NO
+        FROM tbl_employee
         WHERE EMP_REG= ${empReg}
     </select>
+
+    <select id="selectByEmpRegFromLoginInfo" resultType="java.lang.Long">
+        SELECT
+            EMP_NO
+        FROM tbl_login_info
+        WHERE EMP_NO= #{empNo}
+    </select>
+
 <!--    EMP_REG-->
 <!--    ,-->
     <!--    &#45;&#45;         ON A.EMP_NO = B.EMP_NO-->

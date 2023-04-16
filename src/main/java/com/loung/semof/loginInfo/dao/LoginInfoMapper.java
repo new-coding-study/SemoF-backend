@@ -21,8 +21,10 @@ public interface LoginInfoMapper {
 
 //    Optional<EmployeeDto> selectByEmpReg(String empReg);
 
-    EmployeeDto selectByEmpReg(String empReg);
-//    int selectByEmpReg(String empReg);
+//    EmployeeDto selectByEmpReg(String empReg);
+    Long selectByEmpReg(String empReg);
+    Long selectByEmpRegFromLoginInfo(Long empNo);
+
     int checkEmpReg(String empReg);
 
    String selectById(String loginId);
