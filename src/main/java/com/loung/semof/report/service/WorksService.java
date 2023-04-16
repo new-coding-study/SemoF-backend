@@ -73,8 +73,8 @@ public class WorksService {
      * @작성자 : 이지형
      * @메소드설명 : 직원를 위한 보고서 전체 갯수를 조회.
      */
-    public int selectWorksReportTotalForEmp() {
-        int result = worksMapper.selectWorksReportTotalForEmp();
+    public int selectWorksReportTotalForEmp(int empNo) {
+        int result = worksMapper.selectWorksReportTotalForEmp(empNo);
         return result;
     }
 

@@ -100,7 +100,7 @@ public class WorksController {
     public ResponseEntity<ResponseDto> selectAllWorksReportForEmpWithPaging(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = worksService.selectWorksReportTotalForEmp();
+        int totalCount = worksService.selectWorksReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
@@ -122,7 +122,7 @@ public class WorksController {
     public ResponseEntity<ResponseDto> selectAllWorkNStatusForEmp(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = worksService.selectWorksReportTotalForEmp();
+        int totalCount = worksService.selectWorksReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
@@ -144,7 +144,7 @@ public class WorksController {
     public ResponseEntity<ResponseDto> selectAllWorkYStatusForEmp(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = worksService.selectWorksReportTotalForEmp();
+        int totalCount = worksService.selectWorksReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 

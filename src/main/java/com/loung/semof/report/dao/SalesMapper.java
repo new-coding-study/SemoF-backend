@@ -18,7 +18,7 @@ import java.util.List;
 public interface SalesMapper {
 
     int selectSalesReportTotalForAdmin();
-    int selectSalesReportTotalForEmp();
+    int selectSalesReportTotalForEmp(int empNo);
     List<SalesDto> selectAllSalesReportForAdminWithPaging(SelectCriteria selectCriteria);
     List<SalesDto> selectAllSalesReportForEmpWithPaging(SelectCriteria selectCriteria, int empNo);
     SalesDto detailSalesReportForAdmin(Integer salesReportCode);

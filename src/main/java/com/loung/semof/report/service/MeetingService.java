@@ -73,8 +73,8 @@ public class MeetingService {
      * @작성자 : 이지형
      * @메소드설명 : 직원를 위한 보고서 전체 갯수를 조회.
      */
-    public int selectMeetingReportTotalForEmp() {
-        int result = meetingMapper.selectMeetingReportTotalForEmp();
+    public int selectMeetingReportTotalForEmp(int empNo) {
+        int result = meetingMapper.selectMeetingReportTotalForEmp(empNo);
         return result;
     }
 

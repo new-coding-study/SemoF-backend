@@ -4,6 +4,7 @@ import com.loung.semof.common.ResponseDto;
 import com.loung.semof.common.paging.Pagenation;
 import com.loung.semof.common.paging.ResponseDtoWithPaging;
 import com.loung.semof.common.paging.SelectCriteria;
+import com.loung.semof.report.dao.SalesMapper;
 import com.loung.semof.report.dto.SalesDto;
 import com.loung.semof.report.service.SalesService;
 import org.springframework.http.HttpStatus;
@@ -99,7 +100,7 @@ public class SalesController {
     @GetMapping("/sales-lists-emp/{empNo}")
     public ResponseEntity<ResponseDto> selectAllSalesReportForEmpWithPaging(@RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = salesService.selectSalesReportTotalForEmp();
+        int totalCount = salesService.selectSalesReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
@@ -121,7 +122,7 @@ public class SalesController {
     public ResponseEntity<ResponseDto> selectAllSalesNStatusForEmp(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = salesService.selectSalesReportTotalForEmp();
+        int totalCount = salesService.selectSalesReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
@@ -143,7 +144,7 @@ public class SalesController {
     public ResponseEntity<ResponseDto> selectAllSalesYStatusForEmp(
             @RequestParam(name = "offset", defaultValue = "1") String offset, @PathVariable int empNo){
 
-        int totalCount = salesService.selectSalesReportTotalForEmp();
+        int totalCount = salesService.selectSalesReportTotalForEmp(empNo);
         int limit = 10;
         int buttonAmount = 5;
 
