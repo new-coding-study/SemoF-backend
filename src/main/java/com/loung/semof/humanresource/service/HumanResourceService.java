@@ -52,14 +52,14 @@ public class HumanResourceService {
 
     private final DepartmentOrderMapper departmentOrderMapper;
 
-    private final ElasticComponent elasticComponent;
+//    private final ElasticComponent elasticComponent;
 
     @Value("${image.image-dir}")
     private String IMAGE_DIR;
     @Value("${image.image-url}")
     private String IMAGE_URL;
 
-    public HumanResourceService(EmployeeMapper employeeMapper, DepartmentMapper departmentMapper, BranchMapper branchMapper, HumanResourceMapper humanResourceMapper, BranchOrderMapper branchOrderMapper, DepartmentOrderMapper departmentOrderMapper, @Lazy ElasticComponent elasticComponent) {
+    public HumanResourceService(EmployeeMapper employeeMapper, DepartmentMapper departmentMapper, BranchMapper branchMapper, HumanResourceMapper humanResourceMapper, BranchOrderMapper branchOrderMapper, DepartmentOrderMapper departmentOrderMapper/*, @Lazy ElasticComponent elasticComponent*/) {
         this.employeeMapper = employeeMapper;
 
         this.departmentMapper = departmentMapper;
@@ -71,7 +71,7 @@ public class HumanResourceService {
         this.branchOrderMapper = branchOrderMapper;
 
         this.departmentOrderMapper = departmentOrderMapper;
-        this.elasticComponent = elasticComponent;
+//        this.elasticComponent = elasticComponent;
     }
 
     /**
@@ -168,7 +168,7 @@ public class HumanResourceService {
 
             log.info("[EmployeeService] employeeDto : " + employeeDto);
 
-            elasticComponent.addEmployee(employeeDto);
+//            elasticComponent.addEmployee(employeeDto);
 
             return employeeDto;
 

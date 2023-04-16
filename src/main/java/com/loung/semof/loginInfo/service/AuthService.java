@@ -106,26 +106,44 @@ public class AuthService {
 //    }
 
     public Object checkEmpReg(String empReg) {
-////        if (loginInfoMapper.selectByEmpReg(empReg).getEmpReg() != null) {
-//            log.info("[AuthService] 주민번호가 확인되었습니다.");
+
+        // 지히 수정
+        // 프론트에서 넘어온 값 확인
         System.out.println("empReg = " + empReg);
-//        }
-        EmployeeDto employeeDto = loginInfoMapper.selectByEmpReg(empReg);
-        System.out.println("매퍼의 값 : " +loginInfoMapper.selectByEmpReg(empReg));
-        System.out.println("employeeDto = " + employeeDto);
+
+        // 프론트에서 받은 값으로 일치하는 사원의 empNo을 받음
+        Long empNo  = loginInfoMapper.selectByEmpReg(empReg);
+        // empNo 확인
+        System.out.println("매퍼의 값 (empNo) : " +empNo);
+
+        // 위에서 받아온 사원이 이미 가입되어있는지 여부 확인
+        Long checkEmpNo = loginInfoMapper.selectByEmpRegFromLoginInfo(empNo);
+
+        if (empNo == null) {
+            return "일치하는 사원이 없습니다.";
+        } else if (checkEmpNo != null) {
+            return "이미 가입된 사원입니다.";
+        } else{
+            return empNo;
+        }
+
+//        EmployeeDto  = loginInfoMapper.selectByEmpReg(empReg);
+//        System.out.println("매퍼의 값 (employeeDto) : " +loginInfoMapper.selectByEmpReg(empReg));
+//        System.out.println("employeeDto = " + employeeDto);
+
 //        매퍼에서 empREg empoNo를 들고 온다,.
 //        loginInfoMapper.selectByEmpReg(empReg) dto 형식으로 되어있음
 //        empNo로는 setting을 하고 setEmpNo(여기서 가져온거)
 //        empReg는 주민번호 검증에 사용
 //        newEmpNo = Math.toIntExact(loginInfoMapper.selectByEmpReg(empReg).get().getEmpNo());
-        newEmpNo = Math.toIntExact(loginInfoMapper.selectByEmpReg(empReg).getEmpNo());
+//        newEmpNo = Math.toIntExact(loginInfoMapper.selectByEmpReg(empReg).getEmpNo());
 //        newEmpNo = Math.toIntExact(loginInfoMapper.selectByEmpReg(empReg));
 //        if(loginInfoMapper.selectByEmpReg(empReg).get().getEmpReg().equals(empReg)){
-            if(loginInfoMapper.selectByEmpReg(empReg).getEmpReg().equals(empReg)){
-            return "주민번호 체크 성공";
-        }else{
-            return "체크 실패";
-        }
+//            if(loginInfoMapper.selectByEmpReg(empReg).getEmpReg().equals(empReg)){
+//            return "주민번호 체크 성공";
+//        }else{
+//            return "체크 실패";
+//        }
 
 
 //        Optional<LoginInfoDto> loginInfoDtoOptional = loginInfoService.findByUsername("example");
@@ -141,6 +159,9 @@ public class AuthService {
 //        return (result>0) ? "주민번호 체크 성공": "체크 실패";
 //        return 1;
     }
+
+
+
 //    public Object checkEmpReg(String empReg) {
 //        List<UserDTO> userList = userMapper.getUserList();
 //
