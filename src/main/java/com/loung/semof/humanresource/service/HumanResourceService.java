@@ -17,7 +17,6 @@ import com.loung.semof.humanresource.dto.HumanResourceDto;
 import com.loung.semof.util.FileUploadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -92,8 +91,11 @@ public class HumanResourceService {
         }
 
         DepartmentOrderDto deptOrder = new DepartmentOrderDto();
+
         deptOrder.setEmpNo(employee.getEmpNo());
+
         deptOrder.setOrderDate(LocalDateTime.now());
+
         deptOrder.setDeptCode(employee.getDeptCode());
 
         DepartmentDto department = departmentMapper.selectDepartmentByDeptCode(deptCode);
@@ -105,9 +107,11 @@ public class HumanResourceService {
         }
 
         deptOrder.setNewDeptCode(department.getDeptCode());
+
         departmentOrderMapper.insertDepartmentOrder(deptOrder);
 
         employee.setDeptCode(department.getDeptCode());
+
         employeeMapper.updateEmployeeDepartment(employee);
 
         return employee;
@@ -147,9 +151,11 @@ public class HumanResourceService {
         }
 
         branchOrder.setNewBCode(branch.getBranchCode());
+
         branchOrderMapper.insertBranchOrder(branchOrder);
 
         employee.setBranchCode(branch.getBranchCode());
+
         employeeMapper.updateEmployeeBranch(employee);
 
         return employee;
@@ -218,6 +224,7 @@ public class HumanResourceService {
      */
     public EmployeeDto updateEmployee(Long empNo, String phone, String email, String address, Integer salary, Long jobCode, MultipartFile employeePhoto) throws Exception {
         EmployeeDto employee = employeeMapper.selectEmployeeByEmpNo(empNo);
+
         if (employee == null) {
             throw new NotFoundException("해당 사원을 찾을 수 없습니다.");
         }
@@ -241,12 +248,15 @@ public class HumanResourceService {
         // 새로운 사진이 업로드된 경우
         if (employeePhoto != null) {
             EmployeePhotoDto oldPhoto = humanResourceMapper.selectEmployeePhotoByEmpNo(empNo);
+
             if (oldPhoto != null) {
                 FileUploadUtils.deleteFile(IMAGE_DIR, oldPhoto.getChangeName());
+
                 humanResourceMapper.deleteEmployeePhoto(oldPhoto.getPhotoNo());
             }
 
             String imageName = UUID.randomUUID().toString().replace("-", "");
+
             String replaceFileName = FileUploadUtils.saveFile(IMAGE_DIR, imageName, employeePhoto);
 
             EmployeePhotoDto newPhoto = EmployeePhotoDto.builder()
@@ -372,12 +382,6 @@ public class HumanResourceService {
         employees.sort(Comparator.comparing(e -> e.getEmpReg().substring(2, 6)));   // 생일순으로 정렬
 
         return employees;
-
-        //이번 달 + 다음달 생일자
-//        List<EmployeeDto> employeesAfter = humanResourceMapper.selectEmployeeByBirthMonthAfter(monthValue);  // 이번 달 이후 생일인 사원 조회
-//        log.info("[HumanResourceService] employeesAfter :" + employeesAfter);
-//        employeesAfter.sort(Comparator.comparing(e -> e.getEmpReg().substring(2, 6)));
-//        employees.addAll(employeesAfter);   // 이번 달 생일인 사원과 이번 달 이후 생일인 사원을 합침
     }
 
     /**
@@ -438,6 +442,7 @@ public class HumanResourceService {
      */
     public List<BranchDto> selectBranches() {
         List<BranchOrderDto> branchOrders = humanResourceMapper.selectBranchesOrders();
+
         List<BranchDto> branch = branchOrders.stream()
                 .map(BranchOrderDto::getBranchDto)
                 .collect(Collectors.toList());
