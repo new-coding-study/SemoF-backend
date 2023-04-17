@@ -37,6 +37,7 @@ public class AuthService {
 
     @Transactional
     public LoginInfoDto signup(LoginInfoDto loginInfoDto) {
+        System.out.println("서비스단에서 loginInfoDto 확인" + loginInfoDto);
 
 //        if (loginInfoMapper.selectByMemberId(memberDto.getMemberId()) != null) {
 //            log.info("[AuthService] 아이디가 중복됩니다.");
@@ -50,8 +51,8 @@ public class AuthService {
         log.info("[AuthService] Member Signup Start ==============================");
         loginInfoDto.setLoginPwd(passwordEncoder.encode(loginInfoDto.getLoginPwd()));
         log.info("[AuthService] Member {}", loginInfoDto);
-        System.out.println("newEmpNo = " + newEmpNo);
-        loginInfoDto.setEmpNo(newEmpNo);
+//        System.out.println("newEmpNo = " + newEmpNo);
+//        loginInfoDto.setEmpNo(newEmpNo);
 
 //        String role = loginInfoMapper.selectUserRole(newEmpNo);
 //        loginInfoDto.setMemberRole(role);
