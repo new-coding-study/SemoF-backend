@@ -224,7 +224,7 @@
               FROM tbl_APPROVAL A
               JOIN tbl_approv_status tas on A.APPROV_NO = tas.APPROV_NO
               WHERE EMP_NO = #{empNo}
-        ) P
+        ) P ORDER BY P.APPROV_DATE DESC
             LIMIT #{ selectCriteria.startRow }
            , #{selectCriteria.endRow}
     </select>
@@ -300,7 +300,7 @@
             ) tao ON tal.LINE_NO = tao.LINE_NO
                     JOIN tbl_approv_status tas on a.APPROV_NO = tas.APPROV_NO
 
-        ) P
+        ) P ORDER BY P.APPROV_DATE DESC
             LIMIT #{ selectCriteria.startRow }
            , #{selectCriteria.endRow}
     </select>

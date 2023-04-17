@@ -279,6 +279,7 @@ public class ApprovService {
     }
 
     public Object updateStatus(Integer approvNo, Integer lineNo, Long empNo, String status) {
+
         int rowNum = approvMapper.selectStatusOrder(lineNo, empNo);
         System.out.println("rowNum = " + rowNum);
         int result = 0;
