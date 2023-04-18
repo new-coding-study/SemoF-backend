@@ -16,4 +16,5 @@ public class DuplicatedUsernameException extends RuntimeException{
     public DuplicatedUsernameException(Throwable cause) {
         super(cause);
     }
+
 }

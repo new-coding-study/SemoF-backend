@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.loung.semof.humanresource.dao.HumanResourceMapper">
+
+    <sql id="employeeSelectColumns">
+        EMP_NO, EMP_NAME, EMAIL, PHONE, ADDRESS
+	  , SALARY, ENROLL_DATE, RETIRE_DATE, WORK_STATUS
+      , GENDER, JOB_CODE, DEPT_CODE, BRANCH_CODE
+    </sql>
+
+    <sql id="searchColumns">
+        E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+       ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+       ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+       ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+    </sql>
+
+    <!-- ResultMap EmployeeDto -->
+    <resultMap id="employeeResult" type="EmployeeDto">
+        <id property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
+        <result property="empReg" column="EMP_REG"/>
+        <result property="email" column="EMAIL"/>
+        <result property="phone" column="PHONE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="salary" column="SALARY"/>
+        <result property="enrollDate" column="ENROLL_DATE"/>
+        <result property="retireDate" column="RETIRE_DATE"/>
+        <result property="workStatus" column="WORK_STATUS"/>
+        <result property="gender" column="GENDER"/>
+        <result property="jobCode" column="JOB_CODE"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="branchCode" column="BRANCH_CODE"/>
+    </resultMap>
+
+    <!-- ResultMap HumanResourceDto -->
+    <resultMap id="employeesResultExtend" type="HumanResourceDto">
+        <id property="empNo" column="EMP_NO"/>
+        <result property="empName" column="EMP_NAME"/>
+        <result property="email" column="EMAIL"/>
+        <result property="phone" column="PHONE"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="salary" column="SALARY"/>
+        <result property="enrollDate" column="ENROLL_DATE"/>
+        <result property="retireDate" column="RETIRE_DATE"/>
+        <result property="workStatus" column="WORK_STATUS"/>
+        <result property="gender" column="GENDER"/>
+        <result property="jobCode" column="JOB_CODE"/>
+        <result property="deptCode" column="DEPT_CODE"/>
+        <result property="branchCode" column="BRANCH_CODE"/>
+        <result property="branchName" column="BRANCH_NAME"/>
+        <result property="deptName" column="DEPT_NAME"/>
+    </resultMap>
+
+    <resultMap id="employeeEvaluationMap" type="EmployeeEvaluationDto">
+        <id column="EMP_NO" property="empNo" />
+        <result column="EMP_NAME" property="empName" />
+        <result column="JOB_NAME" property="jobName" />
+        <result column="DEPT_NAME" property="deptName" />
+        <result column="BRANCH_NAME" property="branchName" />
+    </resultMap>
+
+    <resultMap id="employeePhotoResult" type="EmployeePhotoDto">
+        <result property="photoNo" column="photo_no"/>
+        <result property="empNo" column="emp_no"/>
+        <result property="filePath" column="file_path"/>
+        <result property="originName" column="origin_name"/>
+        <result property="changeName" column="change_name"/>
+        <result property="uploadDate" column="upload_date"/>
+    </resultMap>
+
+    <resultMap id="branchOrderResultMap" type="BranchOrderDto">
+        <id property="branchOrderNo" column="BRANCH_ORDER_NO" />
+        <result property="empNo" column="EMP_NO" />
+        <result property="branchCode" column="BRANCH_CODE" />
+        <result property="orderDate" column="ORDER_DATE" />
+        <result property="newBCode" column="NEW_BRANCH_CODE" />
+    </resultMap>
+
+    <resultMap id="departmentOrderResultMap" type="DepartmentOrderDto">
+        <id property="deptOrderNo" column="DEPT_ORDER_NO" />
+        <result property="empNo" column="EMP_NO" />
+        <result property="deptCode" column="DEPT_CODE" />
+        <result property="orderDate" column="ORDER_DATE" />
+        <result property="newDeptCode" column="NEW_DEPT_CODE" />
+    </resultMap>
+
+    <resultMap id="jobNameMap" type="java.lang.String"/>
+
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
+    <update id="updateEmployee" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET DEPT_CODE = #{deptCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+    <!-- UPDATE 쿼리: EmployeeDto 업데이트 -->
+    <update id="updateEmployeeBranch" parameterType="EmployeeDto">
+        UPDATE tbl_employee
+        SET BRANCH_CODE = #{branchCode}
+        WHERE EMP_NO = #{empNo}
+    </update>
+
+    <!-- SELECT 쿼리 - 페이지네이션 포함 : 사원 전체 조회 -->
+    <select id="selectEmployeeListWithPaging" parameterType="HumanResourceDto" resultMap="employeesResultExtend">
+        SELECT DISTINCT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+            ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+            ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+            ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM  (SELECT *
+               FROM tbl_employee
+               WHERE WORK_STATUS = 'Y'
+               ORDER BY EMP_NO DESC
+               LIMIT #{startRow}, #{endRow}
+              ) AS E
+                  LEFT JOIN tbl_job J ON E.job_code = J.job_code
+                  LEFT JOIN tbl_department D ON E.dept_code = D.dept_code
+                  LEFT JOIN tbl_branch B ON E.branch_code = B.branch_code
+
+    </select>
+
+    <!-- SELECT 쿼리 : 사원 전체 숫자 조회 -->
+    <select id="selectEmployeeTotal" resultType="int">
+        SELECT
+            COUNT(*)
+        FROM tbl_employee
+    </select>
+
+    <!-- SELECT 쿼리 : 사원 이름으로 사원 조회 조회 -->
+    <select id="selectEmployees"  resultMap="employeesResultExtend">
+        SELECT DISTINCT
+        E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+        ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+        ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+        ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM  (SELECT *
+        FROM tbl_employee
+        WHERE WORK_STATUS = 'Y'
+        ) AS E
+        LEFT JOIN tbl_job J ON E.job_code = J.job_code
+        LEFT JOIN tbl_department D ON E.dept_code = D.dept_code
+        LEFT JOIN tbl_branch B ON E.branch_code = B.branch_code
+        WHERE 1=1
+        <if test="empName != null">
+            AND E.EMP_NAME LIKE CONCAT('%', #{empName}, '%')
+        </if>
+        <if test="deptName != null">
+            AND D.DEPT_NAME LIKE CONCAT('%', #{deptName}, '%')
+        </if>
+        <if test="branchName != null">
+            AND B.BRANCH_NAME LIKE CONCAT('%', #{branchName}, '%')
+        </if>
+    </select>
+
+    <!-- SELECT 쿼리 : 이번달에 생일이 있는 사원 조회 -->
+    <select id="selectEmployeeByBirthMonth" resultType="HumanResourceDto">
+        SELECT E.*, A.DEPT_NAME
+        FROM tbl_employee E
+        LEFT JOIN tbl_department A ON E.DEPT_CODE = A.DEPT_CODE
+        WHERE E.WORK_STATUS = 'Y'
+        AND MONTH(STR_TO_DATE(CONCAT('19', SUBSTR(E.EMP_REG, 1, 2), '-', SUBSTR(E.EMP_REG, 3, 2), '-', SUBSTR(E.EMP_REG, 5, 2)), '%Y-%m-%d')) = #{monthValue}
+    </select>
+
+    <!-- SELECT 쿼리 : 다음달에 생일이 있는 사원 조회 -->
+    <select id="selectEmployeeByBirthMonthAfter" resultMap="employeeResult">
+        SELECT *
+        FROM tbl_employee
+        WHERE MONTH(STR_TO_DATE(CONCAT(SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%y-%m-%d')) &gt;= #{monthValue}
+        ORDER BY MONTH(STR_TO_DATE(CONCAT(SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%y-%m-%d')) ASC
+    </select>
+
+    <!-- SELECT 쿼리 : 해당 조건을 만족하는 사원 조회 -->
+    <select id="SelectEmployeesForChart"  resultMap="employeesResultExtend">
+        SELECT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE
+            ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+            ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+            ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+            JOIN tbl_job J ON E.job_code = J.job_code
+            JOIN tbl_department D ON E.dept_code = D.dept_code
+            JOIN tbl_branch B ON E.branch_code = B.branch_code
+        WHERE 1=1
+        AND WORK_STATUS = 'Y'
+        <if test="empName != null">
+            AND EMP_NAME = #{empName}
+        </if>
+        <if test="deptName != null">
+            AND DEPT_NAME = #{deptName}
+        </if>
+        <if test="branchName != null">
+            AND BRANCH_NAME = #{branchName}
+        </if>
+    </select>
+
+    <!-- SELECT 쿼리 : 사원 번호로 사원 조회  -->
+    <select id="selectEmployeeByEmpNo"  resultType="HumanResourceDto">
+        SELECT
+            E.EMP_NO, E.EMP_NAME, E.EMAIL, E.PHONE, E.EMP_REG
+            ,E.ADDRESS, E.SALARY, E.ENROLL_DATE, E.RETIRE_DATE
+            ,E.WORK_STATUS, E.GENDER, E.JOB_CODE, J.JOB_NAME
+            ,E.DEPT_CODE, D.DEPT_NAME, B.BRANCH_CODE, B.BRANCH_NAME
+        FROM tbl_employee E
+                 JOIN tbl_job J ON E.job_code = J.job_code
+                 JOIN tbl_department D ON E.dept_code = D.dept_code
+                 JOIN tbl_branch B ON E.branch_code = B.branch_code
+        WHERE EMP_NO = #{empNo}
+        AND WORK_STATUS = 'Y'
+    </select>
+
+    <!-- SELECT 쿼리 : 사원 번호로 사원 조회  -->
+    <select id="selectEmployeeByGender"  resultType="EmployeeDto">
+        SELECT *
+        FROM tbl_employee
+        WHERE GENDER = #{gender}
+        AND WORK_STATUS = 'Y'
+    </select>
+
+    <!-- INSERT 쿼리 : 사원 사진 등록  -->
+    <insert id="insertEmployeePhoto" parameterType="EmployeePhotoDto">
+        INSERT INTO tbl_employee_photo
+        VALUES
+            (#{photoNo}, #{empNo}, #{filePath}
+            , #{originName}, #{changeName}, #{uploadDate})
+    </insert>
+
+    <!-- SELECT 쿼리 : 사원 번호로 사원 사진 조회  -->
+    <select id="selectEmployeePhotoByEmpNo" parameterType="long" resultMap="employeePhotoResult">
+        SELECT *
+        FROM tbl_employee_photo
+        WHERE EMP_NO = #{empNo}
+    </select>
+
+    <!-- SELECT 쿼리 : 사진 번호로 사진 삭제  -->
+    <delete id="deleteEmployeePhoto" parameterType="long">
+        DELETE FROM tbl_employee_photo
+        WHERE PHOTO_NO = #{photoNo}
+    </delete>
+
+    <select id="selectBranchesOrders" resultMap="branchOrderResultMap">
+        SELECT *
+        FROM tbl_branch_order bo
+                 JOIN tbl_employee e ON bo.EMP_NO = e.EMP_NO
+                 JOIN tbl_branch b ON bo.BRANCH_CODE = b.BRANCH_CODE
+        WHERE e.EMP_NO = #{empNo}
+          AND bo.ORDER_DATE BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <select id="selectDepartmentsOrders" resultMap="departmentOrderResultMap">
+        SELECT *
+        FROM tbl_department_order do
+                 JOIN tbl_employee e ON do.EMP_NO = e.EMP_NO
+                 JOIN tbl_department d ON do.DEPT_CODE = d.DEPT_CODE
+        WHERE e.EMP_NO = #{empNo}
+          AND do.ORDER_DATE BETWEEN #{startDate} AND #{endDate}
+    </select>
+
+    <!-- SELECT 쿼리 : 생일자 수를 조회 -->
+    <select id="selectBirthEmpCount" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_employee
+        WHERE WORK_STATUS = 'Y'
+          AND MONTH(STR_TO_DATE(CONCAT('19', SUBSTR(EMP_REG, 1, 2), '-', SUBSTR(EMP_REG, 3, 2), '-', SUBSTR(EMP_REG, 5, 2)), '%Y-%m-%d')) = #{monthValue}
+    </select>
+
+    <!-- SELECT 쿼리 : 오늘의 출근자 수를 조회 -->
+    <select id="selectTodayAttendanceList" resultType="int">
+        SELECT COUNT(DISTINCT ATD_NO) AS todayAtd
+        FROM tbl_attendance
+        WHERE DATE_FORMAT(ATD_DATE, '%Y-%m-%d') = CURDATE();
+    </select>
+
+    <!-- SELECT 쿼리 : 휴가자 수를 조회 -->
+    <select id="selectVacationCount" resultType="int">
+        SELECT COUNT(*)
+        FROM tbl_employee e
+                 JOIN tbl_emp_vacation_info v ON e.EMP_NO = v.EMP_NO
+    </select>
+
+    <!-- SELECT 쿼리 : 성별 조회 -->
+    <select id="selectAllEmployees" resultType="EmployeeDto">
+        SELECT *
+        FROM tbl_employee E
+        ORDER BY EMP_NO
+    </select>
+
+    <!-- INSERT 쿼리 : 사원 기본 캘린더 등록  -->
+    <insert id="insertDefaultCalendar" parameterType="String">
+        INSERT INTO tbl_calendar
+            (
+             CAL_NAME,
+             CAL_COLOR,
+             MADE_EMP_NO
+            )
+        VALUES
+            (#{calName}, #{calColor}, #{madeEmpNo})
+    </insert>
+
+    <!-- INSERT 쿼리 : 사원 기본 카테고리(기본, 중요표시) 등록  -->
+    <insert id="insertDefaultCategory" parameterType="String">
+        INSERT INTO tbl_todo_category
+        (
+            CATE_NAME,
+            CATE_COLOR,
+            EMP_NO
+        )
+        VALUES
+            (#{cateName}, #{cateColor}, #{empNo})
+    </insert>
+
+</mapper>
